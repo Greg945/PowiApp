@@ -2,816 +2,1261 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#1f3b5c">
-<title>Der Weg des Gesetzes</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#0d111a">
+<title>Mission Gesetz</title>
 <style>
 :root{
-  --bg:#f4f1ea; --surface:#ffffff; --surface2:#f8f6f1; --text:#1d2430; --muted:#5d6675; --border:#ddd6c8;
-  --accent:#1f5fa8; --accent-text:#fff;
-  --e:#2b2f36; --z:#a0438a; --faint:#cfc8ba;
-  --ok:#1d8a4a; --ok-bg:#e6f5ec; --bad:#c0392b; --bad-bg:#fdecea;
-  --map-bg:#fbfaf6;
-  --shadow:0 2px 10px rgba(20,30,50,.08);
+  --bg:#0d111a; --panel:#2b313d; --panel2:#3a4150; --edge:#0b0d12; --text:#f3f5f8; --muted:#a9b2c2;
+  --yellow:#ffd84a; --green:#3ddc6f; --red:#e5484d; --cyan:#5fd7ff; --paper:#f6f0dd;
 }
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --bg:#14171c; --surface:#1d2128; --surface2:#242933; --text:#e8ebf0; --muted:#a2aab7; --border:#333a46;
-    --accent:#5b9be6; --accent-text:#0d1420;
-    --e:#e3e6eb; --z:#e08bcf; --faint:#3a414d;
-    --ok:#4cc982; --ok-bg:#183527; --bad:#ff7b6b; --bad-bg:#3b1f1c;
-    --map-bg:#181c22; --shadow:0 2px 10px rgba(0,0,0,.4);
-  }
-}
-:root[data-theme="dark"]{
-  --bg:#14171c; --surface:#1d2128; --surface2:#242933; --text:#e8ebf0; --muted:#a2aab7; --border:#333a46;
-  --accent:#5b9be6; --accent-text:#0d1420;
-  --e:#e3e6eb; --z:#e08bcf; --faint:#3a414d;
-  --ok:#4cc982; --ok-bg:#183527; --bad:#ff7b6b; --bad-bg:#3b1f1c;
-  --map-bg:#181c22; --shadow:0 2px 10px rgba(0,0,0,.4);
-}
-*{box-sizing:border-box}
-[hidden]{display:none!important}
-html,body{margin:0;height:100%}
-body{background:var(--bg);color:var(--text);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;-webkit-text-size-adjust:100%;overflow:hidden}
-button{font:inherit;color:inherit}
-.app{display:flex;flex-direction:column;height:100vh;height:100dvh}
-header{display:flex;align-items:center;gap:10px;padding:10px 16px;padding-top:max(10px,env(safe-area-inset-top));background:var(--surface);border-bottom:1px solid var(--border);flex:0 0 auto}
-header h1{font-size:18px;margin:0;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0}
-header h1 span{color:var(--muted);font-weight:500}
-.hbtn{border:1px solid var(--border);background:var(--surface2);border-radius:10px;padding:7px 11px;cursor:pointer;font-size:14px;white-space:nowrap;min-height:38px}
-.hbtn:hover{border-color:var(--accent)}
-.hbtn[aria-pressed="true"]{background:var(--accent);color:var(--accent-text);border-color:var(--accent)}
-.stat{font-size:14px;color:var(--muted);white-space:nowrap}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--text);
+  font-family:"Trebuchet MS","Segoe UI",system-ui,sans-serif;touch-action:none;user-select:none;-webkit-user-select:none}
+button{font:inherit;color:inherit;cursor:pointer}
+#cv{position:fixed;inset:0;width:100%;height:100%;display:block}
+.hidden{display:none!important}
 
-/* Menu */
-.menu{flex:1;overflow:auto;padding:20px 16px 40px}
-.menu-inner{max-width:980px;margin:0 auto}
-.hero{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;box-shadow:var(--shadow);margin-bottom:20px}
-.hero h2{margin:0 0 6px;font-size:24px}
-.hero p{margin:6px 0;color:var(--muted)}
-.progress-row{display:flex;flex-wrap:wrap;gap:16px;margin-top:12px;font-size:14px}
-.pbar{height:8px;background:var(--surface2);border-radius:99px;overflow:hidden;border:1px solid var(--border);width:180px;align-self:center}
-.pbar>i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .5s}
-.cases{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
-.case{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:left;cursor:pointer;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:6px;transition:transform .12s,border-color .12s}
-.case:hover{transform:translateY(-2px);border-color:var(--accent)}
-.case .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.case .num{font-size:13px;color:var(--muted)}
-.case h3{margin:0;font-size:18px}
-.case p{margin:0;color:var(--muted);font-size:14px}
-.tag{font-size:12px;border-radius:99px;padding:2px 9px;border:1px solid var(--border);white-space:nowrap}
-.tag.leicht{color:var(--ok);border-color:var(--ok)}
-.tag.mittel{color:#b7791f;border-color:#b7791f}
-.tag.schwer{color:var(--bad);border-color:var(--bad)}
-.stars{color:#e0a400;letter-spacing:2px;font-size:16px}
-.stars .off{color:var(--faint)}
-.howto{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px 20px}
-.howto h3{margin:0 0 8px}
-.howto ul{margin:0;padding-left:20px}
-.howto li{margin:4px 0}
-.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--muted);margin-top:8px}
-.legend span{display:inline-flex;align-items:center;gap:6px}
-.legend i{display:inline-block;width:26px;height:0;border-top:3px solid}
+/* ---------- HUD ---------- */
+#hud{position:fixed;inset:0;pointer-events:none}
+#hud > *{pointer-events:auto}
+#taskbox{position:absolute;left:max(10px,env(safe-area-inset-left));top:max(10px,env(safe-area-inset-top));width:min(330px,62vw)}
+#totalbar{background:#1b1f27;border:3px solid var(--edge);border-radius:6px;height:26px;position:relative;overflow:hidden}
+#totalfill{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(#5cf08a,#2bb557);width:0;transition:width .5s}
+#totalbar span{position:absolute;inset:0;display:flex;align-items:center;padding-left:8px;font-weight:800;font-size:12px;letter-spacing:.08em;
+  text-shadow:0 0 3px #000,0 0 3px #000}
+#tasklist{margin-top:6px;background:rgba(220,224,232,.18);backdrop-filter:blur(2px);border-radius:6px;padding:8px 10px;font-size:13.5px;line-height:1.35;
+  text-shadow:0 1px 2px #000,0 0 2px #000;max-height:46vh;overflow:auto}
+#tasklist .hd{display:flex;justify-content:space-between;font-weight:800;margin-bottom:3px;cursor:pointer}
+#tasklist .t{padding:1px 0}
+#tasklist .t.part{color:var(--yellow)}
+#tasklist .t.done{color:var(--green)}
+#tasklist .t.lock{color:#8c94a3}
+#tasklist.min .t{display:none}
+.hudbtn{position:absolute;width:58px;height:58px;border-radius:12px;background:rgba(30,34,44,.85);border:3px solid var(--edge);
+  display:flex;align-items:center;justify-content:center;flex-direction:column;font-size:24px;line-height:1}
+.hudbtn small{font-size:9.5px;font-weight:800;letter-spacing:.05em;margin-top:3px}
+#btnMap{right:max(10px,env(safe-area-inset-right));top:max(10px,env(safe-area-inset-top))}
+#btnPause{right:calc(max(10px,env(safe-area-inset-right)) + 66px);top:max(10px,env(safe-area-inset-top))}
+#btnUse{right:max(16px,env(safe-area-inset-right));bottom:max(16px,env(safe-area-inset-bottom));width:96px;height:96px;border-radius:18px;
+  font-size:38px;opacity:.35;transition:opacity .15s,transform .1s;background:rgba(30,34,44,.9)}
+#btnUse.on{opacity:1;border-color:var(--yellow);box-shadow:0 0 18px rgba(255,216,74,.5)}
+#btnUse.on:active{transform:scale(.94)}
+#btnUse small{font-size:11px}
+#roomlbl{position:absolute;left:50%;bottom:max(18px,env(safe-area-inset-bottom));transform:translateX(-50%);font-weight:800;font-size:15px;
+  text-shadow:0 0 4px #000,0 0 3px #000;pointer-events:none;letter-spacing:.03em;white-space:nowrap}
+#hint{position:absolute;left:50%;bottom:calc(max(18px,env(safe-area-inset-bottom)) + 26px);transform:translateX(-50%);font-size:12.5px;color:var(--muted);
+  text-shadow:0 0 3px #000;pointer-events:none;white-space:nowrap}
+#toast{position:absolute;left:50%;top:max(80px,calc(env(safe-area-inset-top) + 72px));transform:translateX(-50%);background:rgba(20,24,32,.92);border:3px solid var(--edge);
+  border-radius:10px;padding:9px 16px;font-weight:700;font-size:15px;max-width:min(560px,90vw);text-align:center;opacity:0;transition:opacity .25s;pointer-events:none}
+#toast.show{opacity:1}
+#joy{position:fixed;width:120px;height:120px;border-radius:50%;border:3px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08);pointer-events:none;display:none}
+#joy i{position:absolute;left:50%;top:50%;width:52px;height:52px;margin:-26px 0 0 -26px;border-radius:50%;background:rgba(255,255,255,.45)}
 
-/* Game layout */
-.game{flex:1;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(320px,.7fr);min-height:0}
-.mapwrap{position:relative;min-height:0;background:var(--map-bg);border-left:1px solid var(--border);order:2}
-.maphead{position:absolute;left:10px;top:10px;right:60px;z-index:2;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.maphead .ttl{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:6px 10px;font-size:13px;box-shadow:var(--shadow)}
-.mapclose{display:none}
-.sm-only{display:none}
-#map{width:100%;height:100%;display:block;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab}
-#map.dragging{cursor:grabbing}
-.mapctl{position:absolute;right:10px;top:10px;display:flex;flex-direction:column;gap:6px;z-index:2}
-.mapctl button{width:40px;height:40px;border-radius:10px;border:1px solid var(--border);background:var(--surface);box-shadow:var(--shadow);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center}
-.mapctl button[aria-pressed="true"]{background:var(--accent);color:var(--accent-text);border-color:var(--accent)}
-.maplegend{position:absolute;left:10px;bottom:10px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:6px 10px;font-size:12px;display:flex;gap:12px;box-shadow:var(--shadow);z-index:2}
-.maplegend span{display:inline-flex;align-items:center;gap:5px;color:var(--muted)}
-.maplegend i{display:inline-block;width:20px;border-top:3px solid}
-.toast{position:absolute;left:50%;top:12px;transform:translateX(-50%);background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 14px;box-shadow:var(--shadow);font-size:14px;max-width:min(92%,420px);z-index:3;opacity:0;pointer-events:none;transition:opacity .2s}
-.toast.show{opacity:1}
-.toast b{display:block}
+/* ---------- Overlays ---------- */
+.ov{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:12px;background:rgba(5,7,12,.62);z-index:20}
+.mg{width:min(600px,100%);max-height:100%;overflow:auto;background:linear-gradient(#444c5c,#2c323d);border:6px solid var(--edge);border-radius:16px;
+  box-shadow:0 10px 40px rgba(0,0,0,.6), inset 0 2px 0 rgba(255,255,255,.12);padding:16px 16px 18px;position:relative}
+.mg h2{margin:0 44px 10px;text-align:center;font-size:19px;letter-spacing:.02em}
+.mg .x{position:absolute;left:10px;top:10px;width:36px;height:36px;border-radius:8px;background:var(--red);border:3px solid var(--edge);font-weight:900;font-size:18px;line-height:1}
+.mg .sub{color:#d5dae3;text-align:center;font-size:14.5px;margin:-4px 0 12px;line-height:1.4}
+.screen{background:#1a1e27;border:4px solid var(--edge);border-radius:10px;padding:12px;box-shadow:inset 0 0 18px rgba(0,0,0,.5)}
+.btn{background:#5a6478;border:3px solid var(--edge);border-radius:10px;padding:10px 14px;font-weight:800;font-size:15px;min-height:46px;
+  box-shadow:inset 0 -4px 0 rgba(0,0,0,.25)}
+.btn:active{transform:translateY(2px);box-shadow:inset 0 -2px 0 rgba(0,0,0,.25)}
+.btn.go{background:#2fa956}.btn.blue{background:#2f6fd6}.btn.warn{background:#c84a3a}
+.btn.ok{background:var(--green)!important;color:#08210f}.btn.bad{background:var(--red)!important;animation:shake .35s}
+.btn:disabled{opacity:.45}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.feedback{margin-top:10px;padding:10px 12px;border-radius:8px;font-size:14.5px;line-height:1.45;background:#20252f;border-left:5px solid var(--muted)}
+.feedback.good{border-color:var(--green)}.feedback.bad{border-color:var(--red)}
+.answers{display:grid;gap:8px}
+.answers .btn{text-align:left;font-weight:700}
+.center{text-align:center}
+.row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px}
 
-.panel{overflow:auto;padding:28px 24px;background:var(--bg);min-height:0;-webkit-overflow-scrolling:touch;order:1}
-.panel-inner{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:14px;padding-bottom:max(16px,env(safe-area-inset-bottom))}
-.stage{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:22px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:14px}
-.stage .lage{font-size:18px}
-.stage .question{font-size:21px}
-.trail{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;font-size:13px;color:var(--muted)}
-.trail .st{background:var(--surface);border:1px solid var(--border);border-radius:99px;padding:2px 9px;white-space:nowrap}
-.trail .st.now{border-color:#e0a400;color:var(--text);font-weight:700}
-.node.gone,.edge.gone,.elabel.gone,.deco.gone{opacity:0!important;pointer-events:none}
-.node,.deco{transition:opacity .6s}
-.casehead{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
-.casehead h2{margin:0;font-size:19px}
-.casehead small{color:var(--muted);white-space:nowrap}
-.steps{display:flex;gap:4px}
-.steps i{flex:1;height:6px;border-radius:99px;background:var(--surface2);border:1px solid var(--border)}
-.steps i.done{background:var(--ok);border-color:var(--ok)}
-.steps i.cur{background:var(--accent);border-color:var(--accent)}
-.lage{background:var(--surface2);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:10px;padding:12px 14px}
-.lage .lbl{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700;margin-bottom:2px}
-.question{font-weight:700;font-size:17px;margin:2px 0 0}
-.choices{display:flex;flex-direction:column;gap:8px}
-.choice{display:flex;align-items:center;gap:12px;text-align:left;padding:12px 14px;border-radius:12px;border:2px solid var(--border);background:var(--surface);cursor:pointer;min-height:56px;transition:border-color .12s,background .12s,transform .1s}
-.choice:hover:not(:disabled){border-color:var(--accent)}
-.choice:active:not(:disabled){transform:scale(.99)}
-.choice .chip{flex:0 0 auto;width:30px;height:30px;border-radius:8px;border:3px solid}
-.choice .t{display:flex;flex-direction:column;line-height:1.25}
-.choice .t b{font-size:16px}
-.choice .t small{color:var(--muted);font-size:13px}
-.choice.wrong{border-color:var(--bad);background:var(--bad-bg);opacity:.75;cursor:not-allowed;animation:shake .35s}
-.choice.right{border-color:var(--ok);background:var(--ok-bg)}
-.choice:disabled{cursor:default}
-.choice.big{justify-content:center;font-weight:700;font-size:17px}
-@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
-.fb{border-radius:12px;padding:12px 14px;font-size:15px}
-.fb.ok{background:var(--ok-bg);border:1px solid var(--ok)}
-.fb.bad{background:var(--bad-bg);border:1px solid var(--bad)}
-.fb b{display:block;margin-bottom:2px}
-.primary{background:var(--accent);color:var(--accent-text);border:0;border-radius:12px;padding:13px 18px;font-weight:700;cursor:pointer;min-height:48px;font-size:16px}
-.primary:hover{filter:brightness(1.08)}
-.secondary{background:transparent;border:1px solid var(--border);border-radius:12px;padding:12px 16px;cursor:pointer;min-height:48px}
-.btnrow{display:flex;gap:8px;flex-wrap:wrap}
-.btnrow>*{flex:1 1 160px}
-.result{text-align:center;padding:8px 0}
-.result .big{font-size:44px;line-height:1}
-.result h2{margin:8px 0 4px}
-.result .stars{font-size:30px}
-.recap{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
-.recap li{display:flex;gap:10px;align-items:flex-start;font-size:14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:8px 10px}
-.recap .n{flex:0 0 auto;width:22px;height:22px;border-radius:50%;background:var(--accent);color:var(--accent-text);font-size:12px;display:flex;align-items:center;justify-content:center;font-weight:700}
-.typehint{font-size:13px;color:var(--muted)}
+/* dialog */
+.dlg{display:flex;gap:14px;align-items:flex-start}
+.dlg canvas{flex:none;width:92px;height:110px;background:radial-gradient(#5a6680,#2a3040);border:4px solid var(--edge);border-radius:10px}
+.dlg .who{font-weight:900;font-size:17px}
+.dlg .role{color:var(--yellow);font-size:13px;font-weight:700;margin-bottom:6px}
+.dlg .txt{font-size:15.5px;line-height:1.5}
 
-/* SVG */
-.edge{fill:none;stroke-width:3;stroke-linejoin:round;transition:stroke .3s,opacity .3s}
-.edge.k-e,.edge.k-n{stroke:var(--e)}
-.edge.k-z{stroke:var(--z)}
-.edge.dash{stroke-dasharray:8 7}
-.edge.hidden{stroke:var(--faint);opacity:.55}
-.edge.active{stroke-width:6}
-.elabel{font-size:15px;fill:var(--muted);transition:opacity .3s}
-.elabel.k-z{fill:var(--z)}
-.elabel.hidden{opacity:0}
-.node rect{transition:filter .2s}
-.node{cursor:pointer}
-.node text{pointer-events:none}
-.node .nm{font-size:25px;font-weight:600;fill:#1d2430}
-.node .art{font-size:15px;fill:#3b4350}
-.node.dim{opacity:.45}
-.node.cand rect.frame{stroke:var(--accent);stroke-width:5;animation:pulse 1.4s ease-in-out infinite}
-.node.here rect.frame{stroke:#e0a400;stroke-width:6}
-@keyframes pulse{0%,100%{stroke-opacity:1}50%{stroke-opacity:.25}}
-.token circle{fill:#e0a400;stroke:#fff;stroke-width:4}
-.token text{font-size:22px;font-weight:800;fill:#1d2430}
-.sectlabel{font-size:16px;fill:var(--muted);font-weight:600}
-.zone{fill:none;stroke:var(--faint);stroke-width:6;stroke-dasharray:4 10;stroke-linecap:round}
+/* sign */
+.paper{background:var(--paper);color:#2a2a2a;border-radius:4px;padding:16px 18px;box-shadow:0 4px 0 #b9ad8c;position:relative;font-family:Georgia,serif}
+.paper h3{margin:0 0 8px;font-size:16px}
+.paper .ln{height:7px;background:#d8cfb6;border-radius:3px;margin:7px 0}
+.paper .sigrow{display:flex;align-items:flex-end;gap:8px;margin-top:16px;font-size:13px}
+.paper svg{width:200px;height:56px;border-bottom:2px solid #333}
+.paper .stampmark{position:absolute;right:16px;top:14px;border:3px solid #c0392b;color:#c0392b;font-weight:900;padding:3px 8px;transform:rotate(-12deg);
+  font-family:"Trebuchet MS",sans-serif;opacity:0;transition:opacity .2s}
 
-/* Narrow: stacked */
-@media (max-width:899px){
-  .game{grid-template-columns:1fr;grid-template-rows:1fr}
-  .mapwrap{position:fixed;inset:0;z-index:20;border:0;display:none}
-  body.mapopen .mapwrap{display:block}
-  .mapclose{display:inline-flex}
-  .sm-only{display:inline-flex}
-  header h1{font-size:16px}
-  .hide-sm{display:none}
-  .maplegend{font-size:11px;padding:4px 8px;gap:8px}
-  .panel{padding:16px}
-  .stage{padding:16px;border-radius:14px}
-  .stage .lage{font-size:17px}
-  .stage .question{font-size:19px}
+/* swipe */
+.reader{height:80px;border-radius:10px;background:linear-gradient(#22272f,#14171c);border:4px solid var(--edge);position:relative;margin:20px 0 10px}
+.reader .slot{position:absolute;left:10px;right:10px;top:50%;height:6px;margin-top:-3px;background:#000;border-radius:3px}
+.reader .led{position:absolute;right:14px;top:8px;width:14px;height:14px;border-radius:50%;background:#444}
+.card{position:absolute;left:8px;top:-34px;width:130px;height:80px;line-height:1.2;border-radius:9px;background:linear-gradient(135deg,#f4f4f4,#cfd8e3);border:3px solid var(--edge);
+  color:#223;font-size:10px;padding:6px;font-weight:700;touch-action:none;cursor:grab}
+.card .ph{position:absolute;left:7px;bottom:6px;width:26px;height:30px;background:#8aa0bd;border-radius:3px}
+.card .lines{position:absolute;left:44px;bottom:10px;right:8px}
+.card .lines i{display:block;height:5px;background:#9aa6b8;margin-top:5px;border-radius:2px}
+.lcd{font-family:"Courier New",monospace;background:#0f1a10;color:#6cff8b;border:3px solid var(--edge);border-radius:6px;padding:8px 10px;font-weight:700;text-align:center;min-height:40px}
+
+/* sort */
+.sortcard{background:var(--paper);color:#222;border-radius:8px;padding:18px;font-size:17px;font-weight:700;text-align:center;min-height:84px;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 0 #b9ad8c;transition:transform .2s,opacity .2s}
+.bins{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.dots{display:flex;gap:5px;justify-content:center;margin-top:10px}
+.dots i{width:10px;height:10px;border-radius:50%;background:#555}
+.dots i.on{background:var(--green)}
+
+/* order */
+.seq{display:grid;gap:6px;margin-bottom:10px}
+.seq div{background:#244b33;border:2px solid #3ddc6f;border-radius:8px;padding:8px 10px;font-weight:700;font-size:14.5px}
+.seq div b{display:inline-block;width:24px}
+.pool{display:grid;gap:7px}
+
+/* wires */
+.wires{position:relative;display:grid;grid-template-columns:1fr 70px 1fr;gap:0;align-items:stretch}
+.wires svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.wcol{display:grid;gap:10px}
+.wit{display:flex;align-items:center;min-height:50px;background:#1f2430;border:3px solid var(--edge);border-radius:8px;padding:6px 8px;font-size:13.5px;font-weight:700;line-height:1.25;touch-action:none}
+.wit.l{padding-right:4px}.wit.r{padding-left:4px}
+.wit .plug{flex:none;width:18px;height:26px;border-radius:4px;border:2px solid var(--edge)}
+.wit.l .plug{margin-left:auto}.wit.r .plug{margin-right:8px;order:-1}
+.wit.l span{margin-right:6px}
+.wit.sel{outline:3px solid var(--yellow)}
+.wit.done{opacity:.75}
+
+/* stamp */
+.stampzone{position:relative;height:210px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.sheet{position:absolute;width:190px;height:180px;background:var(--paper);border-radius:4px;box-shadow:0 4px 0 #b9ad8c;padding:14px;transition:transform .45s ease-in,opacity .45s}
+.sheet h4{margin:0 0 6px;font-size:13px;color:#333;font-family:Georgia,serif}
+.sheet .ln{height:6px;background:#d8cfb6;border-radius:3px;margin:7px 0}
+.sheet .mk{position:absolute;left:30px;bottom:26px;border:4px solid #c0392b;color:#c0392b;font-weight:900;padding:4px 10px;transform:rotate(-10deg) scale(1.6);opacity:0;transition:all .15s}
+.sheet.st .mk{opacity:1;transform:rotate(-10deg) scale(1)}
+.stamper{font-size:54px;position:absolute;top:-10px;transition:top .12s;pointer-events:none}
+
+/* transfer */
+.xfer{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:10px 4px}
+.folder{width:96px;text-align:center;font-size:12px;font-weight:700;color:#cfd6e2}
+.folder div{font-size:50px;line-height:1}
+.flyzone{flex:1;position:relative;height:50px}
+.flyzone i{position:absolute;top:12px;font-style:normal;font-size:22px;opacity:0}
+.prog{height:26px;background:#10131a;border:3px solid var(--edge);border-radius:6px;overflow:hidden;margin-top:8px}
+.prog div{height:100%;width:0;background:linear-gradient(#5cf08a,#2bb557)}
+
+/* count */
+.cards{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.vc{width:44px;height:30px;border-radius:5px;border:2px solid var(--edge);font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center}
+.vc.ja{background:#3ba55c}.vc.nein{background:#d9534f}.vc.enth{background:#c9ccd3;color:#222}
+.land{min-width:84px;padding:5px 6px;border-radius:6px;border:2px solid var(--edge);font-size:11.5px;font-weight:800;text-align:center;line-height:1.2}
+.land b{display:block;font-size:17px}
+.keypad{display:grid;grid-template-columns:repeat(3,62px);gap:7px;justify-content:center;margin-top:10px}
+.keypad .btn{padding:0;min-height:48px;font-size:20px}
+
+/* vote */
+.vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.vt{display:flex;align-items:center;gap:8px;background:#d8dde6;color:#1a1d24;border:3px solid var(--edge);border-radius:8px;padding:4px 8px 4px 4px;position:relative;min-height:56px}
+.vt canvas{width:42px;height:50px;flex:none}
+.vt .nm{font-weight:800;font-size:13px;line-height:1.15}
+.vt .vb{position:absolute;right:6px;top:50%;transform:translateY(-50%) scale(1.8) rotate(-8deg);font-weight:900;font-size:12px;padding:2px 6px;border-radius:4px;border:2px solid;opacity:0;transition:all .18s}
+.vt .vb.show{opacity:1;transform:translateY(-50%) scale(1) rotate(-8deg)}
+.vb.ja{color:#1d7a3c;border-color:#1d7a3c;background:#c9f2d5}.vb.nein{color:#a32222;border-color:#a32222;background:#f6d0d0}.vb.enth{color:#555;border-color:#555;background:#eee}
+.vt.me{background:#fff6cf}
+.result{font-size:22px;font-weight:900;text-align:center;margin-top:12px}
+
+/* ---------- Screens ---------- */
+.scr{position:fixed;inset:0;z-index:30;overflow:auto;background:radial-gradient(ellipse at 50% 30%,#1a2236 0%,#070910 75%);display:flex;flex-direction:column;align-items:center;
+  padding:max(18px,env(safe-area-inset-top)) 16px max(24px,env(safe-area-inset-bottom))}
+.stars{position:fixed;inset:0;pointer-events:none;background-image:radial-gradient(1.5px 1.5px at 20% 30%,#fff8,transparent),radial-gradient(1px 1px at 70% 20%,#fff9,transparent),
+  radial-gradient(1.5px 1.5px at 40% 70%,#fff6,transparent),radial-gradient(1px 1px at 85% 60%,#fff8,transparent),radial-gradient(1px 1px at 10% 85%,#fff7,transparent),
+  radial-gradient(1.2px 1.2px at 55% 45%,#fff5,transparent),radial-gradient(1px 1px at 92% 90%,#fff8,transparent);background-size:340px 340px}
+.logo{font-size:clamp(34px,9vw,66px);font-weight:900;letter-spacing:.04em;margin:18px 0 0;text-align:center;line-height:1;
+  color:#fff;text-shadow:0 4px 0 #0b0d12,4px 0 0 #0b0d12,-4px 0 0 #0b0d12,0 -4px 0 #0b0d12,0 8px 18px rgba(0,0,0,.6)}
+.logo span{color:var(--yellow)}
+.tag{color:var(--muted);text-align:center;margin:12px auto 4px;max-width:560px;line-height:1.45;font-size:15px}
+.wrap{width:min(720px,100%);position:relative}
+.card2{background:rgba(40,46,58,.85);border:4px solid var(--edge);border-radius:14px;padding:14px;margin-top:14px}
+.card2 h3{margin:0 0 10px;font-size:16px;letter-spacing:.04em}
+.colors{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.colors button{width:38px;height:38px;border-radius:50%;border:3px solid var(--edge)}
+.colors button.on{outline:3px solid #fff;outline-offset:2px}
+.nameIn{background:#151922;border:3px solid var(--edge);border-radius:8px;color:#fff;padding:8px 10px;font:inherit;font-weight:700;width:170px}
+.levels{display:grid;gap:8px}
+.lv{display:flex;align-items:center;gap:12px;background:#222834;border:3px solid var(--edge);border-radius:10px;padding:10px 12px;text-align:left;width:100%}
+.lv .n{flex:none;width:40px;height:40px;border-radius:50%;background:#2f6fd6;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;border:3px solid var(--edge)}
+.lv.done .n{background:var(--green);color:#0a2412}
+.lv.lock{opacity:.45}
+.lv b{display:block;font-size:15.5px}.lv small{color:var(--muted);font-size:13px}
+.lv .chk{margin-left:auto;font-size:20px}
+.bigtitle{font-size:clamp(36px,10vw,72px);font-weight:900;letter-spacing:.05em;text-align:center;margin:16px 0 4px}
+.win{color:var(--cyan);text-shadow:0 0 22px rgba(95,215,255,.6)}
+.lvlno{color:var(--yellow);font-weight:900;letter-spacing:.3em;margin-top:22px;font-size:15px}
+#crewcv{width:min(520px,100%);height:150px;display:block;margin:8px auto}
+.track{display:flex;gap:4px;margin:14px 0 4px;width:100%}
+.track div{flex:1;text-align:center;font-size:10.5px;color:var(--muted);font-weight:700}
+.track div i{display:block;height:8px;border-radius:4px;background:#3a4150;margin-bottom:5px;border:2px solid var(--edge)}
+.track div.d i{background:var(--green)}.track div.c i{background:var(--yellow)}.track div.c{color:#fff}
+.recap{margin:0;padding-left:20px;line-height:1.5;font-size:15px}
+.recap li{margin:5px 0}
+.linkbtn{background:none;border:none;color:var(--muted);text-decoration:underline;font-size:13px;padding:6px}
+a.linkbtn{display:inline-block}
+.keys{color:var(--muted);font-size:13px;text-align:center;margin-top:10px;line-height:1.5}
+
+@media (max-width:600px){
+  #tasklist{font-size:12px;max-height:34vh;padding:6px 8px}
+  #totalbar span{font-size:10.5px}
+  .land{min-width:70px;font-size:10px;padding:3px 4px}.land b{font-size:14px}
+  .mg{padding:12px 10px 14px}.mg h2{font-size:17px}
+  #toast{top:auto;bottom:calc(max(18px,env(safe-area-inset-bottom)) + 120px);font-size:13.5px}
 }
-@media (max-width:420px){
-  header{gap:6px;padding-left:12px;padding-right:12px}
-  .hbtn{padding:6px 9px}
-  .panel{padding:12px}
-  .stage{padding:14px}
-}
-@media (prefers-reduced-motion:reduce){
-  *{animation:none!important;transition:none!important}
-}
+/* map */
+#mapov canvas{width:min(94vw,900px);height:auto;max-height:82vh;border:5px solid var(--edge);border-radius:14px;background:rgba(36,82,140,.88);display:block}
 </style>
 </head>
 <body>
-<div class="app">
-  <header>
-    <h1>⚖️ Der Weg des Gesetzes <span class="hide-sm">· Gesetzgebung spielend lernen</span></h1>
-    <span class="stat" id="hdrStars" title="Gesammelte Sterne"></span>
-    <button class="hbtn" id="btnMenu" hidden>☰ Fälle</button>
-  </header>
+<canvas id="cv"></canvas>
 
-  <section class="menu" id="menu">
-    <div class="menu-inner">
-      <div class="hero">
-        <h2>Du bist ein Gesetzentwurf.</h2>
-        <p>Finde deinen Weg durch das Gesetzgebungsverfahren nach Art. 76 ff. Grundgesetz – vom ersten Entwurf bis zur Verkündung im Bundesgesetzblatt. Oder bis zum Scheitern …</p>
-        <div class="progress-row">
-          <span>Schema entdeckt: <b id="discTxt">0/0</b></span>
-          <div class="pbar"><i id="discBar" style="width:0"></i></div>
-          <span>Sterne: <b id="starTxt">0</b></span>
-        </div>
-      </div>
-      <div class="cases" id="cases"></div>
-      <div class="howto">
-        <h3>So funktioniert’s</h3>
-        <ul>
-          <li>Jeder Fall beginnt mit der Frage: <b>Einspruchs- oder Zustimmungsgesetz?</b> Davon hängt der Weg ab.</li>
-          <li>Dann erfährst du an jeder Station, was passiert. Entscheide, <b>wohin der Entwurf als Nächstes geht</b>.</li>
-          <li>Das Schema ist am Anfang leer: Jede richtige Entscheidung deckt eine Station und einen Pfeil auf. So baust du das Schema Schritt für Schritt selbst auf.</li>
-          <li>Ohne Fehler gibt es ★★★. Wer mit 💡 das komplette Schema einblendet, bekommt in diesem Fall höchstens ★★.</li>
-        </ul>
-        <div class="legend">
-          <span><i style="border-color:var(--e)"></i> Einspruchsgesetz / allgemein</span>
-          <span><i style="border-color:var(--z)"></i> Zustimmungsgesetz</span>
-          <span><i style="border-color:var(--z);border-top-style:dashed"></i> Anrufung des VA durch BT/BReg</span>
-        </div>
-        <p style="margin:12px 0 0"><button class="secondary" id="btnReset" style="min-height:38px;padding:6px 12px;font-size:14px">Fortschritt zurücksetzen</button></p>
-      </div>
-    </div>
-  </section>
-
-  <section class="game" id="game" hidden>
-    <div class="mapwrap" id="mapwrap">
-      <svg id="map" viewBox="0 -30 1000 1690" preserveAspectRatio="xMidYMid meet" aria-label="Schema des Gesetzgebungsverfahrens"></svg>
-      <div class="maphead">
-        <button class="hbtn mapclose" id="btnMapClose">✕ Zurück zur Frage</button>
-        <span class="ttl" id="mapTitle">Dein Weg bisher</span>
-      </div>
-      <div class="mapctl">
-        <button id="btnFit" title="Ganzen bisherigen Weg zeigen">⤢</button>
-        <button id="btnSchema" title="Hilfe: komplettes Schema einblenden (max. 2 Sterne)" aria-pressed="false">💡</button>
-        <button id="btnZoomIn" title="Hineinzoomen">＋</button>
-        <button id="btnZoomOut" title="Herauszoomen">－</button>
-      </div>
-      <div class="maplegend"><span><i style="border-color:var(--e)"></i>Einspruch</span><span><i style="border-color:var(--z)"></i>Zustimmung</span></div>
-      <div class="toast" id="toast"></div>
-    </div>
-    <div class="panel" id="panel"><div class="panel-inner" id="panelInner"></div></div>
-  </section>
+<div id="hud" class="hidden">
+  <div id="taskbox">
+    <div id="totalbar"><div id="totalfill"></div><span>AUFGABEN GESAMT</span></div>
+    <div id="tasklist"></div>
+  </div>
+  <button class="hudbtn" id="btnPause" aria-label="Pause">⏸<small>PAUSE</small></button>
+  <button class="hudbtn" id="btnMap" aria-label="Karte">🗺️<small>KARTE</small></button>
+  <button class="hudbtn" id="btnUse" aria-label="Benutzen">✋<small>BENUTZEN</small></button>
+  <div id="hint"></div>
+  <div id="roomlbl"></div>
+  <div id="toast"></div>
 </div>
+<div id="joy"><i></i></div>
+
+<div id="ov" class="ov hidden"></div>
+<div id="mapov" class="ov hidden"><canvas id="mapcv"></canvas></div>
+<div id="scr" class="scr hidden"><div class="stars"></div><div class="wrap" id="scrIn"></div></div>
 
 <script>
 "use strict";
-/* ---------- Schema (Knoten) ---------- */
-const COL = {
-  yellow:{fill:"#efe9b6",stroke:"#c3bb55"},
-  blue:{fill:"#56b1dc",stroke:"#3e72ad"},
-  green:{fill:"#afd06c",stroke:"#0f9a46"},
-  red:{fill:"#d4302a",stroke:"#a51f1a"},
-  white:{fill:"#ffffff",stroke:"#2b2f36"},
-  va:{fill:"url(#vaGrad)",stroke:"#3e72ad"}
-};
-const NODES = {
-  breg_init:{x:210,y:130,w:260,h:100,c:"yellow",lines:["Bundesregierung"],art:"Art. 76 I, II",role:"Gesetzesinitiative"},
-  abg:{x:500,y:130,w:210,h:100,c:"blue",lines:["5 % der Abg.","oder Fraktion"],art:"Art. 76 I, § 76 GOBT",role:"Initiative aus der Mitte des Bundestags",small:true},
-  br_init:{x:790,y:130,w:260,h:100,c:"green",lines:["Bundesrat"],art:"Art. 76 I, II, III",role:"Initiative / erster Durchgang (Stellungnahme)"},
-  bt:{x:500,y:300,w:320,h:110,c:"blue",lines:["Bundestag","1., 2. und 3. Lesung"],art:"Art. 77 I, GOBT",role:"Beratung und Gesetzesbeschluss"},
-  br1:{x:500,y:490,w:260,h:100,c:"green",lines:["Bundesrat"],art:"Art. 77 I",role:"Zweiter Durchgang"},
-  va:{x:500,y:720,w:340,h:110,c:"va",lines:["Vermittlungs-","ausschuss"],art:"Art. 77 II",role:"16 Mitglieder BT + 16 Mitglieder BR",white:true},
-  br3:{x:200,y:950,w:200,h:100,c:"green",lines:["Bundesrat"],art:"Art. 77 III",role:"Entscheidung über Einspruch"},
-  bt2:{x:500,y:950,w:210,h:100,c:"blue",lines:["Bundestag"],art:"Art. 77 II S. 5",role:"Abstimmung über Einigungsvorschlag"},
-  br2a:{x:820,y:950,w:220,h:100,c:"green",lines:["Bundesrat"],art:"Art. 77 IIa",role:"Entscheidung über Zustimmung"},
-  bt4:{x:200,y:1180,w:200,h:100,c:"blue",lines:["Bundestag"],art:"Art. 77 IV",role:"Zurückweisung des Einspruchs"},
-  fail:{x:520,y:1180,w:220,h:100,c:"white",lines:["Gesetz","gescheitert"],art:"Art. 78",role:"Das Gesetz kommt nicht zustande"},
-  breg:{x:230,y:1390,w:300,h:100,c:"yellow",lines:["Bundesregierung"],art:"Art. 58",role:"Gegenzeichnung"},
-  bp:{x:520,y:1570,w:260,h:100,c:"red",lines:["Bundes-","präsident"],art:"Art. 82 I",role:"Prüfung und Ausfertigung",white:true},
-  verk:{x:830,y:1570,w:260,h:100,c:"white",lines:["Ausfertigung /","Verkündung"],art:"Art. 82",role:"Bundesgesetzblatt – Ziel!"}
-};
-const INFO = {
-  breg_init:"Die Bundesregierung kann Gesetzentwürfe einbringen. Ihre Entwürfe gehen zuerst an den Bundesrat (Art. 76 II).",
-  abg:"Eine Fraktion oder 5 % der Abgeordneten können Gesetzentwürfe „aus der Mitte des Bundestages“ einbringen – direkt im Bundestag.",
-  br_init:"Der Bundesrat kann eigene Entwürfe einbringen (über die Bundesregierung, Art. 76 III) und nimmt zu Regierungsentwürfen Stellung (erster Durchgang, 6 Wochen).",
-  bt:"Der Bundestag berät Gesetzentwürfe in drei Lesungen und beschließt sie (Art. 77 I).",
-  br1:"Zweiter Durchgang: Der Bundesrat befasst sich mit dem beschlossenen Gesetz (Art. 77 I).",
-  va:"Der Vermittlungsausschuss (16 Mitglieder aus dem Bundestag, 16 aus dem Bundesrat) sucht einen Kompromiss (Art. 77 II).",
-  br3:"Bei Einspruchsgesetzen kann der Bundesrat nach dem Vermittlungsverfahren binnen 2 Wochen Einspruch einlegen (Art. 77 III).",
-  bt2:"Schlägt der Vermittlungsausschuss eine Änderung vor, muss der Bundestag erneut beschließen (Art. 77 II S. 5).",
-  br2a:"Bei Zustimmungsgesetzen muss der Bundesrat in angemessener Frist über die Zustimmung beschließen (Art. 77 IIa).",
-  bt4:"Der Bundestag kann einen Einspruch zurückweisen – mit Mehrheit seiner Mitglieder, bei 2/3-Einspruch mit 2/3 der Abstimmenden (Art. 77 IV).",
-  fail:"Hier endet der Weg: Das Gesetz kommt nicht zustande.",
-  breg:"Der Bundeskanzler bzw. der zuständige Minister zeichnet das Gesetz gegen (Art. 58).",
-  bp:"Der Bundespräsident prüft das Gesetz und fertigt es aus (Art. 82 I).",
-  verk:"Das Gesetz wird im Bundesgesetzblatt verkündet und kann in Kraft treten."
-};
-/* ---------- Schema (Pfeile) ---------- */
-// k: n = allgemein, e = Einspruchsgesetz, z = Zustimmungsgesetz
-const EDGES = [
-  {id:"i1",from:"breg_init",to:"br_init",k:"n",pts:[[250,80],[250,48],[760,48],[760,80]],lb:[{t:"Stellungnahme (Art. 76 II)",x:505,y:40}]},
-  {id:"i2",from:"br_init",to:"breg_init",k:"n",pts:[[860,80],[860,8],[150,8],[150,80]],lb:[{t:"Zuleitung über die BReg (Art. 76 III)",x:505,y:0}]},
-  {id:"i3",from:"abg",to:"bt",k:"n",pts:[[500,180],[500,245]]},
-  {id:"i4",from:"breg_init",to:"bt",k:"n",pts:[[250,180],[250,300],[340,300]]},
-  {id:"i5",from:"br_init",to:"bt",k:"n",pts:[[770,180],[770,300],[660,300]]},
-  {id:"d1",from:"breg_init",to:"va",k:"z",dash:true,pts:[[130,180],[130,740],[330,740]],lb:[{t:"Anrufung",x:140,y:618,a:"start"},{t:"(Art. 77 II S. 4)",x:140,y:637,a:"start"}]},
-  {id:"d2",from:"bt",to:"va",k:"z",dash:true,pts:[[620,355],[620,390],[900,390],[900,740],[670,740]],lb:[{t:"Anrufung möglich",x:760,y:380},{t:"(Art. 77 II S. 4)",x:910,y:620,a:"start",rot:true}]},
-  {id:"p1",from:"bt",to:"br1",k:"n",pts:[[500,355],[500,440]],lb:[{t:"Gesetzesbeschluss",x:510,y:403,a:"start"}]},
-  {id:"p2",from:"br1",to:"va",k:"e",pts:[[465,540],[465,665]],lb:[{t:"Einspruchsgesetz:",x:455,y:590,a:"end"},{t:"Anrufung muss erfolgen",x:455,y:609,a:"end"}]},
-  {id:"p3",from:"br1",to:"va",k:"z",pts:[[535,540],[535,665]],lb:[{t:"Zustimmungsgesetz:",x:545,y:590,a:"start"},{t:"Anrufung kann erfolgen",x:545,y:609,a:"start"}]},
-  {id:"p4",from:"br1",to:"br2a",k:"z",pts:[[630,490],[970,490],[970,950],[930,950]],lb:[{t:"direkt abstimmen",x:640,y:480,a:"start"}]},
-  {id:"p5",from:"br1",to:"breg",k:"e",pts:[[370,490],[30,490],[30,1410],[80,1410]],lb:[{t:"kein VA verlangt (Art. 78)",x:360,y:480,a:"end"}]},
-  {id:"v1",from:"va",to:"br3",k:"e",pts:[[330,700],[210,700],[210,900]],lb:[{t:"kein Änderungsvorschlag",x:322,y:690,a:"end"}]},
-  {id:"v2",from:"va",to:"bt2",k:"e",pts:[[465,775],[465,900]],lb:[{t:"Änderungsvorschlag",x:455,y:845,a:"end"}]},
-  {id:"v3",from:"va",to:"bt2",k:"z",pts:[[535,775],[535,900]],lb:[{t:"Änderungsvorschlag",x:545,y:845,a:"start"}]},
-  {id:"v4",from:"va",to:"br2a",k:"z",pts:[[670,700],[820,700],[820,900]],lb:[{t:"kein Änderungsvorschlag",x:678,y:690,a:"start"}]},
-  {id:"b1",from:"bt2",to:"br3",k:"e",pts:[[395,950],[300,950]],lb:[{t:"zugestimmt",x:347,y:940,sm:true}]},
-  {id:"b2",from:"bt2",to:"br2a",k:"z",pts:[[605,950],[710,950]],lb:[{t:"zugestimmt",x:657,y:940,sm:true}]},
-  {id:"b3",from:"bt2",to:"fail",k:"e",pts:[[465,1000],[465,1130]],lb:[{t:"abgelehnt",x:455,y:1070,a:"end"}]},
-  {id:"b4",from:"bt2",to:"fail",k:"z",pts:[[535,1000],[535,1130]],lb:[{t:"abgelehnt",x:545,y:1070,a:"start"}]},
-  {id:"r1",from:"br3",to:"breg",k:"e",pts:[[100,950],[62,950],[62,1375],[80,1375]],lb:[{t:"kein Einspruch",x:52,y:1180,rot:true}]},
-  {id:"r2",from:"br3",to:"bt4",k:"e",pts:[[210,1000],[210,1130]],lb:[{t:"Einspruch",x:220,y:1070,a:"start"}]},
-  {id:"o1",from:"bt4",to:"breg",k:"e",pts:[[210,1230],[210,1340]],lb:[{t:"überstimmt",x:220,y:1292,a:"start"}]},
-  {id:"o2",from:"bt4",to:"fail",k:"e",pts:[[300,1180],[410,1180]],lb:[{t:"nicht",x:355,y:1150,sm:true},{t:"überstimmt",x:355,y:1168,sm:true}]},
-  {id:"z1",from:"br2a",to:"fail",k:"z",pts:[[780,1000],[780,1180],[630,1180]],lb:[{t:"keine Zustimmung",x:705,y:1170,sm:true}]},
-  {id:"z2",from:"br2a",to:"breg",k:"z",pts:[[880,1000],[880,1405],[380,1405]],lb:[{t:"Zustimmung",x:870,y:1395,a:"end"}]},
-  {id:"g1",from:"breg",to:"bp",k:"n",pts:[[230,1440],[230,1570],[390,1570]],lb:[{t:"nach Gegenzeichnung",x:240,y:1500,a:"start"}]},
-  {id:"g2",from:"bp",to:"verk",k:"n",pts:[[650,1570],[700,1570]]}
-];
-const EDGE = Object.fromEntries(EDGES.map(e=>[e.id,e]));
-
-/* ---------- Fälle ---------- */
-const S_BT = {at:"bt",ev:"Der Bundestag hat den Entwurf in drei Lesungen beraten und in der 3. Lesung beschlossen.",q:"Wohin geht der Gesetzesbeschluss?",to:"br1",edge:"p1",extra:["breg"],
-  why:"Der Bundestagspräsident leitet das beschlossene Gesetz unverzüglich dem Bundesrat zu (Art. 77 I) – der „zweite Durchgang“.",
-  wrong:{va:"Den Vermittlungsausschuss kann der Bundestag nur bei Zustimmungsgesetzen anrufen – und nur, wenn es Streit mit dem Bundesrat gibt.",breg:"Zu früh! Erst muss sich der Bundesrat mit dem Gesetz befassen."}};
-const S_BREG = {at:"breg",ev:"Das Gesetz ist zustande gekommen (Art. 78).",q:"Was passiert jetzt?",to:"bp",edge:"g1",extra:["verk"],
-  why:"Der Bundeskanzler bzw. der zuständige Bundesminister zeichnet das Gesetz gegen (Art. 58). Dann geht es an den Bundespräsidenten.",
-  wrong:{verk:"Ohne die Unterschrift des Bundespräsidenten wird nichts verkündet."}};
-const S_BP = {at:"bp",ev:"Der Bundespräsident prüft, ob das Gesetz verfassungsgemäß zustande gekommen ist. Er hat keine Bedenken.",q:"Wie endet der Weg?",to:"verk",edge:"g2",extra:["bt"],
-  why:"Er fertigt das Gesetz aus (unterschreibt es) und lässt es im Bundesgesetzblatt verkünden (Art. 82 I). Danach kann es in Kraft treten. 🎉",
-  wrong:{bt:"Der Bundespräsident schickt Gesetze nicht zur erneuten Beratung zurück. Hätte er verfassungsrechtliche Bedenken, würde er die Ausfertigung verweigern."}};
-const S_BREG_BR = {at:"breg_init",ev:"Das Kabinett hat den Gesetzentwurf beschlossen.",q:"Wohin muss der Entwurf zuerst?",to:"br_init",edge:"i1",
-  why:"Regierungsentwürfe gehen zuerst an den Bundesrat. Er hat in der Regel 6 Wochen Zeit für eine Stellungnahme (Art. 76 II) – der „erste Durchgang“.",
-  wrong:{bt:"Noch nicht! Regierungsentwürfe müssen zuerst dem Bundesrat zur Stellungnahme vorgelegt werden (Art. 76 II).",va:"Der Vermittlungsausschuss kommt erst ins Spiel, wenn der Bundestag das Gesetz beschlossen hat."}};
-const S_BR_BT = {at:"br_init",ev:"Der Bundesrat hat Stellung genommen und einige Änderungen angeregt. Die Bundesregierung antwortet mit einer Gegenäußerung.",q:"Wo wird der Entwurf jetzt beraten?",to:"bt",edge:"i5",exclude:["breg_init"],extra:["va"],
-  why:"Die Bundesregierung leitet den Entwurf mit der Stellungnahme des Bundesrats und ihrer Gegenäußerung an den Bundestag weiter. Die Vorschläge des Bundesrats sind nicht bindend.",
-  wrong:{va:"Der Vermittlungsausschuss vermittelt erst nach dem Gesetzesbeschluss des Bundestags."}};
-const S_ABG = {at:"abg",ev:"Die Fraktion hat ihren Gesetzentwurf fertig ausgearbeitet.",q:"Wo bringt sie ihn ein?",to:"bt",edge:"i3",extra:["br_init","breg_init"],
-  why:"Vorlagen „aus der Mitte des Bundestages“ (eine Fraktion oder 5 % der Abgeordneten, § 76 GOBT) gehen direkt in den Bundestag – ohne Umweg über den Bundesrat (Art. 76 I).",
-  wrong:{br_init:"Nur Regierungsentwürfe müssen erst zum Bundesrat. Abgeordnete bringen ihre Entwürfe direkt im Bundestag ein.",breg_init:"Die Fraktion braucht die Bundesregierung nicht – sie hat ein eigenes Initiativrecht."}};
-
-const CASES = [
-  {id:"c1",title:"Der glatte Weg",lvl:"leicht",type:"e",start:"breg_init",
-   intro:"Die Bundesregierung will den gesetzlichen Mindestlohn erhöhen. Das Gesetz ändert nur Bundesrecht und berührt weder die Finanzen noch die Verwaltung der Länder.",
-   typeWhy:"Einspruchsgesetz – das ist der Regelfall. Zustimmungsgesetze sind nur die Gesetze, bei denen das Grundgesetz die Zustimmung des Bundesrats ausdrücklich verlangt (z. B. bei Länderfinanzen, Verwaltung der Länder oder Grundgesetzänderungen).",
-   steps:[S_BREG_BR,S_BR_BT,S_BT,
-    {at:"br1",ev:"Die Mehrheit im Bundesrat ist einverstanden. Drei Wochen verstreichen – niemand verlangt den Vermittlungsausschuss.",q:"Was passiert mit dem Gesetz?",to:"breg",edge:"p5",
-     why:"Bei Einspruchsgesetzen kann der Bundesrat nur Einspruch einlegen, wenn er vorher binnen 3 Wochen den Vermittlungsausschuss anruft. Tut er das nicht, ist das Gesetz zustande gekommen (Art. 77 II, Art. 78).",
-     wrong:{br2a:"Eine Abstimmung über die Zustimmung gibt es nur bei Zustimmungsgesetzen.",va:"Niemand hat den Vermittlungsausschuss angerufen."}},
-    S_BREG,S_BP]},
-  {id:"c2",title:"Mehr Netto vom Brutto",lvl:"leicht",type:"z",start:"abg",
-   intro:"Eine Bundestagsfraktion will den Grundfreibetrag bei der Einkommensteuer erhöhen. Die Einkommensteuer fließt teils dem Bund, teils den Ländern und Gemeinden zu.",
-   typeWhy:"Zustimmungsgesetz: Steuergesetze, deren Aufkommen ganz oder teilweise den Ländern (oder Gemeinden) zufließt, brauchen die Zustimmung des Bundesrats (Art. 105 III).",
-   steps:[S_ABG,S_BT,
-    {at:"br1",ev:"Die Länder sind mit dem Gesetz zufrieden und wollen gleich abstimmen.",q:"Wie geht es weiter?",to:"br2a",edge:"p4",
-     why:"Bei Zustimmungsgesetzen muss der Bundesrat ausdrücklich zustimmen. Er beschließt darüber in angemessener Frist (Art. 77 IIa).",
-     wrong:{va:"Den Vermittlungsausschuss kann der Bundesrat bei Zustimmungsgesetzen anrufen – muss es aber nicht. Hier gibt es keinen Streit.",breg:"Ohne ausdrückliches Ja des Bundesrats kommt ein Zustimmungsgesetz nicht zustande – Schweigen reicht nicht!"}},
-    {at:"br2a",ev:"Abstimmung im Bundesrat: 41 der 69 Stimmen sind dafür.",q:"Was bedeutet das?",to:"breg",edge:"z2",
-     why:"Nötig ist die absolute Mehrheit, also mindestens 35 von 69 Stimmen. 41 reichen: Der Bundesrat stimmt zu, das Gesetz ist zustande gekommen (Art. 78).",
-     wrong:{fail:"Rechne nach: 41 von 69 Stimmen sind mehr als die Hälfte (35)."}},
-    S_BREG,S_BP]},
-  {id:"c3",title:"Einspruch!",lvl:"mittel",type:"e",start:"breg_init",
-   intro:"Die Bundesregierung will strengere Datenschutzregeln für Smartphone-Apps. Die Länder müssen dafür weder zahlen noch ihre Verwaltung umstellen.",
-   typeWhy:"Einspruchsgesetz – der Regelfall. Nichts im Gesetz löst eine Zustimmungspflicht nach dem Grundgesetz aus.",
-   steps:[S_BREG_BR,S_BR_BT,S_BT,
-    {at:"br1",ev:"Mehrere Länder halten das Gesetz für schlecht gemacht und wollen es stoppen.",q:"Was muss der Bundesrat jetzt tun?",to:"va",edge:"p2",
-     why:"Bei Einspruchsgesetzen muss der Bundesrat zuerst (binnen 3 Wochen) den Vermittlungsausschuss anrufen. Nur dann kann er später Einspruch einlegen (Art. 77 II, III).",
-     wrong:{breg:"Dann käme das Gesetz einfach zustande – das wollen die Länder ja gerade verhindern.",br2a:"Eine Zustimmungsabstimmung gibt es bei Einspruchsgesetzen nicht."}},
-    {at:"va",ev:"Der Vermittlungsausschuss tagt – doch Bundestag und Bundesrat finden keinen Kompromiss.",q:"Wohin geht das Gesetz?",to:"br3",edge:"v1",
-     why:"Ohne Änderungsvorschlag geht das Gesetz unverändert zurück an den Bundesrat. Er kann nun binnen 2 Wochen Einspruch einlegen (Art. 77 III).",
-     wrong:{bt2:"Der Bundestag muss nur erneut abstimmen, wenn der Vermittlungsausschuss eine Änderung vorschlägt.",br2a:"Das ist der Weg bei Zustimmungsgesetzen."}},
-    {at:"br3",ev:"Der Bundesrat legt mit 40 von 69 Stimmen Einspruch ein.",q:"Wer ist jetzt am Zug?",to:"bt4",edge:"r2",
-     why:"Ein Einspruch ist kein endgültiges Veto: Der Bundestag kann ihn zurückweisen (Art. 77 IV).",
-     wrong:{breg:"Der Einspruch ist eingelegt – so einfach geht es nicht weiter."}},
-    {at:"bt4",ev:"Weil der Einspruch mit einfacher Mehrheit beschlossen wurde, braucht der Bundestag die Mehrheit seiner Mitglieder (Kanzlermehrheit: 316 von 630). Die Koalition stimmt geschlossen: 380 Ja-Stimmen.",q:"Was ist das Ergebnis?",to:"breg",edge:"o1",
-     why:"380 ≥ 316: Der Einspruch ist zurückgewiesen, das Gesetz zustande gekommen (Art. 77 IV, Art. 78).",
-     wrong:{fail:"Rechne nach: 380 Stimmen sind mehr als die nötigen 316."}},
-    S_BREG,S_BP]},
-  {id:"c4",title:"Die Zwei-Drittel-Hürde",lvl:"mittel",type:"e",start:"abg",
-   intro:"Eine Fraktion will ein strengeres Lobbyregister für Bundestag und Bundesregierung. Länder sind davon nicht betroffen.",
-   typeWhy:"Einspruchsgesetz – es regelt nur Angelegenheiten des Bundes. Das ist der Regelfall.",
-   steps:[S_ABG,S_BT,
-    {at:"br1",ev:"Die Länder lehnen das Gesetz ab und wollen sich die Möglichkeit eines Einspruchs offenhalten.",q:"Wohin geht das Gesetz?",to:"va",edge:"p2",
-     why:"Ohne vorheriges Vermittlungsverfahren gibt es keinen Einspruch – der Bundesrat muss den Vermittlungsausschuss anrufen (Art. 77 II).",
-     wrong:{breg:"Dann wäre das Gesetz zustande gekommen.",br2a:"Eine Zustimmung braucht ein Einspruchsgesetz nicht."}},
-    {at:"va",ev:"Der Vermittlungsausschuss einigt sich auf einen Änderungsvorschlag.",q:"Wer muss jetzt entscheiden?",to:"bt2",edge:"v2",
-     why:"Schlägt der Vermittlungsausschuss eine Änderung vor, muss der Bundestag erneut beschließen (Art. 77 II S. 5).",
-     wrong:{br3:"Erst muss der Bundestag über die Änderung abstimmen.",br2a:"Das ist der Weg bei Zustimmungsgesetzen."}},
-    {at:"bt2",ev:"Der Bundestag nimmt den geänderten Text an.",q:"Wohin geht das Gesetz?",to:"br3",edge:"b1",
-     why:"Das geänderte Gesetz geht zurück an den Bundesrat. Bei Einspruchsgesetzen entscheidet er jetzt binnen 2 Wochen, ob er Einspruch einlegt (Art. 77 III).",
-     wrong:{br2a:"Eine Zustimmung braucht es bei Einspruchsgesetzen nicht.",fail:"Der Bundestag hat doch zugestimmt!"}},
-    {at:"br3",ev:"Den Ländern reicht der Kompromiss nicht: Einspruch mit 48 von 69 Stimmen – mehr als zwei Drittel!",q:"Wie geht es weiter?",to:"bt4",edge:"r2",
-     why:"Auch einen Einspruch mit 2/3-Mehrheit kann der Bundestag zurückweisen – aber nur mit einer ebenso hohen Mehrheit (Art. 77 IV S. 2).",
-     wrong:{breg:"Es wurde Einspruch eingelegt."}},
-    {at:"bt4",ev:"Bei einem 2/3-Einspruch braucht der Bundestag 2/3 der abgegebenen Stimmen (mindestens aber 316). Ergebnis: 390 Ja, 230 Nein.",q:"Was ist das Ergebnis?",to:"fail",edge:"o2",
-     why:"390 von 620 abgegebenen Stimmen sind nur 63 % – nötig wären 414 (zwei Drittel). Der Einspruch bleibt bestehen, das Gesetz ist gescheitert.",
-     wrong:{breg:"Rechne nach: Zwei Drittel von 620 Stimmen sind 414. 390 reichen nicht."}}]},
-  {id:"c5",title:"Die Länder ergreifen die Initiative",lvl:"mittel",type:"z",start:"br_init",
-   intro:"Mehrere Länder wollen digitale Behördengänge vereinfachen. Das Bundesgesetz soll den Behörden der Länder ein einheitliches Verwaltungsverfahren vorschreiben – ohne dass die Länder davon abweichen dürfen.",
-   typeWhy:"Zustimmungsgesetz: Regelt der Bund das Verwaltungsverfahren der Länder ohne Abweichungsmöglichkeit, muss der Bundesrat zustimmen (Art. 84 I S. 5, 6).",
-   steps:[
-    {at:"br_init",ev:"Der Bundesrat hat beschlossen, den Gesetzentwurf einzubringen.",q:"Über welchen Weg geht der Entwurf?",to:"breg_init",edge:"i2",
-     why:"Entwürfe des Bundesrats gehen über die Bundesregierung an den Bundestag. Sie leitet sie innerhalb von 6 Wochen weiter und fügt ihre Auffassung bei (Art. 76 III).",
-     wrong:{bt:"Fast – aber der Bundesrat muss seinen Entwurf über die Bundesregierung zuleiten (Art. 76 III)."}},
-    {at:"breg_init",ev:"Die Bundesregierung hat ihre Auffassung zu dem Entwurf aufgeschrieben.",q:"Wohin leitet sie den Entwurf weiter?",to:"bt",edge:"i4",
-     why:"Jetzt berät der Bundestag den Entwurf in drei Lesungen.",
-     wrong:{br_init:"Der Bundesrat kennt seinen eigenen Entwurf ja schon 😉",va:"Der Vermittlungsausschuss kommt erst nach dem Gesetzesbeschluss ins Spiel."}},
-    S_BT,
-    {at:"br1",ev:"Der Bundesrat findet das Gesetz grundsätzlich gut, möchte aber noch einige Details ändern, bevor er zustimmt.",q:"Was kann er tun?",to:"va",edge:"p3",
-     why:"Auch bei Zustimmungsgesetzen kann der Bundesrat den Vermittlungsausschuss anrufen, um Änderungen auszuhandeln (Art. 77 II).",
-     wrong:{br2a:"Dann könnte er nur Ja oder Nein sagen – ändern könnte er nichts.",breg:"Ohne Zustimmung des Bundesrats kommt ein Zustimmungsgesetz nicht zustande."}},
-    {at:"va",ev:"Der Vermittlungsausschuss legt einen Änderungsvorschlag vor.",q:"Wer muss jetzt abstimmen?",to:"bt2",edge:"v3",
-     why:"Über den Änderungsvorschlag muss zuerst der Bundestag erneut beschließen (Art. 77 II S. 5).",
-     wrong:{br2a:"Erst muss der Bundestag den geänderten Text beschließen.",br3:"Einspruch gibt es nur bei Einspruchsgesetzen."}},
-    {at:"bt2",ev:"Der Bundestag nimmt die Änderungen an.",q:"Wohin geht das Gesetz?",to:"br2a",edge:"b2",
-     why:"Jetzt muss der Bundesrat über seine Zustimmung entscheiden (Art. 77 IIa).",
-     wrong:{br3:"Einspruch gibt es bei Einspruchsgesetzen – hier braucht es eine Zustimmung.",fail:"Der Bundestag hat doch zugestimmt!"}},
-    {at:"br2a",ev:"Der Bundesrat stimmt mit 52 von 69 Stimmen zu.",q:"Wie geht es weiter?",to:"breg",edge:"z2",
-     why:"Mit der Zustimmung ist das Gesetz zustande gekommen (Art. 78).",wrong:{fail:"52 von 69 – das ist eine klare Mehrheit."}},
-    S_BREG,S_BP]},
-  {id:"c6",title:"Der Rettungsversuch",lvl:"schwer",type:"z",start:"breg_init",
-   intro:"Die Bundesregierung will die Verteilung der Umsatzsteuer zwischen Bund und Ländern neu regeln – zugunsten des Bundes.",
-   typeWhy:"Zustimmungsgesetz: Die Anteile von Bund und Ländern an der Umsatzsteuer werden durch ein Bundesgesetz festgelegt, das der Zustimmung des Bundesrats bedarf (Art. 106 III).",
-   steps:[S_BREG_BR,S_BR_BT,S_BT,
-    {at:"br1",ev:"Die Länder fühlen sich benachteiligt. Sie wollen sofort abstimmen.",q:"Wohin geht das Gesetz?",to:"br2a",edge:"p4",
-     why:"Bei Zustimmungsgesetzen entscheidet der Bundesrat direkt über seine Zustimmung (Art. 77 IIa).",
-     wrong:{va:"Der Bundesrat könnte den Vermittlungsausschuss anrufen – will er aber nicht. Er will abstimmen.",breg:"Ohne Zustimmung kommt ein Zustimmungsgesetz nicht zustande."}},
-    {at:"br2a",ev:"Der Bundesrat verweigert die Zustimmung. Doch die Bundesregierung gibt nicht auf und will das Gesetz retten.",q:"Was kann die Bundesregierung tun?",to:"va",edge:"d1",extra:["va"],
-     why:"Bei Zustimmungsgesetzen können auch Bundesregierung und Bundestag den Vermittlungsausschuss anrufen (Art. 77 II S. 4) – im Schema die gestrichelte Linie.",
-     wrong:{fail:"Noch ist nicht alles verloren – es gibt eine Rettungsmöglichkeit!",breg:"Ohne Zustimmung des Bundesrats kommt das Gesetz nicht zustande."}},
-    {at:"va",ev:"Im Vermittlungsausschuss prallen die Interessen aufeinander. Es gibt keinen Änderungsvorschlag.",q:"Wohin geht das Gesetz?",to:"br2a",edge:"v4",
-     why:"Ohne Änderungsvorschlag muss der Bundesrat erneut über die Zustimmung entscheiden.",
-     wrong:{br3:"Einspruch gibt es nur bei Einspruchsgesetzen.",bt2:"Der Bundestag stimmt nur erneut ab, wenn es einen Änderungsvorschlag gibt."}},
-    {at:"br2a",ev:"Die Länder bleiben hart: Nur 30 von 69 Stimmen sind für das Gesetz.",q:"Was ist das Ergebnis?",to:"fail",edge:"z1",extra:["bt4"],
-     why:"30 < 35: keine Zustimmung – das Gesetz ist gescheitert. Anders als einen Einspruch kann der Bundestag ein fehlendes Ja des Bundesrats NICHT überstimmen!",
-     wrong:{breg:"30 von 69 ist keine Mehrheit.",bt4:"Überstimmen kann der Bundestag nur einen Einspruch – kein fehlendes Ja bei Zustimmungsgesetzen!"}}]},
-  {id:"c7",title:"Der Kompromiss",lvl:"schwer",type:"e",start:"abg",
-   intro:"Eine Fraktion will eine Pfandpflicht für alle Getränkeverpackungen. Die Länder müssen dafür weder zahlen noch ihre Verwaltung umbauen.",
-   typeWhy:"Einspruchsgesetz – keine der Zustimmungspflichten des Grundgesetzes ist berührt. Das ist der Regelfall.",
-   steps:[S_ABG,S_BT,
-    {at:"br1",ev:"Einige Länder fürchten Nachteile für kleine Händler und wollen nachverhandeln.",q:"Wohin geht das Gesetz?",to:"va",edge:"p2",
-     why:"Der Bundesrat ruft den Vermittlungsausschuss an (Art. 77 II). Bei Einspruchsgesetzen ist das sein einziger Weg, Einfluss zu nehmen.",
-     wrong:{breg:"Dann käme das Gesetz unverändert zustande.",br2a:"Eine Zustimmung braucht ein Einspruchsgesetz nicht."}},
-    {at:"va",ev:"Durchbruch! Der Vermittlungsausschuss schlägt Ausnahmen für kleine Läden vor.",q:"Wer muss jetzt entscheiden?",to:"bt2",edge:"v2",
-     why:"Über einen Änderungsvorschlag muss der Bundestag erneut beschließen (Art. 77 II S. 5).",
-     wrong:{br3:"Erst muss der Bundestag den geänderten Text beschließen.",br2a:"Das ist der Weg bei Zustimmungsgesetzen."}},
-    {at:"bt2",ev:"Der Bundestag beschließt das Gesetz mit den Änderungen.",q:"Wohin geht das Gesetz?",to:"br3",edge:"b1",
-     why:"Der Bundesrat kann jetzt binnen 2 Wochen entscheiden, ob er trotzdem Einspruch einlegt (Art. 77 III).",
-     wrong:{br2a:"Bei Einspruchsgesetzen braucht es keine Zustimmung.",fail:"Der Bundestag hat doch zugestimmt!"}},
-    {at:"br3",ev:"Mit dem Kompromiss können die Länder leben. Sie legen keinen Einspruch ein.",q:"Was passiert jetzt?",to:"breg",edge:"r1",
-     why:"Ohne Einspruch ist das Gesetz zustande gekommen (Art. 78).",
-     wrong:{bt4:"Der Bundestag muss nur einen Einspruch zurückweisen – es gibt keinen."}},
-    S_BREG,S_BP]},
-  {id:"c8",title:"Zu teuer!",lvl:"schwer",type:"z",start:"abg",
-   intro:"Die Koalitionsfraktionen wollen ein neues Familiengeld. Die Länder sollen es auszahlen und einen Teil der Kosten selbst tragen.",
-   typeWhy:"Zustimmungsgesetz: Bundesgesetze, die die Länder zu Geldleistungen an Bürger verpflichten, deren Kosten die Länder tragen müssen, brauchen die Zustimmung des Bundesrats (Art. 104a IV).",
-   steps:[S_ABG,S_BT,
-    {at:"br1",ev:"Die Länder wollen die Kosten nicht übernehmen und stimmen sofort ab.",q:"Wohin geht das Gesetz?",to:"br2a",edge:"p4",
-     why:"Der Bundesrat entscheidet direkt über seine Zustimmung (Art. 77 IIa).",
-     wrong:{va:"Der Bundesrat könnte den Vermittlungsausschuss anrufen – will aber direkt abstimmen.",breg:"Ohne Zustimmung kommt ein Zustimmungsgesetz nicht zustande."}},
-    {at:"br2a",ev:"Der Bundesrat verweigert die Zustimmung. Jetzt ergreift der Bundestag die Initiative, um das Gesetz zu retten.",q:"Was kann der Bundestag tun?",to:"va",edge:"d2",extra:["va","bt4"],
-     why:"Auch der Bundestag darf bei Zustimmungsgesetzen den Vermittlungsausschuss anrufen (Art. 77 II S. 4) – gestrichelte Linie im Schema.",
-     wrong:{bt4:"Überstimmen geht nur bei einem Einspruch. Ein fehlendes Ja bei Zustimmungsgesetzen kann der Bundestag nicht überstimmen.",fail:"Noch gibt es einen Ausweg!",breg:"Ohne Zustimmung kommt das Gesetz nicht zustande."}},
-    {at:"va",ev:"Der Vermittlungsausschuss schlägt vor: Der Bund übernimmt die Kosten komplett.",q:"Wer muss jetzt abstimmen?",to:"bt2",edge:"v3",
-     why:"Über einen Änderungsvorschlag muss der Bundestag erneut beschließen (Art. 77 II S. 5).",
-     wrong:{br2a:"Erst muss der Bundestag den geänderten Text beschließen.",br3:"Einspruch gibt es nur bei Einspruchsgesetzen."}},
-    {at:"bt2",ev:"Das ist der Koalition zu teuer: Der Bundestag lehnt den Änderungsvorschlag ab.",q:"Was ist das Ergebnis?",to:"fail",edge:"b4",
-     why:"Damit bleibt es beim ursprünglichen Gesetz – dem hat der Bundesrat aber die Zustimmung verweigert. Das Gesetz ist gescheitert.",
-     wrong:{br2a:"Der Bundestag hat den Vorschlag abgelehnt – und dem ursprünglichen Gesetz hat der Bundesrat schon die Zustimmung verweigert.",br3:"Einspruch gibt es nur bei Einspruchsgesetzen."}}]}
-];
-const DISCOVERABLE = [...new Set(CASES.flatMap(c=>c.steps.map(s=>s.edge)))];
-
-/* ---------- Speicher ---------- */
-const KEY="wegdesgesetzes_v1";
-let save={stars:{},edges:[]};
-try{const s=JSON.parse(localStorage.getItem(KEY)||"null"); if(s&&typeof s==="object"){save.stars=s.stars||{};save.edges=Array.isArray(s.edges)?s.edges:[];}}catch(e){}
-function persist(){try{localStorage.setItem(KEY,JSON.stringify(save));}catch(e){}}
-
-/* ---------- SVG aufbauen ---------- */
-const NS="http://www.w3.org/2000/svg";
-const svg=document.getElementById("map");
-function el(tag,attrs,parent){const n=document.createElementNS(NS,tag);for(const k in attrs)n.setAttribute(k,attrs[k]);if(parent)parent.appendChild(n);return n;}
-const FULL={x:0,y:-30,w:1000,h:1690};
-function buildMap(){
-  const defs=el("defs",{},svg);
-  const g=el("linearGradient",{id:"vaGrad",x1:"0",y1:"0",x2:"1",y2:"0.3"},defs);
-  el("stop",{offset:"0","stop-color":"#0a9446"},g);el("stop",{offset:"1","stop-color":"#56b1dc"},g);
-  for(const [k,col] of [["e","var(--e)"],["z","var(--z)"],["h","var(--faint)"]]){
-    const m=el("marker",{id:"ar-"+k,viewBox:"0 0 10 10",refX:"9",refY:"5",markerWidth:"5",markerHeight:"5",orient:"auto-start-reverse"},defs);
-    el("path",{d:"M0,0 L10,5 L0,10 z",style:"fill:"+col},m);
-  }
-  // Bereich Gesetzgebungsverfahren
-  el("path",{class:"zone deco",d:"M 15 225 H 990 V 1490 H 450 L 380 1320 H 15 Z"},svg);
-  el("text",{class:"sectlabel deco",x:20,y:-12},svg).textContent="1. Gesetzesinitiative (Art. 76)";
-  el("text",{class:"sectlabel deco",x:20,y:250},svg).textContent="2. Gesetzgebungsverfahren (Art. 77 ff.)";
-  const eg=el("g",{},svg), lg=el("g",{},svg), ng=el("g",{},svg);
-  for(const e of EDGES){
-    e.el=el("path",{class:"edge k-"+e.k+(e.dash?" dash":""),d:"M"+e.pts.map(p=>p.join(",")).join(" L")},eg);
-    e.lbls=(e.lb||[]).map(l=>{
-      const t=el("text",{class:"elabel k-"+e.k,x:l.x,y:l.y,"text-anchor":l.a||"middle"},lg);
-      if(l.sm)t.style.fontSize="13px";
-      if(l.rot)t.setAttribute("transform",`rotate(-90 ${l.x} ${l.y})`);
-      t.textContent=l.t;return t;});
-  }
-  for(const id in NODES){
-    const n=NODES[id],c=COL[n.c];
-    const gg=el("g",{class:"node","data-id":id},ng); n.el=gg;
-    el("rect",{class:"frame",x:n.x-n.w/2,y:n.y-n.h/2,width:n.w,height:n.h,rx:6,fill:c.fill,stroke:c.stroke,"stroke-width":5},gg);
-    const fs=n.small?20:25, lh=fs*1.1, total=n.lines.length*lh;
-    n.lines.forEach((ln,i)=>{
-      const t=el("text",{class:"nm",x:n.x,y:n.y-total/2+lh*(i+0.75)-8,"text-anchor":"middle"},gg);
-      t.style.fontSize=(i>0&&id==="bt"?19:fs)+"px"; if(n.white)t.style.fill="#fff"; t.textContent=ln;});
-    const a=el("text",{class:"art",x:n.x,y:n.y+n.h/2-11,"text-anchor":"middle"},gg); if(n.white)a.style.fill="#f1f1f1"; a.textContent="("+n.art+")";
-    if(id==="fail"){n.x1=el("path",{d:`M${n.x-n.w/2-20},${n.y-n.h/2-25} L${n.x+n.w/2+20},${n.y+n.h/2+25} M${n.x+n.w/2+20},${n.y-n.h/2-25} L${n.x-n.w/2-20},${n.y+n.h/2+25}`,stroke:"#d4302a","stroke-width":10,opacity:.35,"stroke-linecap":"round"},gg);}
-  }
-  token=el("g",{class:"token"},svg); el("circle",{r:24},token);
-  const tt=el("text",{"text-anchor":"middle",y:8},token); tt.textContent="§";
-  token.style.display="none";
-}
-let token, tokenAnim=0;
-
-/* ---------- Kamera / Pan / Zoom ---------- */
-let vb={...FULL}, camAnim=null, showSchema=false;
-function setVB(v){vb=v;svg.setAttribute("viewBox",`${v.x} ${v.y} ${v.w} ${v.h}`);}
-function fitAspect(b){
-  const r=svg.getBoundingClientRect(); const a=(r.width||1)/(r.height||1);
-  let {x,y,w,h}=b; const cx=x+w/2, cy=y+h/2;
-  if(w/h<a){w=h*a;}else{h=w/a;}
-  return {x:cx-w/2,y:cy-h/2,w,h};
-}
-function animateVB(target,ms=550){
-  if(camAnim)cancelAnimationFrame(camAnim);
-  const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if(reduce){setVB(target);return;}
-  const from={...vb},t0=performance.now();
-  const step=t=>{const p=Math.min(1,(t-t0)/ms),e=p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;
-    setVB({x:from.x+(target.x-from.x)*e,y:from.y+(target.y-from.y)*e,w:from.w+(target.w-from.w)*e,h:from.h+(target.h-from.h)*e});
-    if(p<1)camAnim=requestAnimationFrame(step);else camAnim=null;};
-  camAnim=requestAnimationFrame(step);
-}
-function focusNodes(ids){
-  if(!ids.length){animateVB(fitAspect(FULL));return;}
-  let x1=1e9,y1=1e9,x2=-1e9,y2=-1e9;
-  for(const id of ids){const n=NODES[id];x1=Math.min(x1,n.x-n.w/2);y1=Math.min(y1,n.y-n.h/2);x2=Math.max(x2,n.x+n.w/2);y2=Math.max(y2,n.y+n.h/2);}
-  const pad=50; let b={x:x1-pad,y:y1-pad,w:x2-x1+2*pad,h:y2-y1+2*pad};
-  const r=svg.getBoundingClientRect(), minW=Math.max(480,r.width*0.95), minH=Math.max(300,r.height*0.95);
-  if(b.w<minW){b.x-=(minW-b.w)/2;b.w=minW;} if(b.h<minH){b.y-=(minH-b.h)/2;b.h=minH;}
-  animateVB(fitAspect(b));
-}
-function clientToSvg(cx,cy){const r=svg.getBoundingClientRect();const s=Math.max(vb.w/r.width,vb.h/r.height);
-  const ox=(r.width*s-vb.w)/2, oy=(r.height*s-vb.h)/2;
-  return {x:vb.x-ox+(cx-r.left)*s,y:vb.y-oy+(cy-r.top)*s,s};}
-function zoomAt(f,cx,cy){
-  if(camAnim){cancelAnimationFrame(camAnim);camAnim=null;}
-  const p=clientToSvg(cx,cy); let w=vb.w*f,h=vb.h*f;
-  if(w<250||w>FULL.w*2.2&&f>1)return;
-  setVB({x:p.x-(p.x-vb.x)*f,y:p.y-(p.y-vb.y)*f,w,h});
-}
-const pointers=new Map(); let dragStart=null, pinch=null, moved=false;
-svg.addEventListener("pointerdown",e=>{svg.setPointerCapture(e.pointerId);pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});moved=false;
-  if(pointers.size===1){dragStart={x:e.clientX,y:e.clientY,vb:{...vb}};}
-  else if(pointers.size===2){const [a,b]=[...pointers.values()];pinch={d:Math.hypot(a.x-b.x,a.y-b.y)};}
-});
-svg.addEventListener("pointermove",e=>{if(!pointers.has(e.pointerId))return;pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
-  if(pointers.size===2&&pinch){const [a,b]=[...pointers.values()];const d=Math.hypot(a.x-b.x,a.y-b.y);
-    if(d>0){zoomAt(pinch.d/d,(a.x+b.x)/2,(a.y+b.y)/2);pinch.d=d;}moved=true;return;}
-  if(dragStart){const dx=e.clientX-dragStart.x,dy=e.clientY-dragStart.y;
-    if(!moved&&Math.hypot(dx,dy)<7)return; moved=true; svg.classList.add("dragging");
-    if(camAnim){cancelAnimationFrame(camAnim);camAnim=null;}
-    const r=svg.getBoundingClientRect(),s=Math.max(dragStart.vb.w/r.width,dragStart.vb.h/r.height);
-    setVB({...dragStart.vb,x:dragStart.vb.x-dx*s,y:dragStart.vb.y-dy*s});}
-});
-function endPtr(e){
-  const wasTap=!moved&&pointers.size===1;
-  pointers.delete(e.pointerId); if(pointers.size<2)pinch=null; if(pointers.size===0){dragStart=null;svg.classList.remove("dragging");}
-  if(wasTap&&e.type==="pointerup"){const t=document.elementFromPoint(e.clientX,e.clientY);const g=t&&t.closest&&t.closest(".node");if(g)onNodeTap(g.dataset.id);}
-}
-svg.addEventListener("pointerup",endPtr);svg.addEventListener("pointercancel",endPtr);
-svg.addEventListener("wheel",e=>{e.preventDefault();zoomAt(e.deltaY>0?1.12:1/1.12,e.clientX,e.clientY);},{passive:false});
-document.getElementById("btnZoomIn").onclick=()=>{const r=svg.getBoundingClientRect();zoomAt(1/1.3,r.left+r.width/2,r.top+r.height/2);};
-document.getElementById("btnZoomOut").onclick=()=>{const r=svg.getBoundingClientRect();zoomAt(1.3,r.left+r.width/2,r.top+r.height/2);};
-const btnSchema=document.getElementById("btnSchema");
-document.getElementById("btnFit").onclick=()=>refocus();
-function setSchema(on){
-  showSchema=on; btnSchema.setAttribute("aria-pressed",on);
-  if(on&&G&&!G.finished&&!G.usedHelp){G.usedHelp=true;toast("💡 Hilfe genutzt","Das komplette Schema ist eingeblendet. In diesem Fall gibt es höchstens ★★.");}
-  if(G)render();
-}
-btnSchema.onclick=()=>setSchema(!showSchema);
-function openMap(){document.body.classList.add("mapopen");requestAnimationFrame(()=>{setVB(fitAspect(FULL));refocus();});}
-function closeMap(){document.body.classList.remove("mapopen");}
-document.getElementById("btnMapClose").onclick=closeMap;
-let resizeT; window.addEventListener("resize",()=>{clearTimeout(resizeT);resizeT=setTimeout(()=>{if(!camAnim)refocus();},150);});
-
-/* ---------- Toast ---------- */
-const toastEl=document.getElementById("toast"); let toastT;
-function toast(title,text){toastEl.innerHTML="";const b=document.createElement("b");b.textContent=title;toastEl.append(b,document.createTextNode(text));
-  toastEl.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>toastEl.classList.remove("show"),3800);}
-
-/* ---------- Spielzustand ---------- */
-let G=null; // {c, i (-1=Typfrage), at, mistakes, used:[edges], wrongNow:Set, answered, path:[]}
+/* =====================================================================
+   Mission Gesetz – ein Top-down-Aufgabenspiel zur Gesetzgebung des Bundes
+   ===================================================================== */
 const $=id=>document.getElementById(id);
-const panel=$("panelInner");
-function h(tag,props={},...kids){const n=document.createElement(tag);for(const k in props){if(props[k]==null)continue;if(k==="class")n.className=props[k];else if(k.startsWith("on"))n.addEventListener(k.slice(2),props[k]);else if(k==="html")n.innerHTML=props[k];else n.setAttribute(k,props[k]);}
+function h(tag,props={},...kids){const n=document.createElement(tag);for(const k in props){const v=props[k];if(v==null||v===false)continue;
+  if(k==="class")n.className=v;else if(k==="style")n.style.cssText=v;else if(k.startsWith("on"))n.addEventListener(k.slice(2),v);else if(k==="html")n.innerHTML=v;else n.setAttribute(k,v);}
   for(const c of kids.flat()){if(c==null||c===false)continue;n.append(c.nodeType?c:document.createTextNode(c));}return n;}
-function starStr(n){return h("span",{class:"stars","aria-label":n+" von 3 Sternen"},...[0,1,2].map(i=>h("span",{class:i<n?"":"off"},"★")));}
-function totalStars(){return Object.values(save.stars).reduce((a,b)=>a+b,0);}
-function updateHeader(){ $("hdrStars").textContent="★ "+totalStars()+"/"+CASES.length*3;}
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}return a;};
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+
+/* ---------- Aussehen der Figuren ---------- */
+const SK=["#f3d2b3","#e8b98f","#c98e63","#8d5a3b","#f5dcc5","#6b4429"];
+const HC={black:"#1d1a19",brown:"#5a3a22",blond:"#e2c065",grey:"#b9b9b9",red:"#a8442a",white:"#eeeeee"};
+const LOOK=(body,skin,hair,style,extra={})=>({body,skin:SK[skin],hair:HC[hair],style,tie:"#c0392b",...extra});
+
+/* ---------- Level-Daten ---------- */
+const STEPS=["Ministerium","Bundesrat I","Bundestag: Ausschuss","Bundestag: Beschluss","Bundesrat II + VA","Ausfertigung"];
+const LAW="Recht-auf-Reparatur-Gesetz";
+
+const LEVELS=[
+/* ------------------------------------------------ 1 */
+{title:"Im Ministerium",sub:"Referentenentwurf & Kabinettsbeschluss",art:"Art. 76 I GG",
+ intro:`Das Bundesministerium schreibt am ${LAW}: Hersteller sollen Ersatzteile anbieten, damit Handys, Waschmaschinen & Co. repariert statt weggeworfen werden. Bring den Entwurf durch das Haus bis ins Kabinett!`,
+ recap:["Fast alle Gesetze beginnen als <b>Referentenentwurf</b> in einem Bundesministerium.","Verbände und Länder dürfen dazu Stellung nehmen (<b>Verbändebeteiligung</b>).","Andere Ministerien zeichnen mit (<b>Ressortabstimmung</b>), das Justizministerium macht die <b>Rechtsprüfung</b>, der Normenkontrollrat prüft die Kosten.","Das <b>Kabinett</b> beschließt den Entwurf – jetzt ist es ein Regierungsentwurf. Der geht zuerst an den <b>Bundesrat</b> (Art. 76 II)."],
+ rooms:[
+  {id:"archiv",name:"Archiv",c:0,r:0,floor:"#8f7a5c",pat:"wood",deco:["shelves"]},
+  {id:"referat",name:"Referat Verbraucherschutz",c:1,r:0,floor:"#5f7e9c",pat:"carpet",deco:["desks"]},
+  {id:"kopier",name:"Kopierraum",c:2,r:0,floor:"#9aa3ad",pat:"tile",deco:["printers"]},
+  {id:"kantine",name:"Kantine",c:0,r:1,floor:"#c8b07a",pat:"tile",deco:["round"]},
+  {id:"foyer",name:"Foyer",c:1,r:1,floor:"#b9b2a5",pat:"marble",deco:["rug","plants"]},
+  {id:"kabinett",name:"Kabinettssaal",c:2,r:1,floor:"#7b4a3a",pat:"carpet",deco:["oval"]}],
+ links:[["archiv","referat"],["referat","kopier"],["referat","foyer"],["kantine","foyer"],["foyer","kabinett"],["kopier","kabinett"],["archiv","kantine"]],
+ spawn:"foyer",
+ st:[
+  {id:"scan",room:"foyer",x:.2,y:.1,type:"scanner"},
+  {id:"vorblatt",room:"archiv",x:.82,y:.5,type:"cabinet"},
+  {id:"pc",room:"referat",x:.5,y:.1,type:"terminal"},
+  {id:"druck",room:"kopier",x:.5,y:.1,type:"printer"},
+  {id:"yilmaz",room:"kantine",x:.5,y:.22,npc:{name:"Frau Yılmaz",role:"Verbraucherzentrale",look:LOOK("#2aa198",2,"black","long")}},
+  {id:"brandt",room:"foyer",wander:["kantine","foyer","referat"],npc:{name:"Herr Brandt",role:"Verband der Gerätehersteller",look:LOOK("#4b4f58",0,"grey","short",{glasses:true})}},
+  {id:"nowak",room:"referat",x:.22,y:.36,npc:{name:"Herr Nowak",role:"Finanzministerium",look:LOOK("#6c4bb3",1,"brown","short")}},
+  {id:"berger",room:"archiv",x:.28,y:.62,npc:{name:"Frau Berger",role:"Justizministerium – Rechtsprüfung",look:LOOK("#b03a5b",0,"red","bun",{glasses:true})}},
+  {id:"haas",room:"kopier",wander:["kopier","referat","archiv"],npc:{name:"Dr. Haas",role:"Nationaler Normenkontrollrat",look:LOOK("#3f7d3a",3,"black","bald")}},
+  {id:"kanzlerin",room:"kabinett",x:.5,y:.2,npc:{name:"Die Bundeskanzlerin",role:"Leitung der Kabinettssitzung",look:LOOK("#1f3b73",0,"blond","bun")}}],
+ tasks:[
+  {id:"t1",name:"Hausausweis scannen",steps:[{st:"scan",g:"swipe"}]},
+  {id:"t2",name:"Vorblatt des Entwurfs prüfen",steps:[{st:"vorblatt",g:"sort",d:{title:"Vorblatt prüfen",sub:"Jeder Gesetzentwurf hat ein „Vorblatt“ mit festen Abschnitten. Was gehört hinein?",bins:["✅ Gehört rein","🗑️ Gehört nicht rein"],
+    items:[["A. Problem und Ziel",0],["Werbung für einen Handyhersteller",1,"Ein Gesetzentwurf ist neutral – Werbung hat darin nichts verloren."],["B. Lösung",0],["Lieblingsrezept der Ministerin",1],["C. Alternativen",0,"Ja! Das Ministerium muss zeigen, welche anderen Wege es gäbe."],["E. Erfüllungsaufwand (Kosten für Bürger, Wirtschaft, Verwaltung)",0],["Ein Wahlkampf-Slogan",1]]}}]},
+  {id:"t3",name:"Entwurf ausdrucken",ordered:true,steps:[
+    {st:"pc",g:"transfer",d:{mode:"down",title:"Referentenentwurf herunterladen",from:"Server",to:"USB-Stick",file:"📄"}},
+    {st:"druck",g:"transfer",d:{mode:"up",title:"Entwurf drucken",from:"USB-Stick",to:"Drucker",file:"📄"}}]},
+  {id:"t4",name:"Verbände anhören",steps:[
+    {st:"yilmaz",g:"talk",say:"Gut, dass das Ministerium uns fragt! Bei der <b>Verbändebeteiligung</b> dürfen Verbände und Länder zum Referentenentwurf Stellung nehmen. Unsere Forderung: Ersatzteile müssen mindestens 7 Jahre lang lieferbar sein!"},
+    {st:"brandt",g:"talk",say:"Ersatzteile jahrelang lagern? Das kostet uns viel Geld! Wir schicken eine kritische Stellungnahme. Das Ministerium muss am Ende alle Argumente abwägen – so funktioniert Demokratie."}]},
+  {id:"t5",name:"Mitzeichnungen sammeln",steps:[
+    {st:"nowak",g:"sign",say:"Ressortabstimmung? Klar. Wir im Finanzministerium schauen, ob das Gesetz den Bundeshaushalt belastet. Steht im Vorblatt unter D – passt. Ich zeichne mit!",d:{doc:"Referentenentwurf – Mitzeichnung",who:"BMF, Herr Nowak"}},
+    {st:"berger",g:"sign",say:"Wir im Justizministerium prüfen jeden Entwurf auf <b>Verfassungsmäßigkeit</b> und <b>Rechtsförmlichkeit</b> – also ob er sauber formuliert ist. Vorher eine Prüfungsfrage an dich:",
+     d:{doc:"Rechtsprüfung bestanden",who:"BMJV, Frau Berger",quiz:{q:"Wer darf einen Gesetzentwurf in den Bundestag einbringen?",a:["Bundesregierung, Bundesrat und Abgeordnete aus der Mitte des Bundestags","Jede Bürgerin und jeder Bürger direkt","Nur der Bundespräsident","Nur die Landtage"],ok:0,
+      why:"Richtig! Das Initiativrecht haben nach Art. 76 I GG die Bundesregierung, der Bundesrat und der Bundestag selbst („aus der Mitte“: eine Fraktion oder 5 % der Abgeordneten)."}}},
+    {st:"haas",g:"sign",say:"Ich bin vom <b>Nationalen Normenkontrollrat</b>. Wir prüfen, wie viel Bürokratie und Kosten ein Gesetz für Bürger, Wirtschaft und Verwaltung verursacht. Euer Erfüllungsaufwand ist sauber berechnet!",d:{doc:"Stellungnahme des Normenkontrollrats",who:"NKR, Dr. Haas"}}]},
+  {id:"t6",name:"Kabinettsbeschluss",needs:["t2","t3","t5"],steps:[
+    {st:"kanzlerin",g:"quiz",say:"Willkommen im Kabinett. Alle Ministerien haben mitgezeichnet – das Kabinett beschließt den Entwurf einstimmig. Ab jetzt ist es ein <b>Regierungsentwurf</b>.",
+     d:{q:"Wohin muss ein Regierungsentwurf jetzt zuerst?",a:["Direkt in den Bundestag","Zum Bundesrat","Zum Bundespräsidenten","In den Vermittlungsausschuss"],ok:1,
+      wrong:{0:"Fast! Aber Regierungsentwürfe müssen zuerst dem Bundesrat vorgelegt werden (Art. 76 II).",2:"Der Bundespräsident kommt ganz am Ende.",3:"Den Vermittlungsausschuss gibt es erst nach dem Beschluss des Bundestags – und nur bei Streit."},
+      why:"Genau: Regierungsentwürfe gehen zuerst zum Bundesrat. Er darf in der Regel 6 Wochen lang Stellung nehmen (Art. 76 II) – der „erste Durchgang“."}}]}]},
+/* ------------------------------------------------ 2 */
+{title:"Bundesrat – erster Durchgang",sub:"Stellungnahme der Länder",art:"Art. 76 II GG",
+ intro:"Der Regierungsentwurf ist im Bundesrat angekommen. Hier wirken die 16 Länder mit. Sammle ihre Stellungnahmen ein und sorge dafür, dass der Bundesrat seine Stellungnahme beschließt.",
+ recap:["Im Bundesrat sitzen <b>Mitglieder der Landesregierungen</b> – sie werden nicht direkt gewählt.","Der Bundesrat hat <b>69 Stimmen</b>. Jedes Land hat je nach Einwohnerzahl 3 bis 6 Stimmen und muss sie <b>einheitlich</b> abgeben.","Zu Regierungsentwürfen gibt er in der Regel binnen <b>6 Wochen</b> eine <b>Stellungnahme</b> ab – sie ist nur eine Empfehlung.","Die Bundesregierung antwortet mit einer <b>Gegenäußerung</b> und leitet alles dem <b>Bundestag</b> zu."],
+ rooms:[
+  {id:"nord",name:"Länderbüro Nord",c:0,r:0,floor:"#5d7d68",pat:"carpet",deco:["desks"]},
+  {id:"plenum",name:"Plenarsaal des Bundesrats",c:1,r:0,floor:"#b49f78",pat:"wood",deco:["plenum"],w:540,h:380},
+  {id:"sued",name:"Länderbüro Süd",c:2,r:0,floor:"#65699a",pat:"carpet",deco:["desks"]},
+  {id:"presse",name:"Pressestelle",c:0,r:1,floor:"#8a909a",pat:"tile",deco:["sofas"]},
+  {id:"foyer",name:"Foyer",c:1,r:1,floor:"#bdb6a8",pat:"marble",deco:["rug","plants"]},
+  {id:"ausschuss",name:"Ausschussraum",c:2,r:1,floor:"#7b5a48",pat:"carpet",deco:["oval"]}],
+ links:[["nord","plenum"],["plenum","sued"],["plenum","foyer"],["presse","foyer"],["foyer","ausschuss"],["nord","presse"],["sued","ausschuss"]],
+ spawn:"foyer",
+ st:[
+  {id:"scan",room:"foyer",x:.8,y:.1,type:"scanner"},
+  {id:"board",room:"plenum",x:.84,y:.1,type:"board"},
+  {id:"schmitz",room:"nord",x:.5,y:.26,npc:{name:"Frau Schmitz",role:"Nordrhein-Westfalen",look:LOOK("#d9822b",0,"brown","long")}},
+  {id:"huber",room:"sued",x:.5,y:.26,npc:{name:"Herr Huber",role:"Bayern",look:LOOK("#2c5aa0",1,"brown","short",{glasses:true})}},
+  {id:"wolf",room:"presse",wander:["presse","foyer","plenum"],npc:{name:"Frau Wolf",role:"Sachsen",look:LOOK("#3a9a55",0,"blond","long")}},
+  {id:"fakten",room:"presse",x:.5,y:.1,type:"terminal"},
+  {id:"stempel",room:"ausschuss",x:.5,y:.12,type:"stampdesk"},
+  {id:"praes",room:"plenum",x:.28,y:.17,npc:{name:"Die Bundesratspräsidentin",role:"leitet die Sitzung",look:LOOK("#8e2b3a",4,"grey","bun")}}],
+ tasks:[
+  {id:"t1",name:"Besucherausweis scannen",steps:[{st:"scan",g:"swipe"}]},
+  {id:"t2",name:"Stimmen der Länder zuordnen",steps:[{st:"board",g:"wires",d:{title:"Stimmen im Bundesrat",sub:"Verbinde jedes Land mit seiner Stimmenzahl.",
+    left:["Bayern","Hessen","Berlin","Bremen"],right:["6 Stimmen","5 Stimmen","4 Stimmen","3 Stimmen"],why:"Länder mit mehr Einwohnern haben mehr Stimmen – aber nicht im gleichen Verhältnis. Insgesamt sind es 69."}}]},
+  {id:"t3",name:"Stellungnahmen der Länder einholen",steps:[
+    {st:"schmitz",g:"talk",say:"Hallo! Ich bin Ministerin in Nordrhein-Westfalen. Im Bundesrat sitzen keine gewählten Abgeordneten, sondern <b>Mitglieder der Landesregierungen</b>. NRW findet den Entwurf gut – wir wünschen uns nur mehr Reparatur-Cafés."},
+    {st:"huber",g:"quiz",say:"Grüß Gott! Bayern hat noch ein paar Anmerkungen. Aber sag mal:",d:{q:"Wie viel Zeit hat der Bundesrat normalerweise für seine Stellungnahme?",a:["3 Tage","6 Wochen","1 Jahr","Unbegrenzt"],ok:1,
+      why:"Richtig – in der Regel 6 Wochen (Art. 76 II). Bei besonders eiligen oder umfangreichen Entwürfen gelten andere Fristen."}},
+    {st:"wolf",g:"talk",say:"Sachsen möchte, dass kleine Reparaturbetriebe gefördert werden. Das schreiben wir in die Stellungnahme. Aber Achtung: Die Stellungnahme ist nur eine <b>Empfehlung</b> – der Bundestag muss sich nicht daran halten."}]},
+  {id:"t4",name:"Fakten-Check für die Presse",steps:[{st:"fakten",g:"sort",d:{title:"Fakten-Check",sub:"Die Pressestelle braucht korrekte Infos über den Bundesrat. Stimmt das?",bins:["✔ Stimmt","✘ Stimmt nicht"],
+    items:[["Der Bundesrat hat insgesamt 69 Stimmen.",0],["Jedes Land hat gleich viele Stimmen.",1,"Nein – je nach Einwohnerzahl 3, 4, 5 oder 6 Stimmen (Art. 51 II)."],["Ein Land muss seine Stimmen einheitlich abgeben.",0,"Stimmt (Art. 51 III). Ein Land kann nicht 3 × Ja und 3 × Nein sagen."],["Die Stellungnahme des Bundesrats ist für den Bundestag bindend.",1,"Nein, sie ist eine Empfehlung."],["Die Mitglieder des Bundesrats werden direkt vom Volk gewählt.",1,"Nein – die Landesregierungen schicken sie."]]}}]},
+  {id:"t5",name:"Stellungnahme beschließen",steps:[{st:"stempel",g:"stamp",d:{title:"Stellungnahme beschließen",sub:"Die Ausschüsse haben vorbereitet – jetzt alle Seiten abstempeln!",doc:"Stellungnahme des Bundesrates",mark:"BESCHLOSSEN",n:4}}]},
+  {id:"t6",name:"Stellungnahme weiterleiten",needs:["t2","t3","t4","t5"],steps:[{st:"praes",g:"quiz",say:"Die Stellungnahme ist beschlossen. Vielen Dank für deine Arbeit!",
+    d:{q:"Wie geht es mit dem Entwurf jetzt weiter?",a:["Der Bundesrat schickt ihn direkt zum Bundespräsidenten","Die Bundesregierung schreibt eine Gegenäußerung und leitet alles dem Bundestag zu","Das Gesetz ist damit beschlossen","Die Länder stimmen per Volksentscheid ab"],ok:1,
+     wrong:{0:"Viel zu früh – der Bundestag hat noch gar nicht beraten!",2:"Nein, der Bundesrat hat nur Stellung genommen. Beschließen muss der Bundestag.",3:"Volksentscheide über Bundesgesetze gibt es im Grundgesetz nicht."},
+     why:"Richtig! Die Bundesregierung antwortet mit einer Gegenäußerung und schickt Entwurf, Stellungnahme und Gegenäußerung an den Bundestag."}}]}]},
+/* ------------------------------------------------ 3 */
+{title:"Bundestag – 1. Lesung & Ausschuss",sub:"Beratung im Fachausschuss",art:"Art. 77 I GG",
+ intro:"Der Entwurf ist im Bundestag! Nach der 1. Lesung wird er an den Fachausschuss überwiesen. Dort wird er genau geprüft: Expertinnen werden angehört, Berichterstatter schreiben den Bericht.",
+ recap:["In der <b>1. Lesung</b> wird der Entwurf vorgestellt und an einen oder mehrere <b>Ausschüsse</b> überwiesen.","Im Ausschuss passiert die eigentliche Detailarbeit – oft mit einer <b>öffentlichen Anhörung</b> von Sachverständigen.","Jede Fraktion stellt <b>Berichterstatter</b> für das Gesetz.","Am Ende beschließt der Ausschuss eine <b>Beschlussempfehlung mit Bericht</b> für das Plenum."],
+ rooms:[
+  {id:"fraktion",name:"Fraktionssaal",c:0,r:0,floor:"#6a5a88",pat:"carpet",deco:["desks"]},
+  {id:"plenum",name:"Plenarsaal des Bundestags",c:1,r:0,floor:"#4b6fa8",pat:"carpet",deco:["plenum"],w:540,h:380},
+  {id:"biblio",name:"Bibliothek",c:2,r:0,floor:"#8c6f4f",pat:"wood",deco:["shelves"]},
+  {id:"cafe",name:"Cafeteria",c:0,r:1,floor:"#c7ae78",pat:"tile",deco:["round"]},
+  {id:"halle",name:"Eingangshalle",c:1,r:1,floor:"#bdb6a8",pat:"marble",deco:["rug","plants"]},
+  {id:"ausschuss",name:"Ausschusssaal",c:2,r:1,floor:"#6f5649",pat:"carpet",deco:["oval"]}],
+ links:[["fraktion","plenum"],["plenum","biblio"],["plenum","halle"],["cafe","halle"],["halle","ausschuss"],["fraktion","cafe"],["biblio","ausschuss"]],
+ spawn:"halle",
+ st:[
+  {id:"scan",room:"halle",x:.2,y:.1,type:"scanner"},
+  {id:"pult",room:"plenum",x:.5,y:.13,type:"podium"},
+  {id:"lehmann",room:"ausschuss",x:.18,y:.24,npc:{name:"Prof. Lehmann",role:"Sachverständige (Universität)",look:LOOK("#7a3f99",1,"grey","long",{glasses:true})}},
+  {id:"kaya",room:"cafe",wander:["cafe","halle","plenum"],npc:{name:"Meisterin Kaya",role:"Sachverständige (Handwerk)",look:LOOK("#d1a02a",2,"black","bun")}},
+  {id:"vogel",room:"fraktion",wander:["fraktion","plenum","biblio"],npc:{name:"Abg. Vogel",role:"Berichterstatter",look:LOOK("#2f62c9",0,"brown","short")}},
+  {id:"kuehn",room:"cafe",wander:["cafe","fraktion"],npc:{name:"Abg. Kühn",role:"Berichterstatterin",look:LOOK("#c23b3b",4,"red","long")}},
+  {id:"petersen",room:"biblio",x:.3,y:.66,npc:{name:"Abg. Petersen",role:"Berichterstatter",look:LOOK("#3c9a60",3,"black","curly")}},
+  {id:"gutachten",room:"biblio",x:.8,y:.62,type:"terminal"},
+  {id:"postfach",room:"ausschuss",x:.84,y:.1,type:"terminal"},
+  {id:"stempel",room:"ausschuss",x:.5,y:.12,type:"stampdesk"}],
+ tasks:[
+  {id:"t1",name:"Hausausweis scannen",steps:[{st:"scan",g:"swipe"}]},
+  {id:"t2",name:"Rede in der 1. Lesung",steps:[{st:"pult",g:"order",d:{title:"Rede: Wie geht es weiter?",sub:"Erkläre dem Plenum den Weg im Bundestag. Tippe die Schritte in der richtigen Reihenfolge an.",
+    items:["1. Lesung (Aussprache)","Überweisung an den Ausschuss","Ausschussberatung & Anhörung","Beschlussempfehlung des Ausschusses","2. Lesung (Einzelberatung, Änderungsanträge)","3. Lesung & Schlussabstimmung"]}}]},
+  {id:"t3",name:"Sachverständige anhören",steps:[
+    {st:"lehmann",g:"talk",say:"Bei der <b>öffentlichen Anhörung</b> befragen die Abgeordneten Expertinnen und Experten. Meine Forschung zeigt: Reparieren spart Rohstoffe und reduziert Elektroschrott deutlich."},
+    {st:"kaya",g:"talk",say:"Ich bin Elektromeisterin. Für uns ist wichtig: Wir brauchen <b>Ersatzteile und Reparaturanleitungen</b> zu fairen Preisen – sonst nützt das schönste Gesetz nichts!"}]},
+  {id:"t4",name:"Berichterstatter finden",steps:[
+    {st:"vogel",g:"sign",say:"Ah, da bist du ja! Ich bin Berichterstatter meiner Fraktion für das Reparaturgesetz. Ich unterschreibe den Bericht.",d:{doc:"Bericht des Ausschusses",who:"Abg. Vogel"}},
+    {st:"kuehn",g:"sign",say:"Jede Fraktion stellt eine Berichterstatterin oder einen Berichterstatter. Für meine Fraktion bin ich das. Kurze Frage noch:",
+     d:{doc:"Bericht des Ausschusses",who:"Abg. Kühn",quiz:{q:"Was beschließt der Ausschuss am Ende seiner Beratungen?",a:["Das fertige Gesetz","Eine Beschlussempfehlung mit Bericht für das Plenum","Die Zustimmung des Bundesrats","Den Bundeshaushalt"],ok:1,
+      why:"Genau – der Ausschuss beschließt nichts Endgültiges. Er empfiehlt dem Plenum, wie es abstimmen soll."}}},
+    {st:"petersen",g:"sign",say:"Ich hab mich hier in der Bibliothek versteckt, um in Ruhe den Bericht zu lesen. Passt alles – ich unterschreibe!",d:{doc:"Bericht des Ausschusses",who:"Abg. Petersen"}}]},
+  {id:"t5",name:"Gutachten beschaffen",ordered:true,steps:[
+    {st:"gutachten",g:"transfer",d:{mode:"down",title:"Gutachten der Wissenschaftlichen Dienste",from:"Bibliothek",to:"Tablet",file:"📑"}},
+    {st:"postfach",g:"transfer",d:{mode:"up",title:"Gutachten ins Ausschuss-Postfach",from:"Tablet",to:"Ausschuss",file:"📑"}}]},
+  {id:"t6",name:"Beschlussempfehlung beschließen",needs:["t3","t4","t5"],steps:[{st:"stempel",g:"stamp",d:{title:"Beschlussempfehlung",sub:"Die Mehrheit im Ausschuss stimmt zu. Stemple alle Seiten der Beschlussempfehlung!",doc:"Beschlussempfehlung und Bericht",mark:"BESCHLOSSEN",n:4}}]}]},
+/* ------------------------------------------------ 4 */
+{title:"Bundestag – 2. & 3. Lesung",sub:"Mehrheit organisieren & abstimmen",art:"Art. 42 II, 77 I GG",
+ intro:"Heute wird abgestimmt! Verteile die Drucksachen, überzeuge die unentschlossenen Abgeordneten und rufe dann die Schlussabstimmung im Plenarsaal aus.",
+ recap:["In der <b>2. Lesung</b> wird über jeden Paragrafen und über Änderungsanträge einzeln abgestimmt.","In der <b>3. Lesung</b> folgt die <b>Schlussabstimmung</b> über das ganze Gesetz.","Für ein normales Gesetz reicht die <b>Mehrheit der abgegebenen Stimmen</b> (Art. 42 II).","Abgeordnete sind <b>nur ihrem Gewissen</b> unterworfen (Art. 38 I) – einen rechtlichen Fraktionszwang gibt es nicht.","Der Bundestagspräsident leitet das beschlossene Gesetz an den <b>Bundesrat</b> weiter (zweiter Durchgang)."],
+ rooms:[
+  {id:"fraka",name:"Fraktionssaal A",c:0,r:0,floor:"#5a6f99",pat:"carpet",deco:["desks"]},
+  {id:"plenum",name:"Plenarsaal des Bundestags",c:1,r:0,floor:"#4b6fa8",pat:"carpet",deco:["plenum"],w:540,h:380},
+  {id:"frakb",name:"Fraktionssaal B",c:2,r:0,floor:"#8a5a5a",pat:"carpet",deco:["sofas"]},
+  {id:"lobby",name:"Lobby",c:0,r:1,floor:"#c2ab7a",pat:"tile",deco:["round"]},
+  {id:"halle",name:"Eingangshalle",c:1,r:1,floor:"#bdb6a8",pat:"marble",deco:["rug","plants"]},
+  {id:"bueros",name:"Abgeordnetenbüros",c:2,r:1,floor:"#6a7c88",pat:"carpet",deco:["desks"]}],
+ links:[["fraka","plenum"],["plenum","frakb"],["plenum","halle"],["lobby","halle"],["halle","bueros"],["fraka","lobby"],["frakb","bueros"]],
+ spawn:"halle",
+ st:[
+  {id:"drucker",room:"bueros",x:.5,y:.1,type:"printer"},
+  {id:"fach",room:"plenum",x:.86,y:.1,type:"mailbox"},
+  {id:"tafel",room:"fraka",x:.5,y:.1,type:"board"},
+  {id:"tafel2",room:"frakb",x:.5,y:.1,type:"board"},
+  {id:"krueger",room:"lobby",wander:["lobby","halle","bueros"],npc:{name:"Abg. Krüger",role:"noch unentschlossen",look:LOOK("#7d8a2e",0,"blond","short")}},
+  {id:"demir",room:"frakb",wander:["frakb","plenum","fraka"],npc:{name:"Abg. Demir",role:"noch unentschlossen",look:LOOK("#2b8fbf",2,"black","short",{glasses:true})}},
+  {id:"lange",room:"lobby",x:.5,y:.22,npc:{name:"Abg. Lange",role:"noch unentschlossen",look:LOOK("#b0558f",4,"brown","bun")}},
+  {id:"glocke",room:"plenum",x:.5,y:.14,type:"vote"}],
+ tasks:[
+  {id:"t1",name:"Drucksachen verteilen",ordered:true,steps:[
+    {st:"drucker",g:"transfer",d:{mode:"down",title:"Drucksache drucken",from:"Druckerei",to:"Aktenwagen",file:"📚"}},
+    {st:"fach",g:"transfer",d:{mode:"up",title:"In die Fächer der Abgeordneten verteilen",from:"Aktenwagen",to:"Postfächer",file:"📚"}}]},
+  {id:"t2",name:"Unentschlossene überzeugen",steps:[
+    {st:"krueger",g:"quiz",say:"Ich bin noch unsicher … und den Ablauf hab ich auch vergessen. Hilf mir mal:",d:{q:"In welcher Lesung wird über Änderungsanträge zu einzelnen Paragrafen abgestimmt?",a:["1. Lesung","2. Lesung","3. Lesung","Im Bundesrat"],ok:1,
+      wrong:{0:"In der 1. Lesung gibt es nur eine allgemeine Aussprache.",2:"In der 3. Lesung wird über das ganze Gesetz abgestimmt.",3:"Der Bundesrat kann keine Änderungsanträge im Bundestag stellen."},why:"Richtig – die 2. Lesung ist die Einzelberatung. Danke, jetzt bin ich überzeugt!"}},
+    {st:"demir",g:"quiz",say:"Ich will nicht, dass das Gesetz knapp scheitert. Wie viele Stimmen brauchen wir eigentlich?",d:{q:"Welche Mehrheit braucht ein normales Gesetz in der Schlussabstimmung?",a:["Zwei Drittel aller Mitglieder (420)","Die Mehrheit der Mitglieder (316)","Die Mehrheit der abgegebenen Stimmen","Alle 630 Abgeordneten"],ok:2,
+      wrong:{0:"Zwei Drittel braucht man für Grundgesetzänderungen (Art. 79 II).",1:"Die „Kanzlermehrheit“ braucht man z. B. für die Kanzlerwahl – nicht für normale Gesetze.",3:"Einstimmigkeit ist nicht nötig – das wäre auch kaum zu schaffen."},why:"Genau: einfache Mehrheit der abgegebenen Stimmen (Art. 42 II). Mehr Ja als Nein reicht. Ich bin dabei!"}},
+    {st:"lange",g:"quiz",say:"Meine Fraktion will, dass ich zustimme. Aber ich habe Bedenken …",d:{q:"Muss Abg. Lange so abstimmen, wie die Fraktion es will?",a:["Ja, das schreibt das Grundgesetz vor","Nein – Abgeordnete sind nur ihrem Gewissen unterworfen","Ja, sonst verliert sie sofort ihr Mandat","Nur, wenn der Bundespräsident es anordnet"],ok:1,
+      wrong:{0:"Nein, im Grundgesetz steht das Gegenteil (Art. 38 I).",2:"Das Mandat kann man deswegen nicht verlieren.",3:"Der Bundespräsident hat Abgeordneten nichts anzuordnen."},
+      why:"Richtig (Art. 38 I). Fraktionen erwarten oft Geschlossenheit („Fraktionsdisziplin“), aber zwingen dürfen sie niemanden. Ich habe nachgedacht – ich stimme zu!"}}]},
+  {id:"t3",name:"Probeabstimmung auszählen",steps:[{st:"tafel",g:"count",d:{title:"Probeabstimmung in der Fraktion",sub:"Zähle die Ja-Stimmen (grün) und tippe die Zahl ein.",cards:{ja:17,nein:5,enth:3},
+    why:"17 Ja, 5 Nein, 3 Enthaltungen – die Fraktion steht hinter dem Gesetz."}}]},
+  {id:"t4",name:"Mehrheiten verstehen",steps:[{st:"tafel2",g:"wires",d:{title:"Welche Mehrheit wofür?",sub:"Verbinde die Abstimmung mit der nötigen Mehrheit (630 Abgeordnete).",
+    left:["Normales Gesetz","Grundgesetzänderung","Wahl des Bundeskanzlers","Zurückweisen eines 2/3-Einspruchs"],
+    right:["Mehrheit der abgegebenen Stimmen","2/3 der Mitglieder (420)","Mehrheit der Mitglieder (316)","2/3 der Abstimmenden, mind. 316"],why:"Art. 42 II, Art. 79 II, Art. 63 II und Art. 77 IV GG."}}]},
+  {id:"t5",name:"Schlussabstimmung ausrufen",needs:["t1","t2","t3","t4"],steps:[{st:"glocke",g:"vote",d:{ja:384,nein:212,enth:21}}]}]},
+/* ------------------------------------------------ 5 */
+{title:"Bundesrat – zweiter Durchgang",sub:"Vermittlungsausschuss",art:"Art. 77 II–III, 78 GG",
+ intro:"Der Bundestag hat das Gesetz beschlossen. Jetzt ist der Bundesrat wieder dran – und einige Länder sind unzufrieden. Es ist ein Einspruchsgesetz: Der Bundesrat kann es nur aufhalten, wenn er zuerst den Vermittlungsausschuss anruft …",
+ recap:["Beim <b>Einspruchsgesetz</b> (dem Regelfall) kann der Bundesrat binnen 3 Wochen den <b>Vermittlungsausschuss</b> anrufen (Art. 77 II).","Der Vermittlungsausschuss hat <b>16 Mitglieder aus dem Bundestag und 16 aus dem Bundesrat</b>, tagt vertraulich und sucht einen Kompromiss.","Schlägt er eine Änderung vor, muss der <b>Bundestag erneut beschließen</b>.","Legt der Bundesrat danach keinen Einspruch ein, ist das Gesetz <b>zustande gekommen</b> (Art. 78).","Achtung: Im Bundesrat zählen <b>Enthaltungen wie Nein-Stimmen</b> – nötig sind immer mindestens 35 Ja-Stimmen."],
+ rooms:[
+  {id:"laender",name:"Länderbüro",c:0,r:0,floor:"#5d7d68",pat:"carpet",deco:["desks"]},
+  {id:"plenum",name:"Plenarsaal des Bundesrats",c:1,r:0,floor:"#b49f78",pat:"wood",deco:["plenum"],w:540,h:380},
+  {id:"va",name:"Vermittlungsausschuss",c:2,r:0,floor:"#5b4a7a",pat:"carpet",deco:["oval"]},
+  {id:"archiv",name:"Archiv",c:0,r:1,floor:"#8f7a5c",pat:"wood",deco:["shelves"]},
+  {id:"foyer",name:"Foyer",c:1,r:1,floor:"#bdb6a8",pat:"marble",deco:["rug","plants"]},
+  {id:"bt",name:"Sitzungssaal Bundestag",c:2,r:1,floor:"#4b6fa8",pat:"carpet",deco:["desks"]}],
+ links:[["laender","plenum"],["plenum","va"],["plenum","foyer"],["archiv","foyer"],["foyer","bt"],["laender","archiv"],["va","bt"]],
+ spawn:"foyer",
+ st:[
+  {id:"tafel",room:"plenum",x:.84,y:.1,type:"board"},
+  {id:"roth",room:"archiv",wander:["archiv","foyer","bt"],npc:{name:"Abg. Roth",role:"Vermittlungsausschuss (Bundestag)",look:LOOK("#c0682b",1,"brown","curly")}},
+  {id:"albers",room:"laender",x:.5,y:.26,npc:{name:"Ministerin Albers",role:"Vermittlungsausschuss (Bundesrat)",look:LOOK("#2f8f8f",0,"grey","short",{glasses:true})}},
+  {id:"vapc",room:"va",x:.5,y:.12,type:"terminal"},
+  {id:"vadruck",room:"va",x:.15,y:.12,type:"printer"},
+  {id:"btfach",room:"bt",x:.15,y:.1,type:"mailbox"},
+  {id:"btstempel",room:"bt",x:.5,y:.12,type:"stampdesk"},
+  {id:"praes",room:"plenum",x:.28,y:.17,npc:{name:"Der Bundesratspräsident",role:"leitet die Sitzung",look:LOOK("#3c4f8f",5,"black","short")}}],
+ tasks:[
+  {id:"t1",name:"Abstimmung: Vermittlungsausschuss?",steps:[{st:"tafel",g:"count",d:{title:"Antrag: Vermittlungsausschuss anrufen",sub:"Zähle die Ja-Stimmen der Länder zusammen. Grün = Ja, rot = Nein, grau = Enthaltung.",
+    laender:[["Baden-Württemberg",6,"ja"],["Bayern",6,"ja"],["Berlin",4,"nein"],["Brandenburg",4,"enth"],["Bremen",3,"nein"],["Hamburg",3,"nein"],["Hessen",5,"ja"],["Mecklenburg-Vorp.",3,"enth"],
+      ["Niedersachsen",6,"ja"],["Nordrhein-Westfalen",6,"nein"],["Rheinland-Pfalz",4,"ja"],["Saarland",3,"nein"],["Sachsen",4,"ja"],["Sachsen-Anhalt",4,"enth"],["Schleswig-Holstein",4,"nein"],["Thüringen",4,"ja"]],
+    why:"35 von 69 – genau die nötige absolute Mehrheit (mindestens 35)! Der Bundesrat ruft den Vermittlungsausschuss an. Enthaltungen wirken im Bundesrat übrigens wie Nein-Stimmen."}}]},
+  {id:"t2",name:"Mitglieder des VA zusammenrufen",steps:[
+    {st:"roth",g:"talk",say:"Ich bin eines der <b>16 Mitglieder aus dem Bundestag</b> im Vermittlungsausschuss. Die Fraktionen besetzen die Plätze nach ihrer Stärke. Ich komme sofort!"},
+    {st:"albers",g:"talk",say:"Ich bin eines der <b>16 Mitglieder aus dem Bundesrat</b> – jedes Land schickt eins. Und das Besondere: Im Vermittlungsausschuss bin ich <b>nicht an Weisungen</b> meiner Landesregierung gebunden (Art. 77 II). So kann man freier verhandeln."}]},
+  {id:"t3",name:"Regeln des Vermittlungsausschusses",steps:[{st:"vapc",g:"sort",d:{title:"Was gilt im Vermittlungsausschuss?",sub:"Stimmt das?",bins:["✔ Stimmt","✘ Stimmt nicht"],
+    items:[["Er hat 16 Mitglieder aus dem Bundestag und 16 aus dem Bundesrat.",0],["Er kann das Gesetz selbst endgültig beschließen.",1,"Nein – er macht nur einen Einigungsvorschlag. Entscheiden müssen Bundestag und Bundesrat."],["Er tagt vertraulich, nicht öffentlich.",0,"Stimmt – so lassen sich Kompromisse leichter finden."],
+      ["Er darf ganz neue Themen ins Gesetz schreiben, die nie beraten wurden.",1,"Nein – er muss im Rahmen des bisherigen Gesetzgebungsverfahrens bleiben (so das Bundesverfassungsgericht)."],["Er versucht, einen Kompromiss zwischen Bundestag und Bundesrat zu finden.",0]]}}]},
+  {id:"t4",name:"Einigungsvorschlag übermitteln",ordered:true,steps:[
+    {st:"vadruck",g:"transfer",d:{mode:"down",title:"Einigungsvorschlag drucken",sub:"Kompromiss: Ersatzteile 7 Jahre, aber Ausnahmen für kleine Firmen.",from:"Ausschuss",to:"Mappe",file:"🤝"}},
+    {st:"btfach",g:"transfer",d:{mode:"up",title:"An den Bundestag übermitteln",from:"Mappe",to:"Bundestag",file:"🤝"}}]},
+  {id:"t5",name:"Bundestag bestätigt Änderung",needs:["t4"],steps:[{st:"btstempel",g:"stamp",say:"",d:{title:"Bundestag stimmt zu",sub:"Weil der Vermittlungsausschuss eine Änderung vorschlägt, muss der Bundestag erneut beschließen (Art. 77 II). Er nimmt den Kompromiss an!",doc:"Einigungsvorschlag",mark:"ANGENOMMEN",n:3}}]},
+  {id:"t6",name:"Entscheidung im Bundesrat",needs:["t1","t2","t3","t5"],steps:[{st:"praes",g:"quiz",say:"Mit dem Kompromiss können die Länder leben. Der Bundesrat legt <b>keinen Einspruch</b> ein.",
+    d:{q:"Was bedeutet das für das Gesetz?",a:["Das Gesetz ist gescheitert","Das Gesetz ist zustande gekommen (Art. 78)","Der Bundestag muss den Einspruch zurückweisen","Das Volk muss abstimmen"],ok:1,
+     wrong:{0:"Im Gegenteil – ohne Einspruch kann das Gesetz nicht mehr aufgehalten werden.",2:"Es gibt keinen Einspruch – also gibt es auch nichts zurückzuweisen."},
+     why:"Richtig! Ohne Einspruch ist das Einspruchsgesetz zustande gekommen (Art. 78). Jetzt fehlen nur noch die Unterschriften."}}]}]},
+/* ------------------------------------------------ 6 */
+{title:"Unterschriften & Verkündung",sub:"Gegenzeichnung, Ausfertigung, Bundesgesetzblatt",art:"Art. 58, 82 GG",
+ intro:"Das Gesetz ist zustande gekommen – aber noch nicht in Kraft! Sammle die Unterschriften von Ministerin, Kanzlerin und Bundespräsident und sorge für die Verkündung im Bundesgesetzblatt.",
+ recap:["Das Gesetz wird vom zuständigen <b>Fachminister</b> und vom <b>Bundeskanzler</b> gegengezeichnet (Art. 58).","Der <b>Bundespräsident</b> prüft, ob es verfassungsgemäß zustande gekommen ist, und <b>fertigt es aus</b> – er unterschreibt (Art. 82 I).","Dann wird es im <b>Bundesgesetzblatt</b> verkündet – seit 2023 elektronisch.","Steht kein Datum im Gesetz, tritt es am <b>14. Tag nach der Verkündung</b> in Kraft (Art. 82 II). 🎉"],
+ rooms:[
+  {id:"min",name:"Bundesministerium",c:0,r:0,floor:"#5f7e9c",pat:"carpet",deco:["desks"]},
+  {id:"kanzleramt",name:"Kanzleramt",c:1,r:0,floor:"#8b8f96",pat:"marble",deco:["rug","plants"]},
+  {id:"bellevue",name:"Bundespräsidialamt",c:2,r:0,floor:"#8b5e3c",pat:"wood",deco:["rug","plants"]},
+  {id:"redaktion",name:"Redaktion Bundesgesetzblatt",c:0,r:1,floor:"#9aa3ad",pat:"tile",deco:["printers"]},
+  {id:"garten",name:"Garten",c:1,r:1,floor:"#5c9a4a",pat:"grass",deco:["trees"]},
+  {id:"park",name:"Park",c:2,r:1,floor:"#5c9a4a",pat:"grass",deco:["trees"]}],
+ links:[["min","kanzleramt"],["kanzleramt","bellevue"],["kanzleramt","garten"],["redaktion","garten"],["garten","park"],["min","redaktion"],["bellevue","park"]],
+ spawn:"garten",
+ st:[
+  {id:"ministerin",room:"min",x:.5,y:.26,npc:{name:"Die Ministerin",role:"Bundesministerium (zuständig)",look:LOOK("#2aa198",0,"brown","bun")}},
+  {id:"kanzlerin",room:"kanzleramt",x:.5,y:.24,npc:{name:"Die Bundeskanzlerin",role:"Kanzleramt",look:LOOK("#1f3b73",0,"blond","bun")}},
+  {id:"bp",room:"bellevue",x:.5,y:.24,npc:{name:"Der Bundespräsident",role:"Staatsoberhaupt",look:LOOK("#2b2f3a",4,"white","short",{glasses:true})}},
+  {id:"tafel",room:"garten",x:.5,y:.1,type:"board"},
+  {id:"referendar",room:"park",wander:["park","garten"],npc:{name:"Referendar Jonas",role:"übt für sein Examen",look:LOOK("#d1a02a",1,"blond","curly")}},
+  {id:"bgbl",room:"redaktion",x:.5,y:.1,type:"terminal"}],
+ tasks:[
+  {id:"t1",name:"Gegenzeichnung: Ministerin",steps:[{st:"ministerin",g:"sign",say:"Endlich! Als zuständige Ministerin zeichne ich das Gesetz <b>gegen</b> (Art. 58). Damit übernimmt die Regierung die politische Verantwortung.",d:{doc:LAW,who:"Die Ministerin"}}]},
+  {id:"t2",name:"Gegenzeichnung: Kanzlerin",needs:["t1"],steps:[{st:"kanzlerin",g:"sign",say:"Die Ministerin hat schon unterschrieben – sehr gut. Auch ich zeichne gegen. Jetzt ab damit zum Bundespräsidenten!",d:{doc:LAW,who:"Die Bundeskanzlerin"}}]},
+  {id:"t3",name:"Wer macht was?",steps:[{st:"tafel",g:"wires",d:{title:"Die Verfassungsorgane",sub:"Verbinde jedes Organ mit seiner Aufgabe im Gesetzgebungsverfahren.",
+    left:["Bundestag","Bundesrat","Bundesregierung","Bundespräsident"],right:["beschließt das Gesetz","wirkt für die Länder mit","zeichnet gegen","fertigt aus und verkündet"]}}]},
+  {id:"t4",name:"Prüfung & Ausfertigung",needs:["t2"],ordered:true,steps:[
+    {st:"bp",g:"quiz",say:"Bevor ich unterschreibe, prüfe ich das Gesetz.",d:{q:"Was prüft der Bundespräsident vor der Ausfertigung?",a:["Ob ihm das Gesetz politisch gefällt","Ob das Gesetz verfassungsgemäß zustande gekommen ist","Ob die Umfragewerte stimmen","Nichts – er muss immer unterschreiben"],ok:1,
+      wrong:{0:"Politische Gründe zählen nicht – er ist kein Gegenspieler der Regierung.",3:"Doch, er hat ein Prüfungsrecht. Sehr selten hat ein Bundespräsident deshalb die Unterschrift verweigert."},
+      why:"Richtig! Er prüft, ob das Verfahren korrekt war – und ob das Gesetz offensichtlich gegen das Grundgesetz verstößt."}},
+    {st:"bp",g:"sign",say:"Alles in Ordnung. Ich <b>fertige das Gesetz aus</b> (Art. 82 I).",d:{doc:LAW,who:"Der Bundespräsident"}}]},
+  {id:"t5",name:"Fristen-Check",steps:[{st:"referendar",g:"quiz",say:"Hey, ich lerne fürs Staatsexamen. Weißt du das?",d:{q:"Im Gesetz steht kein Datum für das Inkrafttreten. Wann gilt es?",a:["Sofort bei der Unterschrift","Am 14. Tag nach der Verkündung","Nach einem Jahr","Erst nach der nächsten Bundestagswahl"],ok:1,
+    why:"Genau (Art. 82 II). Meistens steht aber ein Datum im Gesetz – oft mit etwas Vorlauf, damit sich alle darauf einstellen können."}}]},
+  {id:"t6",name:"Verkündung im Bundesgesetzblatt",needs:["t4"],steps:[{st:"bgbl",g:"transfer",d:{mode:"up",title:"Im Bundesgesetzblatt verkünden",sub:"Seit 2023 erscheint das Bundesgesetzblatt elektronisch.",from:"Ausfertigung",to:"Bundesgesetzblatt",file:"📜"}}]}]}
+];
+
+/* ---------- Speichern ---------- */
+const KEY="missiongesetz_v1";
+let save={done:[],color:"#e8433a",name:"Du",all:false};
+try{const s=JSON.parse(localStorage.getItem(KEY)||"null");if(s&&typeof s==="object")save={...save,...s};}catch(e){}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(save));}catch(e){}}
+const COLORS=["#e8433a","#2f6fd6","#2fa956","#f28c28","#f5d33b","#9b4fd1","#ec6fb3","#3fd0d4","#7a4b2a","#f3f3f3","#3b3f48","#9be05b"];
+
+/* ---------- Ton ---------- */
+let AC=null, muted=false;
+function beep(f=600,d=.08,type="square",vol=.05,delay=0){if(muted)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const t=AC.currentTime+delay;
+  const o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.setValueAtTime(f,t);g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);
+  o.connect(g).connect(AC.destination);o.start(t);o.stop(t+d+.02);}catch(e){}}
+const sfx={use:()=>beep(520,.06),ok:()=>{beep(660,.08,"square",.05);beep(990,.12,"square",.05,.08);},bad:()=>beep(180,.18,"sawtooth",.05),
+  task:()=>{[523,659,784,1046].forEach((f,i)=>beep(f,.12,"triangle",.07,i*.08));},click:()=>beep(900,.03,"square",.03),
+  win:()=>{[392,523,659,784,659,784,1046].forEach((f,i)=>beep(f,.18,"triangle",.07,i*.13));}};
+
+/* =====================================================================
+   Welt / Karte
+   ===================================================================== */
+const CW=660, CH=540, MG=140, RW=460, RH=340, CT=120, WT=22, FACE=48;
+let W=null; // aktuelle Welt
+
+function buildWorld(L){
+  const rooms={}, rects=[], obst=[], decos=[];
+  let cols=0, rows=0;
+  for(const r of L.rooms){
+    const w=r.w||RW, hh=r.h||RH;
+    const x=MG+r.c*CW+(CW-w)/2, y=MG+r.r*CH+(CH-hh)/2;
+    rooms[r.id]={...r,x,y,w,h:hh,cx:x+w/2,cy:y+hh/2};
+    cols=Math.max(cols,r.c+1);rows=Math.max(rows,r.r+1);
+  }
+  const corr=[];
+  for(const [a,b] of L.links){
+    const A=rooms[a],B=rooms[b];
+    if(A.r===B.r){const [l,r]=A.x<B.x?[A,B]:[B,A];corr.push({x:l.x+l.w-6,y:l.cy-CT/2,w:r.x-(l.x+l.w)+12,h:CT,corr:true});}
+    else{const [t,bt]=A.y<B.y?[A,B]:[B,A];corr.push({x:t.cx-CT/2,y:t.y+t.h-6,w:CT,h:bt.y-(t.y+t.h)+12,corr:true});}
+  }
+  for(const id in rooms) rects.push(rooms[id]);
+  rects.push(...corr);
+  // Deko
+  for(const id in rooms){const R=rooms[id];for(const d of R.deco||[])makeDeco(d,R,obst,decos);}
+  const world={L,rooms,corr,rects,obst,decos,w:MG*2+cols*CW,h:MG*2+rows*CH};
+  // Stationen
+  world.st={};
+  for(const s of L.st){
+    const R=rooms[s.room];
+    const o={...s};
+    if(s.wander){
+      const path=s.wander.map(id=>({x:rooms[id].cx,y:rooms[id].cy+20}));
+      o.path=path;o.pi=0;o.dir=1;o.x=path[0].x;o.y=path[0].y;o.wait=Math.random()*2;o.face=1;o.phase=0;o.moving=false;
+    }else{o.x=R.x+R.w*s.x;o.y=R.y+R.h*s.y;o.face=s.x>.5?-1:1;}
+    world.st[s.id]=o;
+  }
+  return world;
+}
+
+function makeDeco(kind,R,obst,decos){
+  const P=(fx,fy)=>[R.x+R.w*fx,R.y+R.h*fy];
+  const solid=(x,y,w,h)=>obst.push({x,y,w,h});
+  if(kind==="desks"){
+    for(const fx of [.1,.66])for(const fy of [.6]){const [x,y]=P(fx,fy),w=R.w*.24,hh=46;solid(x,y,w,hh);decos.push({t:"desk",x,y,w,h:hh});}
+  }else if(kind==="shelves"){
+    const segs=[[.04,.36],[.64,.96]];
+    for(const [a,b] of segs){const [x,y]=P(a,0);const w=R.w*(b-a);solid(x,y,w,38);decos.push({t:"shelf",x,y,w,h:38});}
+  }else if(kind==="printers"){
+    for(const fx of [.12,.78]){const [x,y]=P(fx,0);solid(x+4,y,52,40);decos.push({t:"copier",x:x+4,y,w:52,h:40});}
+    const [x,y]=P(.08,.72);solid(x,y,R.w*.22,40);decos.push({t:"desk",x,y,w:R.w*.22,h:40,paper:true});
+  }else if(kind==="round"){
+    for(const [fx,fy] of [[.2,.34],[.8,.34],[.2,.76],[.8,.76]]){const [x,y]=P(fx,fy);const r=32;solid(x-r+6,y-r+8,2*r-12,2*r-14);decos.push({t:"rtable",x,y,r});}
+  }else if(kind==="sofas"){
+    for(const [fx,fy] of [[.1,.64],[.66,.64]]){const [x,y]=P(fx,fy);const w=R.w*.24;solid(x,y,w,50);decos.push({t:"sofa",x,y,w,h:50});}
+  }else if(kind==="oval"){
+    const [x,y]=P(.26,.42);const w=R.w*.48,hh=R.h*.32;solid(x+10,y+6,w-20,hh-12);decos.push({t:"oval",x,y,w,h:hh});
+  }else if(kind==="plenum"){
+    decos.push({t:"plenum",x:R.cx,y:R.y+R.h*.30,R});
+  }else if(kind==="rug"){
+    decos.push({t:"rug",x:R.x+R.w*.3,y:R.y+R.h*.3,w:R.w*.4,h:R.h*.44});
+  }else if(kind==="plants"){
+    for(const [fx,fy] of [[.06,.86],[.94,.86]]){const [x,y]=P(fx,fy);solid(x-14,y-8,28,16);decos.push({t:"plant",x,y});}
+  }else if(kind==="trees"){
+    for(const [fx,fy] of [[.15,.25],[.85,.25],[.15,.8],[.85,.8]]){const [x,y]=P(fx,fy);solid(x-16,y-8,32,18);decos.push({t:"tree",x,y});}
+    decos.push({t:"flowers",R});
+  }
+}
+
+/* ---------- Kollision ---------- */
+const FX=14, FY=7;
+function inRects(x,y){for(const r of W.rects)if(x>=r.x&&x<=r.x+r.w&&y>=r.y&&y<=r.y+r.h)return true;return false;}
+function freeAt(x,y){
+  if(!inRects(x-FX,y-FY)||!inRects(x+FX,y-FY)||!inRects(x-FX,y+FY)||!inRects(x+FX,y+FY))return false;
+  for(const o of W.obst)if(x+FX>o.x&&x-FX<o.x+o.w&&y+FY>o.y&&y-FY<o.y+o.h)return false;
+  return true;
+}
+function roomAt(x,y){for(const id in W.rooms){const r=W.rooms[id];if(x>=r.x&&x<=r.x+r.w&&y>=r.y-10&&y<=r.y+r.h)return r;}return null;}
+
+/* =====================================================================
+   Zeichnen
+   ===================================================================== */
+const cv=$("cv"), ctx=cv.getContext("2d");
+let DPR=1, VW=0, VH=0, ZOOM=1;
+function resize(){DPR=Math.min(window.devicePixelRatio||1,2);VW=innerWidth;VH=innerHeight;cv.width=VW*DPR;cv.height=VH*DPR;
+  ZOOM=clamp(Math.min(VW/880,VH/600)*1.05,.62,1.35);}
+addEventListener("resize",resize);resize();
+
+function rr(c,x,y,w,hh,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+hh,r);c.arcTo(x+w,y+hh,x,y+hh,r);c.arcTo(x,y+hh,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+function shade(hex,amt){let n=parseInt(hex.slice(1),16);let r=n>>16,g=n>>8&255,b=n&255;
+  const f=amt<0?0:255,p=Math.abs(amt);r=Math.round(r+(f-r)*p);g=Math.round(g+(f-g)*p);b=Math.round(b+(f-b)*p);return "#"+((1<<24)|(r<<16)|(g<<8)|b).toString(16).slice(1);}
+const OL="#15171d";
+
+/* Figur (eigener Stil: kleine Politiker-Figur im Anzug) */
+function drawPerson(c,x,y,look,o={}){
+  const f=o.face||1, ph=o.phase||0, mv=!!o.moving, s=o.scale||1;
+  c.save();c.translate(x,y);c.scale(s,s);
+  if(!o.noShadow){c.fillStyle="rgba(0,0,0,.28)";c.beginPath();c.ellipse(0,0,21,7,0,0,Math.PI*2);c.fill();}
+  const bob=mv?-Math.abs(Math.sin(ph))*3.5:0;
+  c.translate(0,bob);c.scale(f,1);
+  c.lineWidth=3;c.strokeStyle=OL;c.lineJoin="round";
+  const sw=mv?Math.sin(ph)*5:0;
+  const pants=shade(look.body,-.45);
+  // Beine
+  c.fillStyle=pants;
+  rr(c,-12+sw,-16,10,16,4);c.fill();c.stroke();
+  rr(c,2-sw,-16,10,16,4);c.fill();c.stroke();
+  // hinterer Arm
+  c.fillStyle=shade(look.body,-.22);
+  c.save();c.translate(-15,-46);c.rotate(mv?-Math.sin(ph)*.5:.08);rr(c,-5,0,10,24,5);c.fill();c.stroke();c.restore();
+  // Körper
+  c.fillStyle=look.body;rr(c,-17,-52,34,40,12);c.fill();c.stroke();
+  c.fillStyle="rgba(0,0,0,.14)";rr(c,-15,-50,10,36,8);c.fill();
+  c.fillStyle="rgba(255,255,255,.16)";rr(c,6,-48,7,14,4);c.fill();
+  // Hemd + Krawatte
+  c.fillStyle="#fff";c.beginPath();c.moveTo(-6,-51);c.lineTo(8,-51);c.lineTo(1,-38);c.closePath();c.fill();
+  c.fillStyle=look.tie||"#c0392b";c.beginPath();c.moveTo(-1,-49);c.lineTo(3,-49);c.lineTo(4.5,-34);c.lineTo(1,-30);c.lineTo(-2.5,-34);c.closePath();c.fill();
+  // vorderer Arm
+  c.fillStyle=look.body;
+  c.save();c.translate(15,-46);c.rotate(mv?Math.sin(ph)*.5:-.08);rr(c,-5,0,10,24,5);c.fill();c.stroke();
+  c.fillStyle=look.skin;c.beginPath();c.arc(0,25,4.5,0,Math.PI*2);c.fill();c.stroke();c.restore();
+  // Kopf
+  const hx=2, hy=-66;
+  if(look.style==="long"){c.fillStyle=look.hair;rr(c,hx-17,hy-10,26,30,10);c.fill();c.stroke();}
+  c.fillStyle=look.skin;c.beginPath();c.arc(hx,hy,15,0,Math.PI*2);c.fill();c.stroke();
+  // Haare
+  c.fillStyle=look.hair;
+  if(look.style!=="bald"){
+    c.beginPath();
+    if(look.style==="curly"){for(let i=0;i<6;i++){const a=Math.PI*(1.05+i*.19);c.moveTo(hx+Math.cos(a)*13+6,hy+Math.sin(a)*13);c.arc(hx+Math.cos(a)*13,hy+Math.sin(a)*13,6,0,Math.PI*2);}c.fill();}
+    else{c.arc(hx,hy,15.5,Math.PI*1.02,Math.PI*1.98);c.quadraticCurveTo(hx+4,hy-6,hx-6,hy-4);c.quadraticCurveTo(hx-12,hy-2,hx-15,hy+4);c.closePath();c.fill();c.stroke();}
+    if(look.style==="bun"){c.beginPath();c.arc(hx-11,hy-13,6.5,0,Math.PI*2);c.fill();c.stroke();}
+  }else{c.beginPath();c.arc(hx-12,hy+1,4,0,Math.PI*2);c.fill();}
+  // Gesicht
+  c.fillStyle=OL;c.beginPath();c.arc(hx+5,hy+1,1.9,0,Math.PI*2);c.arc(hx+11,hy+1,1.9,0,Math.PI*2);c.fill();
+  c.lineWidth=1.6;c.beginPath();c.arc(hx+8,hy+6,3,.2,Math.PI-.2);c.stroke();
+  c.fillStyle="rgba(230,90,90,.35)";c.beginPath();c.arc(hx+13,hy+5,2.5,0,Math.PI*2);c.fill();
+  if(look.glasses){c.strokeStyle=OL;c.lineWidth=1.6;c.beginPath();c.arc(hx+5,hy+1,3.8,0,Math.PI*2);c.moveTo(hx+14.8,hy+1);c.arc(hx+11,hy+1,3.8,0,Math.PI*2);c.stroke();}
+  c.restore();
+}
+
+/* Stationen / Geräte */
+function drawStation(c,s,glow){
+  const x=s.x,y=s.y;
+  c.save();
+  if(glow){c.shadowColor="#ffd84a";c.shadowBlur=glow;}
+  c.lineWidth=3;c.strokeStyle=glow>14?"#ffd84a":OL;c.lineJoin="round";
+  const t=s.type;
+  if(t==="terminal"){c.fillStyle="#4a5160";rr(c,x-26,y-30,52,30,5);c.fill();c.stroke();c.shadowBlur=0;c.fillStyle="#3a404c";rr(c,x-18,y-58,36,28,4);c.fill();c.stroke();
+    c.fillStyle="#62d4ff";c.fillRect(x-13,y-53,26,18);c.fillStyle="#2aa0d0";c.fillRect(x-10,y-49,14,3);c.fillRect(x-10,y-44,9,3);}
+  else if(t==="scanner"){c.fillStyle="#5b6272";rr(c,x-14,y-62,28,62,6);c.fill();c.stroke();c.shadowBlur=0;c.fillStyle="#111";c.fillRect(x-9,y-44,18,5);
+    c.fillStyle=(performance.now()/500|0)%2?"#3ddc6f":"#1a5a2e";c.beginPath();c.arc(x,y-54,4,0,7);c.fill();}
+  else if(t==="printer"){c.fillStyle="#d9dde3";rr(c,x-28,y-38,56,38,5);c.fill();c.stroke();c.shadowBlur=0;c.fillStyle="#9aa1ab";c.fillRect(x-20,y-30,40,6);
+    c.fillStyle="#fff";c.fillRect(x-14,y-46,28,12);c.strokeRect(x-14,y-46,28,12);c.fillStyle="#3ddc6f";c.fillRect(x+16,y-14,6,4);}
+  else if(t==="cabinet"){c.fillStyle="#8b6a46";rr(c,x-22,y-56,44,56,4);c.fill();c.stroke();c.shadowBlur=0;c.strokeStyle=OL;c.lineWidth=2;
+    for(let i=0;i<3;i++){c.strokeRect(x-17,y-51+i*17,34,13);c.fillStyle="#d8c07a";c.fillRect(x-5,y-46+i*17,10,3);}}
+  else if(t==="stampdesk"){c.fillStyle="#9a6b42";rr(c,x-34,y-30,68,30,4);c.fill();c.stroke();c.shadowBlur=0;c.fillStyle="#fff";c.fillRect(x-24,y-27,22,16);
+    c.fillStyle="#c0392b";c.fillRect(x+8,y-34,12,10);c.fillStyle="#333";c.fillRect(x+11,y-44,6,10);}
+  else if(t==="podium"){c.fillStyle="#7a5232";c.beginPath();c.moveTo(x-24,y);c.lineTo(x+24,y);c.lineTo(x+18,y-40);c.lineTo(x-18,y-40);c.closePath();c.fill();c.stroke();c.shadowBlur=0;
+    c.fillStyle="#333";c.fillRect(x-1,y-56,3,16);c.beginPath();c.arc(x,y-57,4,0,7);c.fill();c.fillStyle="#e2c065";c.font="bold 14px sans-serif";c.textAlign="center";c.fillText("§",x,y-16);}
+  else if(t==="board"){c.fillStyle="#666";c.fillRect(x-30,y-6,4,6);c.fillRect(x+26,y-6,4,6);c.fillStyle="#f4f4f4";rr(c,x-34,y-60,68,52,4);c.fill();c.stroke();c.shadowBlur=0;
+    c.strokeStyle="#2f6fd6";c.lineWidth=2;c.beginPath();c.moveTo(x-24,y-46);c.lineTo(x+20,y-46);c.moveTo(x-24,y-36);c.lineTo(x+8,y-36);c.stroke();c.strokeStyle="#c0392b";c.beginPath();c.moveTo(x-24,y-24);c.lineTo(x+14,y-24);c.stroke();}
+  else if(t==="mailbox"){c.fillStyle="#8b6a46";rr(c,x-30,y-56,60,56,4);c.fill();c.stroke();c.shadowBlur=0;c.strokeStyle=OL;c.lineWidth=2;
+    for(let i=0;i<3;i++)for(let j=0;j<3;j++)c.strokeRect(x-25+j*17,y-51+i*17,15,14);}
+  else if(t==="vote"){c.fillStyle="#7a5232";rr(c,x-26,y-34,52,34,5);c.fill();c.stroke();c.shadowBlur=0;c.fillStyle="#c9ccd3";c.beginPath();c.ellipse(x,y-36,20,9,0,0,7);c.fill();c.stroke();
+    c.fillStyle="#e5484d";c.beginPath();c.ellipse(x,y-41,13,6,0,0,7);c.fill();c.stroke();c.fillStyle="#ffd84a";c.fillRect(x-14,y-20,28,6);}
+  c.restore();
+}
+
+/* Böden */
+const PAT={};
+function floorPattern(style,base){
+  const k=style+base;if(PAT[k])return PAT[k];
+  const p=document.createElement("canvas");const n=64;p.width=p.height=n;const c=p.getContext("2d");
+  c.fillStyle=base;c.fillRect(0,0,n,n);
+  const dk=shade(base,-.12),lt=shade(base,.08);
+  if(style==="tile"){c.strokeStyle=dk;c.lineWidth=2;c.strokeRect(1,1,n/2,n/2);c.strokeRect(n/2+1,1,n/2,n/2);c.strokeRect(1,n/2+1,n/2,n/2);c.strokeRect(n/2+1,n/2+1,n/2,n/2);
+    c.fillStyle=lt;c.fillRect(3,3,8,3);c.fillRect(n/2+3,n/2+3,8,3);}
+  else if(style==="wood"){c.strokeStyle=dk;c.lineWidth=2;for(let i=0;i<4;i++){c.beginPath();c.moveTo(0,i*16+1);c.lineTo(n,i*16+1);c.stroke();c.beginPath();const o=(i*23)%n;c.moveTo(o,i*16);c.lineTo(o,i*16+16);c.stroke();}
+    c.fillStyle=lt;c.fillRect(6,6,20,2);c.fillRect(36,38,18,2);}
+  else if(style==="carpet"){c.fillStyle=dk;for(let i=0;i<n;i+=8)for(let j=(i/8)%2*4;j<n;j+=8)c.fillRect(i,j,2,2);}
+  else if(style==="marble"){c.strokeStyle=dk;c.lineWidth=2;c.beginPath();c.moveTo(0,n/2);c.lineTo(n/2,0);c.lineTo(n,n/2);c.lineTo(n/2,n);c.closePath();c.stroke();c.fillStyle=lt;c.fillRect(n/2-6,n/2-1,12,2);}
+  else if(style==="grass"){c.fillStyle=dk;for(let i=0;i<40;i++){c.fillRect((i*37)%n,(i*53)%n,2,4);}c.fillStyle=lt;for(let i=0;i<14;i++)c.fillRect((i*29+7)%n,(i*41+3)%n,2,3);}
+  else if(style==="metal"){c.strokeStyle=dk;c.lineWidth=2;c.strokeRect(1,1,n-2,n-2);c.fillStyle=dk;for(const [a,b] of [[6,6],[n-8,6],[6,n-8],[n-8,n-8]])c.fillRect(a,b,3,3);}
+  return PAT[k]=ctx.createPattern(p,"repeat");
+}
+
+let STATIC=null, SS=1;
+function renderStatic(){
+  SS=Math.min(DPR,1.5,4096/W.w,4096/W.h);
+  const can=document.createElement("canvas");can.width=Math.ceil(W.w*SS);can.height=Math.ceil(W.h*SS);
+  const c=can.getContext("2d");c.scale(SS,SS);
+  // Außenwände
+  const grow=(r,t,top)=>[r.x-t,r.y-t-top,r.w+2*t,r.h+2*t+top];
+  c.fillStyle="#07080c";for(const r of W.rects)c.fillRect(...grow(r,WT+4,FACE));
+  c.fillStyle="#3d4555";for(const r of W.rects)c.fillRect(...grow(r,WT,FACE));
+  // Wandflächen (oben)
+  for(const r of W.rects){
+    const base=r.corr?"#566074":shade(r.floor,-.35);
+    c.fillStyle=base;c.fillRect(r.x,r.y-FACE,r.w,FACE);
+    c.fillStyle=shade(base,.12);c.fillRect(r.x,r.y-FACE,r.w,6);
+    c.fillStyle=shade(base,-.25);c.fillRect(r.x,r.y-8,r.w,8);
+    if(!r.corr){c.fillStyle=shade(base,-.1);for(let x=r.x+30;x<r.x+r.w-20;x+=60)c.fillRect(x,r.y-FACE+10,3,FACE-20);}
+  }
+  // Böden
+  for(const r of W.corr){c.fillStyle=floorPattern("metal","#6b7384");c.fillRect(r.x,r.y,r.w,r.h);}
+  for(const id in W.rooms){const r=W.rooms[id];c.fillStyle=floorPattern(r.pat,r.floor);c.fillRect(r.x,r.y,r.w,r.h);}
+  // Schatten unter der Wand
+  for(const r of W.rects){const g=c.createLinearGradient(0,r.y,0,r.y+18);g.addColorStop(0,"rgba(0,0,0,.28)");g.addColorStop(1,"rgba(0,0,0,0)");c.fillStyle=g;c.fillRect(r.x,r.y,r.w,18);}
+  // Raumnamen auf dem Boden
+  c.font="900 22px 'Trebuchet MS',sans-serif";c.textAlign="center";
+  for(const id in W.rooms){const r=W.rooms[id];c.fillStyle="rgba(255,255,255,.13)";c.fillText(r.name.toUpperCase(),r.cx,r.y+r.h-16);}
+  // Deko
+  for(const d of W.decos)drawDeco(c,d);
+  STATIC=can;
+}
+function drawDeco(c,d){
+  c.save();c.lineWidth=3;c.strokeStyle=OL;c.lineJoin="round";
+  if(d.t==="desk"){c.fillStyle="#9a6b42";rr(c,d.x,d.y,d.w,d.h,5);c.fill();c.stroke();c.fillStyle="#b9875a";c.fillRect(d.x+4,d.y+4,d.w-8,5);
+    if(d.paper){for(let i=0;i<3;i++){c.fillStyle="#fff";c.fillRect(d.x+10+i*26,d.y+10,18,22);}}
+    else{c.fillStyle="#3a404c";rr(c,d.x+d.w/2-16,d.y+6,32,20,3);c.fill();c.stroke();c.fillStyle="#62d4ff";c.fillRect(d.x+d.w/2-12,d.y+10,24,12);
+      c.fillStyle="#fff";c.fillRect(d.x+10,d.y+12,14,18);c.fillStyle="#3b3f48";for(const dx of [.25,.75]){c.beginPath();c.arc(d.x+d.w*dx,d.y+d.h+14,10,0,7);c.fill();c.stroke();}}}
+  else if(d.t==="shelf"){c.fillStyle="#6e4f32";rr(c,d.x,d.y-30,d.w,d.h+30,4);c.fill();c.stroke();
+    const cols=["#c0392b","#2f6fd6","#2fa956","#e2c065","#8e44ad","#e67e22"];for(let x=d.x+6,i=0;x<d.x+d.w-10;x+=9,i++){c.fillStyle=cols[(i*7)%6];c.fillRect(x,d.y-24+(i%3),7,22-(i%3));c.fillStyle=cols[(i*5+2)%6];c.fillRect(x,d.y+4+(i%2),7,22-(i%2));}}
+  else if(d.t==="copier"){c.fillStyle="#cfd3da";rr(c,d.x,d.y-20,d.w,d.h+20,5);c.fill();c.stroke();c.fillStyle="#7d848f";c.fillRect(d.x+6,d.y-12,d.w-12,8);c.fillStyle="#3ddc6f";c.fillRect(d.x+d.w-14,d.y+d.h-12,6,4);}
+  else if(d.t==="rtable"){c.fillStyle="#3b3f48";for(const a of [0,1.57,3.14,4.71]){c.beginPath();c.arc(d.x+Math.cos(a)*40,d.y+Math.sin(a)*34,9,0,7);c.fill();c.stroke();}
+    c.fillStyle="#e8e8e8";c.beginPath();c.ellipse(d.x,d.y,d.r,d.r*.8,0,0,7);c.fill();c.stroke();c.fillStyle="#d3d3d3";c.beginPath();c.ellipse(d.x,d.y+3,d.r-8,d.r*.8-8,0,0,7);c.fill();}
+  else if(d.t==="sofa"){c.fillStyle="#7b3f3f";rr(c,d.x,d.y,d.w,d.h,10);c.fill();c.stroke();c.fillStyle="#9a5252";rr(c,d.x+8,d.y+14,d.w-16,d.h-20,6);c.fill();}
+  else if(d.t==="oval"){c.fillStyle="#3b3f48";const n=6;for(let i=0;i<n;i++){const fx=d.x+d.w*(i+.5)/n;for(const fy of [d.y-10,d.y+d.h+10]){c.beginPath();c.arc(fx,fy,9,0,7);c.fill();c.stroke();}}
+    c.fillStyle="#6e4a2e";c.beginPath();c.ellipse(d.x+d.w/2,d.y+d.h/2,d.w/2,d.h/2,0,0,7);c.fill();c.stroke();c.fillStyle="#86603f";c.beginPath();c.ellipse(d.x+d.w/2,d.y+d.h/2-3,d.w/2-10,d.h/2-10,0,0,7);c.fill();
+    c.fillStyle="#fff";for(let i=0;i<4;i++)c.fillRect(d.x+d.w*(.18+i*.19),d.y+d.h*.35,14,10);}
+  else if(d.t==="plenum"){const R=d.R;const cx=R.cx,cy=R.y+R.h*.08;
+    const seat=R.floor==="#4b6fa8"?"#2a54a8":"#3d5a8a";
+    for(let row=0;row<4;row++){const rad=R.h*(.40+row*.14);const st=26/(rad*1.2);
+      for(let a=.12;a<=Math.PI-.12;a+=st){const sx=cx+Math.cos(a)*rad*1.2,sy=cy+Math.sin(a)*rad;
+        if(Math.abs(sx-cx)<62||Math.abs(sy-R.cy-20)<46)continue;
+        if(sx<R.x+18||sx>R.x+R.w-18||sy>R.y+R.h-34||sy<R.y+R.h*.3)continue;
+        c.fillStyle=seat;c.lineWidth=2;rr(c,sx-9,sy-7,18,14,4);c.fill();c.stroke();}}
+    c.fillStyle="rgba(0,0,0,.15)";c.fillRect(cx-R.w*.22,R.y+4,R.w*.44,R.h*.16);
+    c.fillStyle="#e2c065";c.font="900 30px serif";c.textAlign="center";c.fillText("§",cx,R.y-14);}
+  else if(d.t==="rug"){c.fillStyle="#8e2b3a";rr(c,d.x,d.y,d.w,d.h,8);c.fill();c.strokeStyle="#e2c065";c.lineWidth=3;rr(c,d.x+8,d.y+8,d.w-16,d.h-16,6);c.stroke();}
+  else if(d.t==="plant"){c.fillStyle="#7a4b2a";rr(c,d.x-12,d.y-18,24,20,4);c.fill();c.stroke();c.fillStyle="#2fa956";
+    for(const [dx,dy] of [[-10,-28],[10,-28],[0,-38],[-4,-24],[6,-22]]){c.beginPath();c.arc(d.x+dx,d.y+dy,10,0,7);c.fill();c.stroke();}}
+  else if(d.t==="tree"){c.fillStyle="rgba(0,0,0,.25)";c.beginPath();c.ellipse(d.x,d.y+2,30,10,0,0,7);c.fill();c.fillStyle="#6b4429";c.fillRect(d.x-6,d.y-26,12,28);c.strokeRect(d.x-6,d.y-26,12,28);
+    c.fillStyle="#2f7d32";for(const [dx,dy,r] of [[-16,-40,18],[16,-40,18],[0,-56,22],[0,-34,18]]){c.beginPath();c.arc(d.x+dx,d.y+dy,r,0,7);c.fill();c.stroke();}
+    c.fillStyle="#4caf50";c.beginPath();c.arc(d.x-6,d.y-60,8,0,7);c.fill();}
+  else if(d.t==="flowers"){const R=d.R;const cols=["#ffd84a","#ec6fb3","#fff","#e5484d"];for(let i=0;i<26;i++){const x=R.x+20+((i*97)%(R.w-40)),y=R.y+20+((i*61)%(R.h-40));
+    if(Math.abs(x-R.cx)<80||Math.abs(y-R.cy)<70)continue;c.fillStyle=cols[i%4];c.beginPath();c.arc(x,y,4,0,7);c.fill();}}
+  c.restore();
+}
+
+/* =====================================================================
+   Spielzustand
+   ===================================================================== */
+let G=null; // laufendes Level
+const keys=new Set();
+let joy=null;
+
+function startLevel(i){
+  const L=LEVELS[i];
+  closeOv();toggleMap(false);
+  W=buildWorld(L);
+  renderStatic();
+  const sp=W.rooms[L.spawn];
+  G={i,L,px:sp.cx,py:sp.cy+40,face:1,phase:0,moving:false,done:{},prog:{},target:null,room:null,over:false,cam:{x:sp.cx,y:sp.cy},t:0,busy:false};
+  for(const t of L.tasks){G.prog[t.id]=t.steps.map(()=>false);}
+  showIntro();
+}
+
+function taskDone(t){return G.prog[t.id].every(Boolean);}
+function taskOpen(t){return (t.needs||[]).every(id=>taskDone(L_task(id)));}
+function L_task(id){return G.L.tasks.find(t=>t.id===id);}
+function availSteps(){ // Liste offener, verfügbarer Schritte
+  const out=[];
+  for(const t of G.L.tasks){if(taskDone(t)||!taskOpen(t))continue;
+    t.steps.forEach((s,k)=>{if(G.prog[t.id][k])return;if(t.ordered&&G.prog[t.id].indexOf(false)!==k)return;out.push({t,k,s});});}
+  return out;
+}
+function stepFor(stId){return availSteps().find(a=>a.s.st===stId)||null;}
+
+/* ---------- Eingabe ---------- */
+addEventListener("keydown",e=>{
+  if(!G||G.over)return;
+  const k=e.key.toLowerCase();
+  if(!$("ov").classList.contains("hidden")||!$("scr").classList.contains("hidden")){if(k==="escape"&&!$("ov").classList.contains("hidden"))(closeHandler||closeOv)();return;}
+  if(!$("mapov").classList.contains("hidden")){if(k==="m"||k==="escape"||k==="tab"){e.preventDefault();toggleMap(false);}return;}
+  if(["arrowup","arrowdown","arrowleft","arrowright","w","a","s","d"].includes(k)){keys.add(k);e.preventDefault();}
+  if(k===" "||k==="e"||k==="enter"){e.preventDefault();doUse();}
+  if(k==="m"||k==="tab"){e.preventDefault();toggleMap(true);}
+  if(k==="escape"||k==="p")showPause();
+});
+addEventListener("keyup",e=>keys.delete(e.key.toLowerCase()));
+addEventListener("blur",()=>keys.clear());
+
+cv.addEventListener("pointerdown",e=>{if(!G||G.over)return;cv.setPointerCapture(e.pointerId);joy={id:e.pointerId,ox:e.clientX,oy:e.clientY,dx:0,dy:0};
+  const j=$("joy");j.style.display="block";j.style.left=(e.clientX-60)+"px";j.style.top=(e.clientY-60)+"px";j.firstChild.style.transform="";});
+cv.addEventListener("pointermove",e=>{if(!joy||e.pointerId!==joy.id)return;let dx=e.clientX-joy.ox,dy=e.clientY-joy.oy;const d=Math.hypot(dx,dy),m=46;
+  if(d>m){dx=dx/d*m;dy=dy/d*m;}joy.dx=dx/m;joy.dy=dy/m;$("joy").firstChild.style.transform=`translate(${dx}px,${dy}px)`;});
+const endJoy=e=>{if(joy&&e.pointerId===joy.id){joy=null;$("joy").style.display="none";}};
+cv.addEventListener("pointerup",endJoy);cv.addEventListener("pointercancel",endJoy);
+$("btnUse").addEventListener("click",()=>doUse());
+$("btnMap").addEventListener("click",()=>toggleMap(true));
+$("mapov").addEventListener("click",()=>toggleMap(false));
+$("btnPause").addEventListener("click",()=>showPause());
+$("tasklist").addEventListener("click",()=>{$("tasklist").classList.toggle("min");});
+
+/* ---------- Update ---------- */
+const SPEED=250;
+function update(dt){
+  if(!G||G.over)return;
+  G.t+=dt;
+  const paused=G.busy||!$("ov").classList.contains("hidden")||!$("mapov").classList.contains("hidden")||!$("scr").classList.contains("hidden");
+  // NPCs laufen
+  for(const id in W.st){const s=W.st[id];if(!s.path)continue;
+    if(paused&&G.talkTo===id){s.moving=false;continue;}
+    const near=Math.hypot(s.x-G.px,s.y-G.py)<80 && stepFor(id);
+    if(s.wait>0||near){s.wait-=dt;s.moving=false;continue;}
+    const tg=s.path[s.pi];const dx=tg.x-s.x,dy=tg.y-s.y,d=Math.hypot(dx,dy);
+    if(d<3){s.wait=1.2+Math.random()*2.5;let ni=s.pi+s.dir;if(ni<0||ni>=s.path.length){s.dir*=-1;ni=s.pi+s.dir;}s.pi=ni;s.moving=false;}
+    else{const sp=95*dt;s.x+=dx/d*Math.min(sp,d);s.y+=dy/d*Math.min(sp,d);s.face=dx>1?1:dx<-1?-1:s.face;s.phase+=dt*11;s.moving=true;}
+  }
+  if(paused){G.moving=false;return;}
+  let vx=0,vy=0;
+  if(keys.has("arrowleft")||keys.has("a"))vx-=1;if(keys.has("arrowright")||keys.has("d"))vx+=1;
+  if(keys.has("arrowup")||keys.has("w"))vy-=1;if(keys.has("arrowdown")||keys.has("s"))vy+=1;
+  if(joy&&Math.hypot(joy.dx,joy.dy)>.18){vx=joy.dx;vy=joy.dy;}
+  const m=Math.hypot(vx,vy);
+  if(m>0){if(m>1){vx/=m;vy/=m;}
+    const nx=G.px+vx*SPEED*dt, ny=G.py+vy*SPEED*dt;
+    if(freeAt(nx,G.py))G.px=nx;if(freeAt(G.px,ny))G.py=ny;
+    if(Math.abs(vx)>.1)G.face=vx>0?1:-1;G.phase+=dt*13;G.moving=true;}
+  else G.moving=false;
+  // Ziel suchen
+  let best=null,bd=1e9;
+  for(const a of availSteps()){const s=W.st[a.s.st];const d=Math.hypot(s.x-G.px,(s.y-G.py)*1.15);const R=s.npc?78:72;
+    if(d<R&&d<bd){bd=d;best=a;}}
+  G.target=best;
+  $("btnUse").classList.toggle("on",!!best);
+  const r=roomAt(G.px,G.py);const rn=r?r.name:"Flur";
+  if(rn!==G.room){G.room=rn;$("roomlbl").textContent=rn;}
+  $("hint").textContent=best?(W.st[best.s.st].npc?"💬 "+W.st[best.s.st].npc.name+" – ansprechen":"✋ "+best.t.name):"";
+}
+
+/* ---------- Render ---------- */
+function render(){
+  const w=VW,hh=VH;
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  ctx.fillStyle="#090b11";ctx.fillRect(0,0,w,hh);
+  if(!G||!STATIC)return;
+  // Kamera
+  G.cam.x+=(G.px-G.cam.x)*.18;G.cam.y+=(G.py-30-G.cam.y)*.18;
+  const ox=w/2-G.cam.x*ZOOM, oy=hh/2-G.cam.y*ZOOM;
+  ctx.setTransform(DPR*ZOOM,0,0,DPR*ZOOM,ox*DPR,oy*DPR);
+  ctx.imageSmoothingEnabled=true;
+  ctx.drawImage(STATIC,0,0,W.w,W.h);
+  // Sprites
+  const av=new Set(availSteps().map(a=>a.s.st));
+  const tgt=G.target?G.target.s.st:null;
+  const pulse=6+Math.sin(G.t*4)*3;
+  const list=[];
+  for(const id in W.st){const s=W.st[id];list.push({y:s.y,f:()=>{
+    const glow=id===tgt?22:av.has(id)?pulse:0;
+    if(s.npc){ctx.save();if(glow){ctx.shadowColor="#ffd84a";ctx.shadowBlur=glow;}drawPerson(ctx,s.x,s.y,s.npc.look,{face:s.face,phase:s.phase,moving:s.moving});ctx.restore();}
+    else drawStation(ctx,s,glow);}});}
+  list.push({y:G.py,f:()=>drawPerson(ctx,G.px,G.py,LOOK(save.color,0,"brown","short",{tie:"#1d2430"}),{face:G.face,phase:G.phase,moving:G.moving})});
+  list.sort((a,b)=>a.y-b.y).forEach(o=>o.f());
+  // Namen & Ausrufezeichen
+  ctx.textAlign="center";ctx.lineJoin="round";
+  for(const id in W.st){const s=W.st[id];if(!s.npc)continue;
+    const near=Math.hypot(s.x-G.px,s.y-G.py)<260;
+    if(near){label(s.npc.name,s.x,s.y-90,13);}
+    if(av.has(id)){const b=Math.sin(G.t*5)*3;ctx.font="900 26px 'Trebuchet MS',sans-serif";ctx.lineWidth=5;ctx.strokeStyle=OL;ctx.strokeText("!",s.x,s.y-(near?104:92)+b);ctx.fillStyle="#ffd84a";ctx.fillText("!",s.x,s.y-(near?104:92)+b);}}
+  label(save.name||"Du",G.px,G.py-90,14);
+  // Sichtfeld-Vignette
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  const px=G.px*ZOOM+ox,py=(G.py-30)*ZOOM+oy;const R=Math.max(w,hh);
+  const g=ctx.createRadialGradient(px,py,R*.22,px,py,R*.72);g.addColorStop(0,"rgba(0,0,0,0)");g.addColorStop(1,"rgba(0,0,0,.62)");
+  ctx.fillStyle=g;ctx.fillRect(0,0,w,hh);
+}
+function label(t,x,y,size){ctx.font=`800 ${size}px 'Trebuchet MS',sans-serif`;ctx.lineWidth=4;ctx.strokeStyle=OL;ctx.strokeText(t,x,y);ctx.fillStyle="#fff";ctx.fillText(t,x,y);}
+
+let last=performance.now();
+function loop(t){const dt=Math.min(.05,(t-last)/1000);last=t;update(dt);render();requestAnimationFrame(loop);}
+requestAnimationFrame(loop);
+
+/* ---------- HUD ---------- */
+function updateHUD(){
+  const L=G.L;let total=0,done=0;
+  const tl=$("tasklist");const wasMin=tl.classList.contains("min");tl.innerHTML="";
+  tl.append(h("div",{class:"hd"},h("span",{},"📋 Aufgaben"),h("span",{},wasMin?"▸":"▾")));
+  for(const t of L.tasks){const p=G.prog[t.id];total+=p.length;done+=p.filter(Boolean).length;
+    const n=p.filter(Boolean).length;
+    const next=t.steps[p.indexOf(false)];const room=next?W.rooms[W.st[next.st].room].name:"";
+    const cls=taskDone(t)?"done":!taskOpen(t)?"lock":n>0?"part":"";
+    const where=W.st[next?next.st:t.steps[0].st].path?"irgendwo unterwegs":room;
+    tl.append(h("div",{class:"t "+cls},(taskDone(t)?"✓ ":!taskOpen(t)?"🔒 ":"")+(taskDone(t)?"":where+": ")+t.name+(p.length>1?` (${n}/${p.length})`:"")));
+  }
+  $("totalfill").style.width=(100*done/total)+"%";
+}
+let toastT;
+function toast(html,ms=2600){const t=$("toast");t.innerHTML=html;t.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("show"),ms);}
+
+/* ---------- Karte ---------- */
+function toggleMap(on){
+  const ov=$("mapov");if(!on){ov.classList.add("hidden");return;}
+  if(!G)return;ov.classList.remove("hidden");
+  const c=$("mapcv"),x=c.getContext("2d");const sc=.42;const pad=20;
+  const bw=W.w-2*MG+200,bh=W.h-2*MG+200;
+  c.width=bw*sc*2;c.height=bh*sc*2;x.scale(sc*2,sc*2);x.translate(-MG+100,-MG+100);
+  x.fillStyle="rgba(170,215,255,.25)";x.strokeStyle="rgba(220,240,255,.9)";x.lineWidth=4;
+  for(const r of W.rects){x.fillRect(r.x,r.y,r.w,r.h);}
+  for(const id in W.rooms){const r=W.rooms[id];x.strokeRect(r.x,r.y,r.w,r.h);}
+  x.textAlign="center";x.font="800 26px 'Trebuchet MS',sans-serif";x.fillStyle="#fff";
+  for(const id in W.rooms){const r=W.rooms[id];wrapText(x,r.name,r.cx,r.cy-10,r.w-30,30);}
+  for(const a of availSteps()){const s=W.st[a.s.st];if(s.path)continue;
+    x.fillStyle="#ffd84a";x.strokeStyle="#15171d";x.lineWidth=5;x.font="900 52px sans-serif";x.strokeText("!",s.x,s.y+10);x.fillText("!",s.x,s.y+10);}
+  x.fillStyle=save.color;x.strokeStyle="#15171d";x.lineWidth=5;x.beginPath();x.arc(G.px,G.py-20,20,0,7);x.fill();x.stroke();
+  x.font="800 22px sans-serif";x.fillStyle="#fff";x.strokeText("DU",G.px,G.py-48);x.fillText("DU",G.px,G.py-48);
+  x.setTransform(1,0,0,1,0,0);x.font="700 22px sans-serif";x.fillStyle="#fff";x.textAlign="left";
+  x.fillText("! = Aufgabe   ·   Personen, die herumlaufen, musst du suchen",20,c.height-16);
+}
+function wrapText(x,t,cx,cy,maxw,lh){const words=t.split(" ");const lines=[];let cur="";for(const w of words){const tt=cur?cur+" "+w:w;if(x.measureText(tt).width>maxw&&cur){lines.push(cur);cur=w;}else cur=tt;}lines.push(cur);
+  lines.forEach((l,i)=>x.fillText(l,cx,cy+(i-(lines.length-1)/2)*lh));}
+
+/* =====================================================================
+   Interaktion & Mini-Spiele
+   ===================================================================== */
+let closeHandler=null;
+function openOv(node,onClose){const ov=$("ov");ov.innerHTML="";ov.append(node);ov.classList.remove("hidden");closeHandler=onClose||null;keys.clear();joy=null;$("joy").style.display="none";}
+function closeOv(){$("ov").classList.add("hidden");$("ov").innerHTML="";closeHandler=null;G&&(G.talkTo=null);}
+function panel(title,sub,abort){const p=h("div",{class:"mg"});
+  p.append(h("button",{class:"x",onclick:()=>{abort&&abort();closeOv();},"aria-label":"Schließen"},"✕"));
+  if(title)p.append(h("h2",{},title));if(sub)p.append(h("div",{class:"sub",html:sub}));return p;}
+
+function doUse(){
+  if(!G||G.over||!G.target)return;
+  const a=G.target, s=W.st[a.s.st];
+  sfx.use();
+  if(s.npc){G.talkTo=s.id;s.face=G.px<s.x?-1:1;}
+  const run=()=>runGame(a.s.g,a.s.d||{},()=>completeStep(a));
+  if(a.s.say)dialog(s,a.s.say,run);else run();
+}
+function completeStep(a){
+  closeOv();
+  G.prog[a.t.id][a.k]=true;
+  if(taskDone(a.t)){sfx.task();toast("✅ Aufgabe erledigt: <b>"+a.t.name+"</b>");}
+  else{sfx.ok();const p=G.prog[a.t.id];toast(`${a.t.name}: ${p.filter(Boolean).length}/${p.length}`);}
+  const unlocked=G.L.tasks.filter(t=>!taskDone(t)&&t.needs&&t.needs.includes(a.t.id)&&taskOpen(t));
+  if(unlocked.length)setTimeout(()=>toast("🔓 Neue Aufgabe: <b>"+unlocked.map(t=>t.name).join(", ")+"</b>",3200),1500);
+  updateHUD();
+  if(G.L.tasks.every(taskDone)){G.over=true;setTimeout(levelWon,900);}
+}
+function portrait(look,w=92,hgt=110){const c=h("canvas",{width:w*2,height:hgt*2});const x=c.getContext("2d");x.scale(2,2);const sc=hgt/82;drawPerson(x,w/2,hgt+30*sc,look,{scale:sc,noShadow:true});return c;}
+function dialog(s,text,next){
+  const p=panel(null,null);
+  p.append(h("div",{class:"dlg"},portrait(s.npc.look),h("div",{},h("div",{class:"who"},s.npc.name),h("div",{class:"role"},s.npc.role),h("div",{class:"txt",html:text}))));
+  const b=h("button",{class:"btn go",onclick:()=>{sfx.click();next();}},"Weiter ▶");
+  p.append(h("div",{class:"row"},b));openOv(p);setTimeout(()=>b.focus(),50);
+}
+function runGame(g,d,done){
+  ({talk:(d,done)=>done(),quiz:gQuiz,sign:gSign,swipe:gSwipe,sort:gSort,order:gOrder,wires:gWires,stamp:gStamp,transfer:gTransfer,count:gCount,vote:gVote})[g](d,done);
+}
+
+/* Quiz */
+function gQuiz(d,done,embedTitle){
+  const p=panel(embedTitle||"Frage",null);
+  p.append(h("div",{class:"screen",style:"font-size:17px;font-weight:800;line-height:1.4;margin-bottom:12px"},d.q));
+  const fb=h("div",{class:"feedback hidden"});
+  const ans=h("div",{class:"answers"});let solved=false;
+  shuffle(d.a.map((t,i)=>({t,i}))).forEach(o=>{const b=h("button",{class:"btn",onclick:()=>{
+    if(solved)return;
+    if(o.i===d.ok){solved=true;b.classList.add("ok");sfx.ok();fb.className="feedback good";fb.innerHTML="✔ "+(d.why||"Richtig!");
+      p.append(h("div",{class:"row"},h("button",{class:"btn go",onclick:()=>{sfx.click();done();}},"Weiter ▶")));}
+    else{b.classList.remove("bad");void b.offsetWidth;b.classList.add("bad");b.disabled=true;sfx.bad();fb.className="feedback bad";fb.innerHTML="✘ "+((d.wrong&&d.wrong[o.i])||"Nicht ganz – versuch es nochmal!");}
+  }},o.t);ans.append(b);});
+  p.append(ans,fb);openOv(p);
+}
+
+/* Unterschrift */
+function gSign(d,done){
+  if(d.quiz)return gQuiz(d.quiz,()=>gSign({...d,quiz:null},done));
+  const p=panel("Unterschrift einholen","Lege die Mappe vor, damit unterschrieben werden kann.");
+  const svgNS="http://www.w3.org/2000/svg";
+  const sv=document.createElementNS(svgNS,"svg");sv.setAttribute("viewBox","0 0 200 56");
+  const path=document.createElementNS(svgNS,"path");
+  let dd="M10 40 ";for(let i=0;i<9;i++){const x=20+i*18;dd+=`C ${x-6} ${10+((i*37)%20)}, ${x+4} ${48-((i*23)%14)}, ${x+9} ${28+((i*13)%14)} `;}dd+="M30 46 L 175 40";
+  path.setAttribute("d",dd);path.setAttribute("fill","none");path.setAttribute("stroke","#1d3a8a");path.setAttribute("stroke-width","2.5");path.setAttribute("stroke-linecap","round");
+  sv.append(path);
+  const mark=h("div",{class:"stampmark"},"✓ GEZEICHNET");
+  const paper=h("div",{class:"paper"},h("h3",{},d.doc),...[1,2,3,4].map(i=>h("div",{class:"ln",style:`width:${[96,88,92,60][i-1]}%`})),
+    h("div",{class:"sigrow"},h("span",{},"Unterschrift:"),sv),h("div",{style:"font-size:12px;margin-top:4px;color:#555"},d.who),mark);
+  p.append(paper);
+  const b=h("button",{class:"btn blue",onclick:()=>{b.disabled=true;sfx.click();
+    const L=path.getTotalLength?path.getTotalLength():600;path.style.strokeDasharray=L;path.style.strokeDashoffset=L;path.getBoundingClientRect();
+    path.style.transition="stroke-dashoffset 1.2s ease-in-out";path.style.strokeDashoffset="0";
+    setTimeout(()=>{mark.style.opacity=1;sfx.ok();},1250);setTimeout(done,2100);}},"📁 Mappe vorlegen");
+  path.style.strokeDasharray="2000";path.style.strokeDashoffset="2000";
+  p.append(h("div",{class:"row"},b));openOv(p);
+}
+
+/* Ausweis durchziehen */
+function gSwipe(d,done){
+  const p=panel("Ausweis durchziehen","Ziehe den Ausweis gleichmäßig durch den Leser – nicht zu schnell, nicht zu langsam.");
+  const lcd=h("div",{class:"lcd"},"BITTE AUSWEIS DURCHZIEHEN");
+  const led=h("div",{class:"led"});
+  const card=h("div",{class:"card"},"HAUSAUSWEIS",h("br"),h("span",{style:"font-weight:400"},G?G.L.title:""),h("div",{class:"ph"}),h("div",{class:"lines"},h("i"),h("i",{style:"width:70%"})));
+  const reader=h("div",{class:"reader"},h("div",{class:"slot"}),led,card);
+  p.append(lcd,h("div",{style:"padding-top:30px"},reader));
+  let drag=null,ok=false;
+  card.addEventListener("pointerdown",e=>{if(ok)return;card.setPointerCapture(e.pointerId);drag={x0:e.clientX,t0:performance.now(),max:reader.clientWidth-card.offsetWidth-16};card.style.transition="none";lcd.textContent="…";});
+  card.addEventListener("pointermove",e=>{if(!drag)return;const dx=clamp(e.clientX-drag.x0,0,drag.max);card.style.transform=`translateX(${dx}px)`;drag.dx=dx;});
+  const end=()=>{if(!drag)return;const dt=(performance.now()-drag.t0)/1000;const full=(drag.dx||0)>=drag.max-4;
+    card.style.transition="transform .25s";
+    if(!full){lcd.textContent="BITTE GANZ DURCHZIEHEN";card.style.transform="";sfx.bad();}
+    else if(dt<.45){lcd.textContent="ZU SCHNELL. NOCHMAL.";card.style.transform="";sfx.bad();led.style.background="#e5484d";}
+    else if(dt>1.6){lcd.textContent="ZU LANGSAM. NOCHMAL.";card.style.transform="";sfx.bad();led.style.background="#e5484d";}
+    else{ok=true;lcd.textContent="ZUGANG GEWÄHRT ✓";led.style.background="#3ddc6f";sfx.ok();setTimeout(done,900);}
+    drag=null;};
+  card.addEventListener("pointerup",end);card.addEventListener("pointercancel",end);
+  openOv(p);
+}
+
+/* Sortieren */
+function gSort(d,done){
+  const p=panel(d.title,d.sub);
+  const items=shuffle(d.items);let i=0;
+  const cardEl=h("div",{class:"sortcard"});const fb=h("div",{class:"feedback hidden"});
+  const dots=h("div",{class:"dots"},items.map(()=>h("i")));
+  const bins=h("div",{class:"bins"},d.bins.map((b,bi)=>h("button",{class:"btn "+(bi?"warn":"go"),style:"min-height:58px",onclick:()=>choose(bi)},b)));
+  let lock=false;
+  function show(){cardEl.textContent=items[i][0];cardEl.style.transform="";cardEl.style.opacity=1;}
+  function choose(bi){if(lock)return;const it=items[i];
+    if(bi===it[1]){lock=true;sfx.ok();dots.children[i].classList.add("on");fb.className="feedback good";fb.innerHTML="✔ "+(it[2]||"Richtig!");
+      cardEl.style.transform=`translateX(${bi?60:-60}px) rotate(${bi?8:-8}deg)`;cardEl.style.opacity=.0;
+      setTimeout(()=>{i++;lock=false;if(i>=items.length){fb.className="feedback good";fb.innerHTML="✔ Alles richtig sortiert!";setTimeout(done,700);}else show();},it[2]?1500:650);}
+    else{sfx.bad();cardEl.animate([{transform:"translateX(-8px)"},{transform:"translateX(8px)"},{transform:"translateX(0)"}],{duration:250});
+      fb.className="feedback bad";fb.innerHTML="✘ "+(it[2]||"Nein – überleg nochmal.");}}
+  p.append(cardEl,bins,dots,fb);show();openOv(p);
+}
+
+/* Reihenfolge */
+function gOrder(d,done){
+  const p=panel(d.title,d.sub);
+  const seq=h("div",{class:"seq"}),pool=h("div",{class:"pool"}),fb=h("div",{class:"feedback hidden"});let n=0;
+  shuffle(d.items.map((t,i)=>({t,i}))).forEach(o=>{const b=h("button",{class:"btn",style:"text-align:left",onclick:()=>{
+    if(o.i===n){sfx.ok();b.remove();seq.append(h("div",{},h("b",{},(n+1)+"."),o.t));n++;fb.className="feedback hidden";
+      if(n===d.items.length){fb.className="feedback good";fb.innerHTML="✔ Perfekt erklärt! Das Plenum überweist den Entwurf an den Ausschuss.";p.append(h("div",{class:"row"},h("button",{class:"btn go",onclick:done},"Weiter ▶")));}}
+    else{sfx.bad();b.classList.remove("bad");void b.offsetWidth;b.classList.add("bad");fb.className="feedback bad";fb.innerHTML="✘ Das kommt noch nicht dran. Was passiert als Nächstes?";}}},o.t);pool.append(b);});
+  p.append(seq,pool,fb);openOv(p);
+}
+
+/* Kabel verbinden */
+function gWires(d,done){
+  const p=panel(d.title,d.sub);
+  const cols=["#e5484d","#2f6fd6","#f5d33b","#c45bd6","#3ddc6f"];
+  const wrap=h("div",{class:"wires"});const svgNS="http://www.w3.org/2000/svg";
+  const sv=document.createElementNS(svgNS,"svg");
+  const L=h("div",{class:"wcol"}),R=h("div",{class:"wcol"});
+  const lefts=d.left.map((t,i)=>{const e=h("div",{class:"wit l"},h("span",{},t),h("i",{class:"plug",style:`background:${cols[i]}`}));e.dataset.i=i;return e;});
+  const rights=shuffle(d.right.map((t,i)=>({t,i}))).map(o=>{const e=h("div",{class:"wit r"},h("span",{},o.t),h("i",{class:"plug",style:"background:#777"}));e.dataset.i=o.i;return e;});
+  L.append(...lefts);R.append(...rights);wrap.append(L,h("div"),R,sv);
+  const fb=h("div",{class:"feedback hidden"});
+  p.append(wrap,fb);openOv(p);
+  let sel=null,tmp=null,matched=0;
+  const pos=(el,side)=>{const wr=wrap.getBoundingClientRect(),b=el.querySelector(".plug").getBoundingClientRect();return [side?b.left-wr.left:b.right-wr.left,b.top+b.height/2-wr.top];};
+  function line(a,b,col,dash){const l=document.createElementNS(svgNS,"line");l.setAttribute("x1",a[0]);l.setAttribute("y1",a[1]);l.setAttribute("x2",b[0]);l.setAttribute("y2",b[1]);
+    l.setAttribute("stroke",col);l.setAttribute("stroke-width","8");l.setAttribute("stroke-linecap","round");if(dash)l.setAttribute("opacity",".6");sv.append(l);return l;}
+  function pick(el){if(el.classList.contains("done"))return;lefts.forEach(x=>x.classList.remove("sel"));sel=el;el.classList.add("sel");sfx.click();}
+  function tryMatch(r){if(!sel||r.classList.contains("done"))return;
+    if(r.dataset.i===sel.dataset.i){const i=+sel.dataset.i;line(pos(sel,0),pos(r,1),cols[i]);r.querySelector(".plug").style.background=cols[i];
+      sel.classList.add("done");r.classList.add("done");sel.classList.remove("sel");sel=null;matched++;sfx.ok();
+      if(matched===d.left.length){fb.className="feedback good";fb.innerHTML="✔ Alles verbunden!"+(d.why?" "+d.why:"");p.append(h("div",{class:"row"},h("button",{class:"btn go",onclick:done},"Weiter ▶")));}}
+    else{sfx.bad();r.animate([{transform:"translateX(-6px)"},{transform:"translateX(6px)"},{transform:"none"}],{duration:250});fb.className="feedback bad";fb.innerHTML="✘ Passt nicht – versuch eine andere Verbindung.";}}
+  lefts.forEach(el=>{el.addEventListener("pointerdown",e=>{pick(el);try{el.releasePointerCapture(e.pointerId);}catch(_){}});});
+  rights.forEach(el=>{el.addEventListener("pointerup",()=>tryMatch(el));});
+  wrap.addEventListener("pointermove",e=>{if(!sel||!(e.buttons&1)){if(tmp){tmp.remove();tmp=null;}return;}const wr=wrap.getBoundingClientRect();
+    if(tmp)tmp.remove();tmp=line(pos(sel,0),[e.clientX-wr.left,e.clientY-wr.top],cols[+sel.dataset.i],true);});
+  addEventListener("pointerup",()=>{if(tmp){tmp.remove();tmp=null;}},{once:false});
+}
+
+/* Stempeln */
+function gStamp(d,done){
+  const p=panel(d.title,d.sub);
+  const zone=h("div",{class:"stampzone"});const stamper=h("div",{class:"stamper"},"🔨");
+  const cnt=h("div",{class:"center",style:"font-weight:800;margin-top:6px"});
+  let i=0,busy=false;
+  function sheet(){const s=h("div",{class:"sheet"},h("h4",{},d.doc+" – S. "+(i+1)),...[90,80,95,70,85].map(w=>h("div",{class:"ln",style:`width:${w}%`})),h("div",{class:"mk"},d.mark));zone.append(s);return s;}
+  let cur=sheet();zone.append(stamper);stamper.textContent="🟥";stamper.style.fontSize="0";
+  const stampIcon=h("div",{style:"position:absolute;top:-80px;width:70px;height:60px;transition:top .12s;pointer-events:none"},
+    h("div",{style:"width:30px;height:34px;background:#6b4429;border:3px solid #15171d;border-radius:6px;margin:0 auto"}),h("div",{style:"width:70px;height:20px;background:#c0392b;border:3px solid #15171d;border-radius:4px"}));
+  zone.append(stampIcon);
+  cnt.textContent=`Seite 0 / ${d.n}`;
+  const b=h("button",{class:"btn warn",style:"min-width:200px;min-height:56px",onclick:()=>{
+    if(busy)return;busy=true;stampIcon.style.top="40px";
+    setTimeout(()=>{cur.classList.add("st");beep(140,.1,"square",.08);stampIcon.style.top="-80px";},120);
+    setTimeout(()=>{cur.style.transform="translateX(-130%) rotate(-12deg)";cur.style.opacity=0;i++;cnt.textContent=`Seite ${i} / ${d.n}`;
+      if(i>=d.n){sfx.ok();b.disabled=true;setTimeout(done,700);return;}
+      setTimeout(()=>{cur.remove();cur=sheet();zone.append(stampIcon);busy=false;},200);},520);}},"STEMPELN!");
+  p.append(zone,cnt,h("div",{class:"row"},b));openOv(p);
+}
+
+/* Datenübertragung */
+function gTransfer(d,done){
+  let tm=null;
+  const p=panel(d.title,d.sub||"",()=>{clearInterval(tm);});
+  const fly=h("div",{class:"flyzone"});
+  const bar=h("div");const lab=h("div",{class:"center",style:"margin-top:6px;font-weight:700;color:#cfd6e2"},"");
+  p.append(h("div",{class:"screen"},h("div",{class:"xfer"},h("div",{class:"folder"},h("div",{},"📂"),d.from),fly,h("div",{class:"folder"},h("div",{},d.mode==="up"?"🖨️":"💾"),d.to)),h("div",{class:"prog"},bar),lab));
+  const b=h("button",{class:"btn blue",style:"min-width:200px",onclick:()=>{b.disabled=true;sfx.click();
+    const T=3600,t0=performance.now();
+    const est=["Geschätzte Zeit: 2 Tage 4 Std.","Geschätzte Zeit: 3 Std. 12 Min.","Geschätzte Zeit: 41 Sek.","Geschätzte Zeit: 7 Sek.","Fast fertig …"];
+    let k=0;
+    tm=setInterval(()=>{const pr=Math.min(1,(performance.now()-t0)/T);bar.style.width=pr*100+"%";lab.textContent=pr<1?est[Math.min(4,pr*5|0)]:"Fertig ✓";
+      if(Math.random()<.35){const f=h("i",{},d.file);fly.append(f);f.animate([{left:"0%",opacity:0},{opacity:1,offset:.2},{left:"88%",opacity:0}],{duration:700});setTimeout(()=>f.remove(),700);}
+      if(pr>=1){clearInterval(tm);sfx.ok();setTimeout(done,600);}},90);}},d.mode==="up"?"⬆ Übertragen":"⬇ Herunterladen");
+  p.append(h("div",{class:"row"},b));openOv(p,()=>{clearInterval(tm);closeOv();});
+}
+
+/* Zählen mit Ziffernblock */
+function gCount(d,done){
+  const p=panel(d.title,d.sub);
+  let answer=0;const box=h("div",{class:"cards"});
+  if(d.cards){const arr=shuffle([...Array(d.cards.ja).fill("ja"),...Array(d.cards.nein).fill("nein"),...Array(d.cards.enth).fill("enth")]);
+    arr.forEach(v=>box.append(h("div",{class:"vc "+v},v==="ja"?"JA":v==="nein"?"NEIN":"ENTH.")));answer=d.cards.ja;}
+  else{d.laender.forEach(([n,v,s])=>{box.append(h("div",{class:"land",style:`background:${s==="ja"?"#3ba55c":s==="nein"?"#d9534f":"#c9ccd3"};color:${s==="enth"?"#222":"#fff"}`},n,h("b",{},v)));if(s==="ja")answer+=v;});}
+  const disp=h("div",{class:"lcd",style:"font-size:26px;margin-top:12px"},"0");let val="";
+  const fb=h("div",{class:"feedback hidden"});let solved=false;
+  const press=k=>{if(solved)return;sfx.click();
+    if(k==="⌫")val=val.slice(0,-1);
+    else if(k==="OK"){if(+val===answer){solved=true;sfx.ok();disp.style.color="#6cff8b";fb.className="feedback good";fb.innerHTML="✔ "+(d.why||"Richtig gezählt!");
+        p.append(h("div",{class:"row"},h("button",{class:"btn go",onclick:done},"Weiter ▶")));}
+      else{sfx.bad();disp.style.color="#ff6b6b";fb.className="feedback bad";fb.innerHTML="✘ Das stimmt nicht – zähl nochmal nach.";setTimeout(()=>{disp.style.color="";},600);val="";}}
+    else if(val.length<3)val+=k;
+    disp.textContent=val||"0";};
+  const pad=h("div",{class:"keypad"},["1","2","3","4","5","6","7","8","9","⌫","0","OK"].map(k=>h("button",{class:"btn"+(k==="OK"?" go":""),onclick:()=>press(k)},k)));
+  p.append(h("div",{class:"screen"},box),disp,pad,fb);openOv(p);
+}
+
+/* Abstimmung im Plenum */
+function gVote(d,done){
+  const p=panel("Schlussabstimmung – 3. Lesung",`Abstimmung über das <b>${LAW}</b>. Gib deine Stimme ab!`);
+  const people=[{n:save.name||"Du",look:LOOK(save.color,0,"brown","short",{tie:"#1d2430"}),me:true},
+    ...G.L.st.filter(s=>s.npc).map(s=>({n:s.npc.name,look:s.npc.look})),
+    {n:"Abg. Jansen",look:LOOK("#6a4c93",1,"black","short")},{n:"Abg. Weiß",look:LOOK("#e07a3f",0,"grey","bun")},{n:"Abg. Öztürk",look:LOOK("#3aa0a0",2,"black","curly")},
+    {n:"Abg. Hoffmann",look:LOOK("#4b4f58",0,"blond","long")},{n:"Abg. Nguyen",look:LOOK("#c0392b",1,"black","short",{glasses:true})}];
+  const votes=["ja","ja","ja","ja","nein","ja","nein","enth"];
+  const grid=h("div",{class:"vgrid"});
+  const tiles=people.map((o,i)=>{const vb=h("div",{class:"vb"});const t=h("div",{class:"vt"+(o.me?" me":"")},portrait(o.look,42,50),h("div",{class:"nm"},o.n),vb);grid.append(t);return {t,vb};});
+  const res=h("div",{class:"result"});
+  const mine=h("div",{class:"row"},[["ja","✔ JA","go"],["nein","✘ NEIN","warn"],["enth","ENTHALTUNG",""]].map(([v,l,c])=>h("button",{class:"btn "+c,onclick:()=>cast(v)},l)));
+  p.append(grid,mine,res);openOv(p);
+  function cast(my){mine.remove();sfx.click();
+    const all=[my,...people.slice(1).map((_,i)=>votes[i%votes.length])];
+    all.forEach((v,i)=>setTimeout(()=>{const vb=tiles[i].vb;vb.className="vb "+v;vb.textContent=v==="ja"?"JA":v==="nein"?"NEIN":"ENTH.";void vb.offsetWidth;vb.classList.add("show");beep(300+i*40,.06);},400+i*260));
+    setTimeout(()=>{sfx.win();
+      res.innerHTML=`<div style="font-size:15px;color:#cfd6e2;font-weight:700">Ergebnis im ganzen Bundestag:</div>✔ ${d.ja} Ja · ✘ ${d.nein} Nein · ${d.enth} Enthaltungen<div style="color:var(--green);margin-top:6px;font-size:26px">ANGENOMMEN!</div>`;
+      res.append(h("div",{class:"feedback good",style:"text-align:left;font-size:14.5px;font-weight:400"},"Mehr Ja- als Nein-Stimmen: Die einfache Mehrheit der abgegebenen Stimmen ist erreicht (Art. 42 II). Der Bundestagspräsident leitet das Gesetz jetzt an den Bundesrat weiter."),
+        h("div",{class:"row"},h("button",{class:"btn go",onclick:done},"Weiter ▶")));
+      p.scrollTop=p.scrollHeight;},600+all.length*260);}
+}
+
+/* =====================================================================
+   Bildschirme
+   ===================================================================== */
+function showScr(...nodes){const s=$("scr"),i=$("scrIn");i.innerHTML="";i.append(...nodes);s.classList.remove("hidden");s.scrollTop=0;$("hud").classList.add("hidden");}
+function hideScr(){$("scr").classList.add("hidden");}
+function unlocked(i){return save.all||i===0||save.done.includes(i-1)||save.done.includes(i);}
+function track(cur){return h("div",{class:"track"},STEPS.map((s,i)=>h("div",{class:save.done.includes(i)&&i!==cur?"d":i===cur?"c":""},h("i"),s)));}
 
 function showMenu(){
-  G=null; closeMap(); $("menu").hidden=false; $("game").hidden=true; $("btnMenu").hidden=true;
-  const disc=DISCOVERABLE.filter(e=>save.edges.includes(e)).length;
-  $("discTxt").textContent=disc+"/"+DISCOVERABLE.length; $("discBar").style.width=(100*disc/DISCOVERABLE.length)+"%";
-  $("starTxt").textContent=totalStars()+" / "+CASES.length*3;
-  const box=$("cases"); box.innerHTML="";
-  CASES.forEach((c,i)=>{
-    const st=save.stars[c.id]||0;
-    box.append(h("button",{class:"case",onclick:()=>startCase(i)},
-      h("div",{class:"top"},h("span",{class:"num"},"Fall "+(i+1)),h("span",{class:"tag "+c.lvl},c.lvl)),
-      h("h3",{},c.title),h("p",{},c.intro),
-      h("div",{class:"top"},starStr(st),h("span",{class:"num"},st?"nochmal spielen →":"spielen →"))));
-  });
-  updateHeader();
-}
-$("btnMenu").onclick=showMenu;
-$("btnReset").onclick=()=>{if(confirm("Sterne und entdeckte Pfade wirklich zurücksetzen?")){save={stars:{},edges:[]};persist();showMenu();}};
-
-function startCase(i){
-  const c=CASES[i];
-  G={ci:i,c,i:-1,at:c.start,mistakes:0,used:[],wrongNow:new Set(),answered:false,path:[c.start]};
-  $("menu").hidden=true; $("game").hidden=false; $("btnMenu").hidden=false;
-  if(!svg.firstChild)buildMap();
-  showSchema=false; btnSchema.setAttribute("aria-pressed",false); closeMap();
-  $("panel").scrollTop=0;
-  cancelAnimationFrame(tokenAnim);
-  const n=NODES[c.start]; token.style.display=""; token.setAttribute("transform",`translate(${n.x+n.w/2-10},${n.y-n.h/2+10})`);
-  requestAnimationFrame(()=>{setVB(fitAspect(FULL));render();});
+  G=null;W=null;STATIC=null;closeOv();toggleMap(false);
+  const colors=h("div",{class:"colors"},COLORS.map(c=>{const b=h("button",{style:`background:${c}`,class:c===save.color?"on":"","aria-label":"Farbe",onclick:()=>{save.color=c;persist();[...colors.children].forEach(x=>x.classList.toggle("on",x===b));drawPrev();}});return b;}));
+  const prev=h("canvas",{width:160,height:200,style:"width:80px;height:100px"});
+  const drawPrev=()=>{const x=prev.getContext("2d");x.clearRect(0,0,160,200);x.save();x.scale(2,2);drawPerson(x,40,92,LOOK(save.color,0,"brown","short",{tie:"#1d2430"}),{scale:1});x.restore();};
+  drawPrev();
+  const name=h("input",{class:"nameIn",maxlength:"14",value:save.name||"",placeholder:"Dein Name","aria-label":"Name"});
+  name.addEventListener("input",()=>{save.name=name.value.trim()||"Du";persist();});
+  name.addEventListener("keydown",e=>e.stopPropagation());
+  const lv=h("div",{class:"levels"},LEVELS.map((L,i)=>{const ok=unlocked(i),dn=save.done.includes(i);
+    return h("button",{class:"lv"+(dn?" done":"")+(ok?"":" lock"),onclick:()=>{if(!ok){toast("🔒 Schaffe zuerst das vorherige Level!");return;}sfx.click();hideScr();startLevel(i);}},
+      h("div",{class:"n"},dn?"✓":String(i+1)),h("div",{},h("b",{},L.title),h("small",{},L.sub+" · "+L.art)),h("span",{class:"chk"},ok?"▶":"🔒"));}));
+  showScr(
+    h("div",{class:"logo"},"MISSION ",h("span",{},"GESETZ")),
+    h("p",{class:"tag"},`Lauf durch Ministerium, Bundesrat und Bundestag, erledige Aufgaben, sammle Unterschriften – und bring das ${LAW} ins Bundesgesetzblatt!`),
+    h("div",{class:"card2"},h("h3",{},"DEINE FIGUR"),h("div",{style:"display:flex;gap:14px;align-items:center;flex-wrap:wrap"},prev,h("div",{style:"flex:1;min-width:220px"},name,h("div",{style:"height:10px"}),colors))),
+    h("div",{class:"card2"},h("h3",{},"LEVEL – DIE SCHRITTE DER GESETZGEBUNG"),lv,
+      h("div",{class:"center"},!save.all?h("button",{class:"linkbtn",onclick:()=>{save.all=true;persist();showMenu();}},"Alle Level freischalten (für Lehrkräfte)"):null)),
+    h("p",{class:"keys"},"Steuerung: WASD / Pfeiltasten · E oder Leertaste = Benutzen · M = Karte · Esc = Pause",h("br"),"Am Handy: auf den Bildschirm tippen und ziehen = laufen, ✋ = benutzen"),
+    h("div",{class:"center"},h("a",{class:"linkbtn",href:"schema.html"},"📘 Zum Schema-Quiz „Der Weg des Gesetzes“"))
+  );
 }
 
-function curStep(){return G.i>=0?G.c.steps[G.i]:null;}
-function choicesFor(s){
-  let ids=[...new Set(EDGES.filter(e=>e.from===s.at).map(e=>e.to))];
-  for(const x of s.extra||[]) if(!ids.includes(x))ids.push(x);
-  if(!ids.includes(s.to))ids.push(s.to);
-  ids=ids.filter(x=>!(s.exclude||[]).includes(x)&&x!==s.at);
-  // stabile Mischung je Schritt
-  let seed=(G.ci+1)*97+(G.i+1)*31; const rnd=()=>{seed=(seed*9301+49297)%233280;return seed/233280;};
-  return ids.map(id=>({id,r:rnd()})).sort((a,b)=>a.r-b.r).map(o=>o.id);
+function showIntro(){
+  if(innerWidth<600)$("tasklist").classList.add("min");
+  const L=G.L;
+  const cvs=h("canvas",{id:"crewcv",width:1040,height:300});
+  const go=h("button",{class:"btn go",style:"min-width:220px;font-size:18px",onclick:()=>{sfx.click();hideScr();$("hud").classList.remove("hidden");updateHUD();G.room=null;
+    toast("🎯 Finde die <b>gelben</b> Stellen und Personen mit <b>!</b>",3500);}},"LOS GEHT'S ▶");
+  showScr(h("div",{class:"center lvlno"},"LEVEL "+(G.i+1)+" / "+LEVELS.length),h("div",{class:"bigtitle",style:"font-size:clamp(28px,7vw,52px)"},L.title),
+    h("p",{class:"tag",style:"margin:0 auto"},L.sub+" · "+L.art),cvs,track(G.i),
+    h("div",{class:"card2"},h("p",{style:"margin:0 0 10px;line-height:1.5;font-size:15.5px"},L.intro),
+      h("b",{},"Deine Aufgaben:"),h("ul",{class:"recap"},L.tasks.map(t=>h("li",{},t.name+(t.needs?" 🔒":""))))),
+    h("div",{class:"row",style:"margin-top:16px"},go));
+  drawCrew(cvs,[LOOK(save.color,0,"brown","short",{tie:"#1d2430"}),...L.st.filter(s=>s.npc).slice(0,4).map(s=>s.npc.look)]);
+  setTimeout(()=>go.focus(),50);
+}
+function drawCrew(cvs,looks){const x=cvs.getContext("2d");x.clearRect(0,0,cvs.width,cvs.height);x.save();x.scale(2,2);
+  const n=looks.length,mid=(n-1)/2;
+  looks.forEach((lk,i)=>{const o=i-mid;const order=Math.abs(o);});
+  const ord=looks.map((lk,i)=>({lk,i,o:i===0?0:(i%2?-1:1)*Math.ceil(i/2)})).sort((a,b)=>Math.abs(b.o)-Math.abs(a.o));
+  ord.forEach(({lk,o})=>{const sc=o===0?1.45:1.2-Math.abs(o)*.08;drawPerson(x,260+o*82,128-Math.abs(o)*6,lk,{scale:sc,face:o>0?-1:1});});
+  x.restore();}
+
+function levelWon(){
+  sfx.win();
+  if(!save.done.includes(G.i))save.done.push(G.i);persist();
+  const L=G.L,last=G.i===LEVELS.length-1;
+  const cvs=h("canvas",{id:"crewcv",width:1040,height:300});
+  showScr(h("div",{class:"bigtitle win"},last?"IN KRAFT!":"GESCHAFFT!"),
+    h("p",{class:"tag",style:"margin:0 auto"},last?`Das ${LAW} ist verkündet. Du hast den ganzen Weg der Gesetzgebung geschafft! 🎉`:"Das Gesetz geht einen Schritt weiter."),
+    cvs,track(last?-1:G.i+1),
+    h("div",{class:"card2"},h("h3",{},"WAS IST PASSIERT?"),h("ul",{class:"recap"},L.recap.map(r=>h("li",{html:r})))),
+    h("div",{class:"row",style:"margin-top:16px"},
+      !last?h("button",{class:"btn go",style:"min-width:200px;font-size:17px",onclick:()=>{hideScr();startLevel(G.i+1);}},"Nächstes Level ▶"):null,
+      h("button",{class:"btn",onclick:()=>{hideScr();startLevel(G.i);}},"↻ Nochmal"),
+      h("button",{class:"btn",onclick:showMenu},"Menü")));
+  drawCrew(cvs,[LOOK(save.color,0,"brown","short",{tie:"#1d2430"}),...L.st.filter(s=>s.npc).slice(0,6).map(s=>s.npc.look)]);
 }
 
-const nm=id=>NODES[id].lines.join(" ").replace("- ","");
-function visibleSets(){
-  const nodes=new Set(), edges=new Set(G?G.used:[]);
-  if(showSchema){Object.keys(NODES).forEach(n=>nodes.add(n));EDGES.forEach(e=>edges.add(e.id));return {nodes,edges};}
-  if(G)G.path.forEach(n=>nodes.add(n));
-  if(G&&G.finished)save.edges.forEach(id=>edges.add(id));
-  edges.forEach(id=>{const e=EDGE[id];if(e){nodes.add(e.from);nodes.add(e.to);}});
-  return {nodes,edges};
-}
-function paintEdges(){
-  const {edges}=visibleSets(); const used=new Set(G?G.used:[]);
-  for(const e of EDGES){
-    const vis=edges.has(e.id);
-    e.el.classList.toggle("gone",!vis); e.el.classList.remove("hidden");
-    e.el.classList.toggle("active",used.has(e.id));
-    e.el.setAttribute("marker-end","url(#ar-"+(e.k==="z"?"z":"e")+")");
-    e.lbls.forEach(t=>{t.classList.toggle("gone",!vis);t.classList.remove("hidden");});
-  }
-}
-function paintNodes(){
-  const {nodes}=visibleSets();
-  for(const id in NODES){const g=NODES[id].el;
-    g.classList.toggle("gone",!nodes.has(id));
-    g.classList.toggle("here",!!G&&id===G.at);
-    g.classList.remove("cand","dim");
-  }
-  const showDeco=showSchema||(G&&G.finished);
-  svg.querySelectorAll(".deco").forEach(d=>d.classList.toggle("gone",!showDeco));
-  if(NODES.fail.x1)NODES.fail.x1.setAttribute("opacity",G&&G.at==="fail"?1:.35);
-  const n=G?G.path.length:0;
-  $("mapTitle").textContent=showSchema?"💡 Komplettes Schema":(G&&G.finished?"Dein entdecktes Schema":"Dein Weg bisher · "+n+(n===1?" Station":" Stationen"));
-}
-function refocus(){
-  if(!G)return;
-  focusNodes([...visibleSets().nodes]);
-}
-function trail(){
-  return h("div",{class:"trail","aria-label":"Bisheriger Weg"},...G.path.flatMap((id,k)=>[k?h("span",{},"→"):null,h("span",{class:"st"+(k===G.path.length-1?" now":"")},nm(id))]),
-    h("button",{class:"hbtn sm-only",style:"min-height:30px;padding:3px 10px;font-size:13px;margin-left:4px",onclick:openMap},"🗺️ Schema"));
+function showPause(){
+  if(!G||G.over||!$("ov").classList.contains("hidden"))return;
+  const p=panel("Pause",null);
+  p.append(h("div",{class:"answers"},
+    h("button",{class:"btn go",onclick:closeOv},"▶ Weiterspielen"),
+    h("button",{class:"btn",onclick:()=>{toggleMap(true);closeOv();}},"🗺️ Karte"),
+    h("button",{class:"btn",onclick:()=>{muted=!muted;closeOv();toast(muted?"🔇 Ton aus":"🔊 Ton an");}},muted?"🔊 Ton an":"🔇 Ton aus"),
+    h("button",{class:"btn",onclick:()=>{closeOv();startLevel(G.i);}},"↻ Level neu starten"),
+    h("button",{class:"btn warn",onclick:()=>{closeOv();showMenu();}},"⏏ Hauptmenü")),
+    h("div",{class:"feedback",style:"margin-top:14px"},h("b",{},"Tipp: "),"Aufgaben mit 🔒 werden frei, wenn du die anderen erledigt hast. Personen ohne festen Platz laufen herum – schau auf der Karte nach oder such sie in den Fluren."));
+  openOv(p);
 }
 
-function render(){
-  paintEdges(); paintNodes(); panel.innerHTML="";
-  const c=G.c, total=c.steps.length+1, done=G.i+1+(G.answered?1:0);
-  panel.append(h("div",{class:"casehead"},h("h2",{},c.title),h("small",{},"Fall "+(G.ci+1)+" · "+c.lvl+(G.usedHelp?" · 💡":""))));
-  panel.append(h("div",{class:"steps"},...Array.from({length:total},(_,k)=>h("i",{class:k<done?"done":k===done?"cur":""}))));
-  if(G.finished){renderResult();refocus();return;}
-  const stage=h("div",{class:"stage"});
-  panel.append(stage);
-  if(G.i===-1){
-    stage.append(h("div",{class:"lage"},h("div",{class:"lbl"},"📰 Der Fall"),c.intro));
-    stage.append(h("p",{class:"question"},"Welche Art von Gesetz ist das?"));
-    stage.append(h("p",{class:"typehint",style:"margin:-6px 0 0"},"Tipp: Die Zustimmung des Bundesrats ist nur nötig, wenn das Grundgesetz es ausdrücklich verlangt."));
-    const opts=[["e","Einspruchsgesetz","var(--e)"],["z","Zustimmungsgesetz","var(--z)"]];
-    stage.append(h("div",{class:"choices"},...opts.map(([k,lbl,col])=>{
-      const right=G.answered&&k===c.type, wrong=G.wrongNow.has(k);
-      return h("button",{class:"choice big"+(right?" right":"")+(wrong?" wrong":""),style:"border-left:8px solid "+col,disabled:(G.answered||wrong)?"":null,onclick:()=>answerType(k)},lbl);
-    })));
-    if(G.answered)stage.append(feedback(true,c.type==="z"?"Richtig: Zustimmungsgesetz!":"Richtig: Einspruchsgesetz!",c.typeWhy),nextBtn());
-    else if(G.lastWrong)stage.append(feedback(false,"Nicht ganz.","Überlege: Verlangt das Grundgesetz hier ausdrücklich die Zustimmung der Länder? (Finanzen der Länder, Verwaltung der Länder, Grundgesetzänderung …)"));
-    panel.append(trail());
-    refocus(); return;
-  }
-  const s=curStep();
-  stage.append(h("div",{class:"lage"},h("div",{class:"lbl"},"📍 Was passiert? · "+nm(s.at)+" · "+(c.type==="z"?"Zustimmungsgesetz":"Einspruchsgesetz")),s.ev));
-  stage.append(h("p",{class:"question"},s.q));
-  const ch=choicesFor(s), names={}; ch.forEach(id=>{names[nm(id)]=(names[nm(id)]||0)+1;});
-  stage.append(h("div",{class:"choices"},...ch.map(id=>{
-    const n=NODES[id],col=COL[n.c], right=G.answered&&id===s.to, wrong=G.wrongNow.has(id);
-    return h("button",{class:"choice"+(right?" right":"")+(wrong?" wrong":""),disabled:(G.answered||wrong)?"":null,onclick:()=>answer(id)},
-      h("span",{class:"chip",style:`background:${n.c==="va"?"linear-gradient(90deg,#0a9446,#56b1dc)":col.fill};border-color:${col.stroke}`}),
-      h("span",{class:"t"},h("b",{},nm(id)),names[nm(id)]>1?h("small",{},n.role):null));
-  })));
-  if(G.answered)stage.append(feedback(true,"Richtig! Neue Station aufgedeckt: "+nm(s.to),s.why),nextBtn());
-  else if(G.lastWrong)stage.append(feedback(false,"Nicht ganz.",(s.wrong&&s.wrong[G.lastWrong])||"Überlege noch einmal, wer in dieser Situation zuständig ist."));
-  panel.append(trail());
-  refocus();
-}
-function cleanDisabled(){panel.querySelectorAll('[disabled="null"]').forEach(b=>b.removeAttribute("disabled"));}
-function feedback(ok,title,text){return h("div",{class:"fb "+(ok?"ok":"bad"),role:"status"},h("b",{},(ok?"✅ ":"❌ ")+title),text);}
-function nextBtn(){
-  const last=G.i===G.c.steps.length-1;
-  const b=h("button",{class:"primary",onclick:next},last?"Ergebnis ansehen →":"Weiter →");
-  setTimeout(()=>{b.scrollIntoView({block:"nearest",behavior:"smooth"});b.focus({preventScroll:true});},60);
-  return b;
-}
-function answerType(k){
-  if(G.answered)return;
-  if(k===G.c.type){G.answered=true;G.lastWrong=null;}
-  else{G.mistakes++;G.wrongNow.add(k);G.lastWrong=k;}
-  render();
-}
-function onNodeTap(id){
-  if(NODES[id].el.classList.contains("gone"))return;
-  toast(nm(id)+" ("+NODES[id].art+")",INFO[id]);
-}
-function answer(id){
-  const s=curStep(); if(!s||G.answered)return;
-  if(id===s.to){
-    G.answered=true;G.lastWrong=null;
-    const e=EDGE[s.edge]; G.used.push(e.id); G.lastEdge=e.id;
-    if(!save.edges.includes(e.id)){save.edges.push(e.id);persist();}
-    moveToken(e,s.at,s.to);
-    G.at=s.to; G.path.push(s.to);
-  }else{G.mistakes++;G.wrongNow.add(id);G.lastWrong=id;}
-  render();
-}
-function next(){
-  if(G.i===G.c.steps.length-1){finish();return;}
-  G.i++;G.answered=false;G.wrongNow=new Set();G.lastWrong=null;render();
-  const first=panel.querySelector(".choice:not([disabled])"); if(first&&window.innerWidth>=900)first.focus({preventScroll:true});
-  $("panel").scrollTop=0;
-}
-function moveToken(e,fromId,toId){
-  const A=NODES[fromId],B=NODES[toId];
-  const off=n=>[n.x+n.w/2-10,n.y-n.h/2+10];
-  let pts;
-  if(e.from===fromId){pts=[off(A),...e.pts,off(B)];} else {pts=[off(A),[B.x,B.y],off(B)];}
-  let len=0;const seg=[];for(let k=1;k<pts.length;k++){const d=Math.hypot(pts[k][0]-pts[k-1][0],pts[k][1]-pts[k-1][1]);seg.push(d);len+=d;}
-  const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const ms=reduce?0:Math.min(1400,350+len*0.9), t0=performance.now();
-  const step=t=>{const p=ms?Math.min(1,(t-t0)/ms):1;const e2=p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;let dist=e2*len,k=0;
-    while(k<seg.length-1&&dist>seg[k]){dist-=seg[k];k++;}
-    const f=seg[k]?Math.min(1,dist/seg[k]):1;const x=pts[k][0]+(pts[k+1][0]-pts[k][0])*f,y=pts[k][1]+(pts[k+1][1]-pts[k][1])*f;
-    token.setAttribute("transform",`translate(${x},${y})`); if(p<1)tokenAnim=requestAnimationFrame(step);};
-  cancelAnimationFrame(tokenAnim); tokenAnim=requestAnimationFrame(step);
-}
-function finish(){
-  G.finished=true; let stars=G.mistakes===0?3:G.mistakes<=2?2:1; if(G.usedHelp)stars=Math.min(stars,2);
-  G.stars=stars; save.stars[G.c.id]=Math.max(save.stars[G.c.id]||0,stars); persist(); updateHeader(); render();
-}
-function renderResult(){
-  const ok=G.at==="verk";
-  panel.append(h("div",{class:"stage result"},
-    h("div",{class:"big"},ok?"📜":"🗑️"),
-    h("h2",{},ok?"Das Gesetz ist verkündet!":"Das Gesetz ist gescheitert."),
-    h("p",{style:"margin:4px 0;color:var(--muted)"},ok?"Es steht im Bundesgesetzblatt und kann in Kraft treten.":"Auch das gehört zur Demokratie: Ohne Mehrheit kein Gesetz."),
-    starStr(G.stars),
-    h("p",{style:"margin:6px 0 0;color:var(--muted);font-size:14px"},(G.mistakes===0?"Fehlerfrei – stark!":G.mistakes+" Fehler")+(G.usedHelp?" · Hilfe genutzt (max. ★★)":""))));
-  const disc=DISCOVERABLE.filter(e=>save.edges.includes(e)).length;
-  panel.append(h("p",{style:"margin:0;text-align:center;color:var(--muted);font-size:14px"},"Dein Schema: "+disc+" von "+DISCOVERABLE.length+" Pfeilen entdeckt. ",
-    h("button",{class:"hbtn sm-only",style:"min-height:30px;padding:3px 10px;font-size:13px",onclick:openMap},"🗺️ Ansehen")));
-  panel.append(h("b",{},"Dein Weg im Überblick:"));
-  const items=[h("li",{},h("span",{class:"n"},"1"),h("span",{},h("b",{},"Gesetzesart: "),G.c.typeWhy))];
-  G.c.steps.forEach((s,k)=>items.push(h("li",{},h("span",{class:"n"},String(k+2)),h("span",{},h("b",{},nm(s.at)+" → "+nm(s.to)+": "),s.why))));
-  panel.append(h("ol",{class:"recap"},...items));
-  const nextI=G.ci+1<CASES.length?G.ci+1:null;
-  panel.append(h("div",{class:"btnrow"},
-    nextI!==null?h("button",{class:"primary",onclick:()=>startCase(nextI)},"Nächster Fall →"):null,
-    h("button",{class:"secondary",onclick:()=>startCase(G.ci)},"Nochmal"),
-    h("button",{class:"secondary",onclick:showMenu},"Alle Fälle")));
-  $("panel").scrollTop=0;
-}
-
+window.__mg={LEVELS,startLevel,get G(){return G;},get W(){return W;},freeAt,buildWorld,setW:w=>{W=w;},completeStep,availSteps};
 showMenu();
 </script>
 </body>

@@ -1,0 +1,818 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1f3b5c">
+<title>Der Weg des Gesetzes</title>
+<style>
+:root{
+  --bg:#f4f1ea; --surface:#ffffff; --surface2:#f8f6f1; --text:#1d2430; --muted:#5d6675; --border:#ddd6c8;
+  --accent:#1f5fa8; --accent-text:#fff;
+  --e:#2b2f36; --z:#a0438a; --faint:#cfc8ba;
+  --ok:#1d8a4a; --ok-bg:#e6f5ec; --bad:#c0392b; --bad-bg:#fdecea;
+  --map-bg:#fbfaf6;
+  --shadow:0 2px 10px rgba(20,30,50,.08);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#14171c; --surface:#1d2128; --surface2:#242933; --text:#e8ebf0; --muted:#a2aab7; --border:#333a46;
+    --accent:#5b9be6; --accent-text:#0d1420;
+    --e:#e3e6eb; --z:#e08bcf; --faint:#3a414d;
+    --ok:#4cc982; --ok-bg:#183527; --bad:#ff7b6b; --bad-bg:#3b1f1c;
+    --map-bg:#181c22; --shadow:0 2px 10px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#14171c; --surface:#1d2128; --surface2:#242933; --text:#e8ebf0; --muted:#a2aab7; --border:#333a46;
+  --accent:#5b9be6; --accent-text:#0d1420;
+  --e:#e3e6eb; --z:#e08bcf; --faint:#3a414d;
+  --ok:#4cc982; --ok-bg:#183527; --bad:#ff7b6b; --bad-bg:#3b1f1c;
+  --map-bg:#181c22; --shadow:0 2px 10px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--text);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;-webkit-text-size-adjust:100%;overflow:hidden}
+button{font:inherit;color:inherit}
+.app{display:flex;flex-direction:column;height:100vh;height:100dvh}
+header{display:flex;align-items:center;gap:10px;padding:10px 16px;padding-top:max(10px,env(safe-area-inset-top));background:var(--surface);border-bottom:1px solid var(--border);flex:0 0 auto}
+header h1{font-size:18px;margin:0;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0}
+header h1 span{color:var(--muted);font-weight:500}
+.hbtn{border:1px solid var(--border);background:var(--surface2);border-radius:10px;padding:7px 11px;cursor:pointer;font-size:14px;white-space:nowrap;min-height:38px}
+.hbtn:hover{border-color:var(--accent)}
+.hbtn[aria-pressed="true"]{background:var(--accent);color:var(--accent-text);border-color:var(--accent)}
+.stat{font-size:14px;color:var(--muted);white-space:nowrap}
+
+/* Menu */
+.menu{flex:1;overflow:auto;padding:20px 16px 40px}
+.menu-inner{max-width:980px;margin:0 auto}
+.hero{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;box-shadow:var(--shadow);margin-bottom:20px}
+.hero h2{margin:0 0 6px;font-size:24px}
+.hero p{margin:6px 0;color:var(--muted)}
+.progress-row{display:flex;flex-wrap:wrap;gap:16px;margin-top:12px;font-size:14px}
+.pbar{height:8px;background:var(--surface2);border-radius:99px;overflow:hidden;border:1px solid var(--border);width:180px;align-self:center}
+.pbar>i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .5s}
+.cases{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.case{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:left;cursor:pointer;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:6px;transition:transform .12s,border-color .12s}
+.case:hover{transform:translateY(-2px);border-color:var(--accent)}
+.case .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.case .num{font-size:13px;color:var(--muted)}
+.case h3{margin:0;font-size:18px}
+.case p{margin:0;color:var(--muted);font-size:14px}
+.tag{font-size:12px;border-radius:99px;padding:2px 9px;border:1px solid var(--border);white-space:nowrap}
+.tag.leicht{color:var(--ok);border-color:var(--ok)}
+.tag.mittel{color:#b7791f;border-color:#b7791f}
+.tag.schwer{color:var(--bad);border-color:var(--bad)}
+.stars{color:#e0a400;letter-spacing:2px;font-size:16px}
+.stars .off{color:var(--faint)}
+.howto{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px 20px}
+.howto h3{margin:0 0 8px}
+.howto ul{margin:0;padding-left:20px}
+.howto li{margin:4px 0}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--muted);margin-top:8px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{display:inline-block;width:26px;height:0;border-top:3px solid}
+
+/* Game layout */
+.game{flex:1;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(320px,.7fr);min-height:0}
+.mapwrap{position:relative;min-height:0;background:var(--map-bg);border-left:1px solid var(--border);order:2}
+.maphead{position:absolute;left:10px;top:10px;right:60px;z-index:2;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.maphead .ttl{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:6px 10px;font-size:13px;box-shadow:var(--shadow)}
+.mapclose{display:none}
+.sm-only{display:none}
+#map{width:100%;height:100%;display:block;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab}
+#map.dragging{cursor:grabbing}
+.mapctl{position:absolute;right:10px;top:10px;display:flex;flex-direction:column;gap:6px;z-index:2}
+.mapctl button{width:40px;height:40px;border-radius:10px;border:1px solid var(--border);background:var(--surface);box-shadow:var(--shadow);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center}
+.mapctl button[aria-pressed="true"]{background:var(--accent);color:var(--accent-text);border-color:var(--accent)}
+.maplegend{position:absolute;left:10px;bottom:10px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:6px 10px;font-size:12px;display:flex;gap:12px;box-shadow:var(--shadow);z-index:2}
+.maplegend span{display:inline-flex;align-items:center;gap:5px;color:var(--muted)}
+.maplegend i{display:inline-block;width:20px;border-top:3px solid}
+.toast{position:absolute;left:50%;top:12px;transform:translateX(-50%);background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 14px;box-shadow:var(--shadow);font-size:14px;max-width:min(92%,420px);z-index:3;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.show{opacity:1}
+.toast b{display:block}
+
+.panel{overflow:auto;padding:28px 24px;background:var(--bg);min-height:0;-webkit-overflow-scrolling:touch;order:1}
+.panel-inner{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:14px;padding-bottom:max(16px,env(safe-area-inset-bottom))}
+.stage{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:22px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:14px}
+.stage .lage{font-size:18px}
+.stage .question{font-size:21px}
+.trail{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;font-size:13px;color:var(--muted)}
+.trail .st{background:var(--surface);border:1px solid var(--border);border-radius:99px;padding:2px 9px;white-space:nowrap}
+.trail .st.now{border-color:#e0a400;color:var(--text);font-weight:700}
+.node.gone,.edge.gone,.elabel.gone,.deco.gone{opacity:0!important;pointer-events:none}
+.node,.deco{transition:opacity .6s}
+.casehead{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.casehead h2{margin:0;font-size:19px}
+.casehead small{color:var(--muted);white-space:nowrap}
+.steps{display:flex;gap:4px}
+.steps i{flex:1;height:6px;border-radius:99px;background:var(--surface2);border:1px solid var(--border)}
+.steps i.done{background:var(--ok);border-color:var(--ok)}
+.steps i.cur{background:var(--accent);border-color:var(--accent)}
+.lage{background:var(--surface2);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:10px;padding:12px 14px}
+.lage .lbl{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700;margin-bottom:2px}
+.question{font-weight:700;font-size:17px;margin:2px 0 0}
+.choices{display:flex;flex-direction:column;gap:8px}
+.choice{display:flex;align-items:center;gap:12px;text-align:left;padding:12px 14px;border-radius:12px;border:2px solid var(--border);background:var(--surface);cursor:pointer;min-height:56px;transition:border-color .12s,background .12s,transform .1s}
+.choice:hover:not(:disabled){border-color:var(--accent)}
+.choice:active:not(:disabled){transform:scale(.99)}
+.choice .chip{flex:0 0 auto;width:30px;height:30px;border-radius:8px;border:3px solid}
+.choice .t{display:flex;flex-direction:column;line-height:1.25}
+.choice .t b{font-size:16px}
+.choice .t small{color:var(--muted);font-size:13px}
+.choice.wrong{border-color:var(--bad);background:var(--bad-bg);opacity:.75;cursor:not-allowed;animation:shake .35s}
+.choice.right{border-color:var(--ok);background:var(--ok-bg)}
+.choice:disabled{cursor:default}
+.choice.big{justify-content:center;font-weight:700;font-size:17px}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.fb{border-radius:12px;padding:12px 14px;font-size:15px}
+.fb.ok{background:var(--ok-bg);border:1px solid var(--ok)}
+.fb.bad{background:var(--bad-bg);border:1px solid var(--bad)}
+.fb b{display:block;margin-bottom:2px}
+.primary{background:var(--accent);color:var(--accent-text);border:0;border-radius:12px;padding:13px 18px;font-weight:700;cursor:pointer;min-height:48px;font-size:16px}
+.primary:hover{filter:brightness(1.08)}
+.secondary{background:transparent;border:1px solid var(--border);border-radius:12px;padding:12px 16px;cursor:pointer;min-height:48px}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap}
+.btnrow>*{flex:1 1 160px}
+.result{text-align:center;padding:8px 0}
+.result .big{font-size:44px;line-height:1}
+.result h2{margin:8px 0 4px}
+.result .stars{font-size:30px}
+.recap{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.recap li{display:flex;gap:10px;align-items:flex-start;font-size:14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:8px 10px}
+.recap .n{flex:0 0 auto;width:22px;height:22px;border-radius:50%;background:var(--accent);color:var(--accent-text);font-size:12px;display:flex;align-items:center;justify-content:center;font-weight:700}
+.typehint{font-size:13px;color:var(--muted)}
+
+/* SVG */
+.edge{fill:none;stroke-width:3;stroke-linejoin:round;transition:stroke .3s,opacity .3s}
+.edge.k-e,.edge.k-n{stroke:var(--e)}
+.edge.k-z{stroke:var(--z)}
+.edge.dash{stroke-dasharray:8 7}
+.edge.hidden{stroke:var(--faint);opacity:.55}
+.edge.active{stroke-width:6}
+.elabel{font-size:15px;fill:var(--muted);transition:opacity .3s}
+.elabel.k-z{fill:var(--z)}
+.elabel.hidden{opacity:0}
+.node rect{transition:filter .2s}
+.node{cursor:pointer}
+.node text{pointer-events:none}
+.node .nm{font-size:25px;font-weight:600;fill:#1d2430}
+.node .art{font-size:15px;fill:#3b4350}
+.node.dim{opacity:.45}
+.node.cand rect.frame{stroke:var(--accent);stroke-width:5;animation:pulse 1.4s ease-in-out infinite}
+.node.here rect.frame{stroke:#e0a400;stroke-width:6}
+@keyframes pulse{0%,100%{stroke-opacity:1}50%{stroke-opacity:.25}}
+.token circle{fill:#e0a400;stroke:#fff;stroke-width:4}
+.token text{font-size:22px;font-weight:800;fill:#1d2430}
+.sectlabel{font-size:16px;fill:var(--muted);font-weight:600}
+.zone{fill:none;stroke:var(--faint);stroke-width:6;stroke-dasharray:4 10;stroke-linecap:round}
+
+/* Narrow: stacked */
+@media (max-width:899px){
+  .game{grid-template-columns:1fr;grid-template-rows:1fr}
+  .mapwrap{position:fixed;inset:0;z-index:20;border:0;display:none}
+  body.mapopen .mapwrap{display:block}
+  .mapclose{display:inline-flex}
+  .sm-only{display:inline-flex}
+  header h1{font-size:16px}
+  .hide-sm{display:none}
+  .maplegend{font-size:11px;padding:4px 8px;gap:8px}
+  .panel{padding:16px}
+  .stage{padding:16px;border-radius:14px}
+  .stage .lage{font-size:17px}
+  .stage .question{font-size:19px}
+}
+@media (max-width:420px){
+  header{gap:6px;padding-left:12px;padding-right:12px}
+  .hbtn{padding:6px 9px}
+  .panel{padding:12px}
+  .stage{padding:14px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>⚖️ Der Weg des Gesetzes <span class="hide-sm">· Gesetzgebung spielend lernen</span></h1>
+    <span class="stat" id="hdrStars" title="Gesammelte Sterne"></span>
+    <button class="hbtn" id="btnMenu" hidden>☰ Fälle</button>
+  </header>
+
+  <section class="menu" id="menu">
+    <div class="menu-inner">
+      <div class="hero">
+        <h2>Du bist ein Gesetzentwurf.</h2>
+        <p>Finde deinen Weg durch das Gesetzgebungsverfahren nach Art. 76 ff. Grundgesetz – vom ersten Entwurf bis zur Verkündung im Bundesgesetzblatt. Oder bis zum Scheitern …</p>
+        <div class="progress-row">
+          <span>Schema entdeckt: <b id="discTxt">0/0</b></span>
+          <div class="pbar"><i id="discBar" style="width:0"></i></div>
+          <span>Sterne: <b id="starTxt">0</b></span>
+        </div>
+      </div>
+      <div class="cases" id="cases"></div>
+      <div class="howto">
+        <h3>So funktioniert’s</h3>
+        <ul>
+          <li>Jeder Fall beginnt mit der Frage: <b>Einspruchs- oder Zustimmungsgesetz?</b> Davon hängt der Weg ab.</li>
+          <li>Dann erfährst du an jeder Station, was passiert. Entscheide, <b>wohin der Entwurf als Nächstes geht</b>.</li>
+          <li>Das Schema ist am Anfang leer: Jede richtige Entscheidung deckt eine Station und einen Pfeil auf. So baust du das Schema Schritt für Schritt selbst auf.</li>
+          <li>Ohne Fehler gibt es ★★★. Wer mit 💡 das komplette Schema einblendet, bekommt in diesem Fall höchstens ★★.</li>
+        </ul>
+        <div class="legend">
+          <span><i style="border-color:var(--e)"></i> Einspruchsgesetz / allgemein</span>
+          <span><i style="border-color:var(--z)"></i> Zustimmungsgesetz</span>
+          <span><i style="border-color:var(--z);border-top-style:dashed"></i> Anrufung des VA durch BT/BReg</span>
+        </div>
+        <p style="margin:12px 0 0"><button class="secondary" id="btnReset" style="min-height:38px;padding:6px 12px;font-size:14px">Fortschritt zurücksetzen</button></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="game" id="game" hidden>
+    <div class="mapwrap" id="mapwrap">
+      <svg id="map" viewBox="0 -30 1000 1690" preserveAspectRatio="xMidYMid meet" aria-label="Schema des Gesetzgebungsverfahrens"></svg>
+      <div class="maphead">
+        <button class="hbtn mapclose" id="btnMapClose">✕ Zurück zur Frage</button>
+        <span class="ttl" id="mapTitle">Dein Weg bisher</span>
+      </div>
+      <div class="mapctl">
+        <button id="btnFit" title="Ganzen bisherigen Weg zeigen">⤢</button>
+        <button id="btnSchema" title="Hilfe: komplettes Schema einblenden (max. 2 Sterne)" aria-pressed="false">💡</button>
+        <button id="btnZoomIn" title="Hineinzoomen">＋</button>
+        <button id="btnZoomOut" title="Herauszoomen">－</button>
+      </div>
+      <div class="maplegend"><span><i style="border-color:var(--e)"></i>Einspruch</span><span><i style="border-color:var(--z)"></i>Zustimmung</span></div>
+      <div class="toast" id="toast"></div>
+    </div>
+    <div class="panel" id="panel"><div class="panel-inner" id="panelInner"></div></div>
+  </section>
+</div>
+
+<script>
+"use strict";
+/* ---------- Schema (Knoten) ---------- */
+const COL = {
+  yellow:{fill:"#efe9b6",stroke:"#c3bb55"},
+  blue:{fill:"#56b1dc",stroke:"#3e72ad"},
+  green:{fill:"#afd06c",stroke:"#0f9a46"},
+  red:{fill:"#d4302a",stroke:"#a51f1a"},
+  white:{fill:"#ffffff",stroke:"#2b2f36"},
+  va:{fill:"url(#vaGrad)",stroke:"#3e72ad"}
+};
+const NODES = {
+  breg_init:{x:210,y:130,w:260,h:100,c:"yellow",lines:["Bundesregierung"],art:"Art. 76 I, II",role:"Gesetzesinitiative"},
+  abg:{x:500,y:130,w:210,h:100,c:"blue",lines:["5 % der Abg.","oder Fraktion"],art:"Art. 76 I, § 76 GOBT",role:"Initiative aus der Mitte des Bundestags",small:true},
+  br_init:{x:790,y:130,w:260,h:100,c:"green",lines:["Bundesrat"],art:"Art. 76 I, II, III",role:"Initiative / erster Durchgang (Stellungnahme)"},
+  bt:{x:500,y:300,w:320,h:110,c:"blue",lines:["Bundestag","1., 2. und 3. Lesung"],art:"Art. 77 I, GOBT",role:"Beratung und Gesetzesbeschluss"},
+  br1:{x:500,y:490,w:260,h:100,c:"green",lines:["Bundesrat"],art:"Art. 77 I",role:"Zweiter Durchgang"},
+  va:{x:500,y:720,w:340,h:110,c:"va",lines:["Vermittlungs-","ausschuss"],art:"Art. 77 II",role:"16 Mitglieder BT + 16 Mitglieder BR",white:true},
+  br3:{x:200,y:950,w:200,h:100,c:"green",lines:["Bundesrat"],art:"Art. 77 III",role:"Entscheidung über Einspruch"},
+  bt2:{x:500,y:950,w:210,h:100,c:"blue",lines:["Bundestag"],art:"Art. 77 II S. 5",role:"Abstimmung über Einigungsvorschlag"},
+  br2a:{x:820,y:950,w:220,h:100,c:"green",lines:["Bundesrat"],art:"Art. 77 IIa",role:"Entscheidung über Zustimmung"},
+  bt4:{x:200,y:1180,w:200,h:100,c:"blue",lines:["Bundestag"],art:"Art. 77 IV",role:"Zurückweisung des Einspruchs"},
+  fail:{x:520,y:1180,w:220,h:100,c:"white",lines:["Gesetz","gescheitert"],art:"Art. 78",role:"Das Gesetz kommt nicht zustande"},
+  breg:{x:230,y:1390,w:300,h:100,c:"yellow",lines:["Bundesregierung"],art:"Art. 58",role:"Gegenzeichnung"},
+  bp:{x:520,y:1570,w:260,h:100,c:"red",lines:["Bundes-","präsident"],art:"Art. 82 I",role:"Prüfung und Ausfertigung",white:true},
+  verk:{x:830,y:1570,w:260,h:100,c:"white",lines:["Ausfertigung /","Verkündung"],art:"Art. 82",role:"Bundesgesetzblatt – Ziel!"}
+};
+const INFO = {
+  breg_init:"Die Bundesregierung kann Gesetzentwürfe einbringen. Ihre Entwürfe gehen zuerst an den Bundesrat (Art. 76 II).",
+  abg:"Eine Fraktion oder 5 % der Abgeordneten können Gesetzentwürfe „aus der Mitte des Bundestages“ einbringen – direkt im Bundestag.",
+  br_init:"Der Bundesrat kann eigene Entwürfe einbringen (über die Bundesregierung, Art. 76 III) und nimmt zu Regierungsentwürfen Stellung (erster Durchgang, 6 Wochen).",
+  bt:"Der Bundestag berät Gesetzentwürfe in drei Lesungen und beschließt sie (Art. 77 I).",
+  br1:"Zweiter Durchgang: Der Bundesrat befasst sich mit dem beschlossenen Gesetz (Art. 77 I).",
+  va:"Der Vermittlungsausschuss (16 Mitglieder aus dem Bundestag, 16 aus dem Bundesrat) sucht einen Kompromiss (Art. 77 II).",
+  br3:"Bei Einspruchsgesetzen kann der Bundesrat nach dem Vermittlungsverfahren binnen 2 Wochen Einspruch einlegen (Art. 77 III).",
+  bt2:"Schlägt der Vermittlungsausschuss eine Änderung vor, muss der Bundestag erneut beschließen (Art. 77 II S. 5).",
+  br2a:"Bei Zustimmungsgesetzen muss der Bundesrat in angemessener Frist über die Zustimmung beschließen (Art. 77 IIa).",
+  bt4:"Der Bundestag kann einen Einspruch zurückweisen – mit Mehrheit seiner Mitglieder, bei 2/3-Einspruch mit 2/3 der Abstimmenden (Art. 77 IV).",
+  fail:"Hier endet der Weg: Das Gesetz kommt nicht zustande.",
+  breg:"Der Bundeskanzler bzw. der zuständige Minister zeichnet das Gesetz gegen (Art. 58).",
+  bp:"Der Bundespräsident prüft das Gesetz und fertigt es aus (Art. 82 I).",
+  verk:"Das Gesetz wird im Bundesgesetzblatt verkündet und kann in Kraft treten."
+};
+/* ---------- Schema (Pfeile) ---------- */
+// k: n = allgemein, e = Einspruchsgesetz, z = Zustimmungsgesetz
+const EDGES = [
+  {id:"i1",from:"breg_init",to:"br_init",k:"n",pts:[[250,80],[250,48],[760,48],[760,80]],lb:[{t:"Stellungnahme (Art. 76 II)",x:505,y:40}]},
+  {id:"i2",from:"br_init",to:"breg_init",k:"n",pts:[[860,80],[860,8],[150,8],[150,80]],lb:[{t:"Zuleitung über die BReg (Art. 76 III)",x:505,y:0}]},
+  {id:"i3",from:"abg",to:"bt",k:"n",pts:[[500,180],[500,245]]},
+  {id:"i4",from:"breg_init",to:"bt",k:"n",pts:[[250,180],[250,300],[340,300]]},
+  {id:"i5",from:"br_init",to:"bt",k:"n",pts:[[770,180],[770,300],[660,300]]},
+  {id:"d1",from:"breg_init",to:"va",k:"z",dash:true,pts:[[130,180],[130,740],[330,740]],lb:[{t:"Anrufung",x:140,y:618,a:"start"},{t:"(Art. 77 II S. 4)",x:140,y:637,a:"start"}]},
+  {id:"d2",from:"bt",to:"va",k:"z",dash:true,pts:[[620,355],[620,390],[900,390],[900,740],[670,740]],lb:[{t:"Anrufung möglich",x:760,y:380},{t:"(Art. 77 II S. 4)",x:910,y:620,a:"start",rot:true}]},
+  {id:"p1",from:"bt",to:"br1",k:"n",pts:[[500,355],[500,440]],lb:[{t:"Gesetzesbeschluss",x:510,y:403,a:"start"}]},
+  {id:"p2",from:"br1",to:"va",k:"e",pts:[[465,540],[465,665]],lb:[{t:"Einspruchsgesetz:",x:455,y:590,a:"end"},{t:"Anrufung muss erfolgen",x:455,y:609,a:"end"}]},
+  {id:"p3",from:"br1",to:"va",k:"z",pts:[[535,540],[535,665]],lb:[{t:"Zustimmungsgesetz:",x:545,y:590,a:"start"},{t:"Anrufung kann erfolgen",x:545,y:609,a:"start"}]},
+  {id:"p4",from:"br1",to:"br2a",k:"z",pts:[[630,490],[970,490],[970,950],[930,950]],lb:[{t:"direkt abstimmen",x:640,y:480,a:"start"}]},
+  {id:"p5",from:"br1",to:"breg",k:"e",pts:[[370,490],[30,490],[30,1410],[80,1410]],lb:[{t:"kein VA verlangt (Art. 78)",x:360,y:480,a:"end"}]},
+  {id:"v1",from:"va",to:"br3",k:"e",pts:[[330,700],[210,700],[210,900]],lb:[{t:"kein Änderungsvorschlag",x:322,y:690,a:"end"}]},
+  {id:"v2",from:"va",to:"bt2",k:"e",pts:[[465,775],[465,900]],lb:[{t:"Änderungsvorschlag",x:455,y:845,a:"end"}]},
+  {id:"v3",from:"va",to:"bt2",k:"z",pts:[[535,775],[535,900]],lb:[{t:"Änderungsvorschlag",x:545,y:845,a:"start"}]},
+  {id:"v4",from:"va",to:"br2a",k:"z",pts:[[670,700],[820,700],[820,900]],lb:[{t:"kein Änderungsvorschlag",x:678,y:690,a:"start"}]},
+  {id:"b1",from:"bt2",to:"br3",k:"e",pts:[[395,950],[300,950]],lb:[{t:"zugestimmt",x:347,y:940,sm:true}]},
+  {id:"b2",from:"bt2",to:"br2a",k:"z",pts:[[605,950],[710,950]],lb:[{t:"zugestimmt",x:657,y:940,sm:true}]},
+  {id:"b3",from:"bt2",to:"fail",k:"e",pts:[[465,1000],[465,1130]],lb:[{t:"abgelehnt",x:455,y:1070,a:"end"}]},
+  {id:"b4",from:"bt2",to:"fail",k:"z",pts:[[535,1000],[535,1130]],lb:[{t:"abgelehnt",x:545,y:1070,a:"start"}]},
+  {id:"r1",from:"br3",to:"breg",k:"e",pts:[[100,950],[62,950],[62,1375],[80,1375]],lb:[{t:"kein Einspruch",x:52,y:1180,rot:true}]},
+  {id:"r2",from:"br3",to:"bt4",k:"e",pts:[[210,1000],[210,1130]],lb:[{t:"Einspruch",x:220,y:1070,a:"start"}]},
+  {id:"o1",from:"bt4",to:"breg",k:"e",pts:[[210,1230],[210,1340]],lb:[{t:"überstimmt",x:220,y:1292,a:"start"}]},
+  {id:"o2",from:"bt4",to:"fail",k:"e",pts:[[300,1180],[410,1180]],lb:[{t:"nicht",x:355,y:1150,sm:true},{t:"überstimmt",x:355,y:1168,sm:true}]},
+  {id:"z1",from:"br2a",to:"fail",k:"z",pts:[[780,1000],[780,1180],[630,1180]],lb:[{t:"keine Zustimmung",x:705,y:1170,sm:true}]},
+  {id:"z2",from:"br2a",to:"breg",k:"z",pts:[[880,1000],[880,1405],[380,1405]],lb:[{t:"Zustimmung",x:870,y:1395,a:"end"}]},
+  {id:"g1",from:"breg",to:"bp",k:"n",pts:[[230,1440],[230,1570],[390,1570]],lb:[{t:"nach Gegenzeichnung",x:240,y:1500,a:"start"}]},
+  {id:"g2",from:"bp",to:"verk",k:"n",pts:[[650,1570],[700,1570]]}
+];
+const EDGE = Object.fromEntries(EDGES.map(e=>[e.id,e]));
+
+/* ---------- Fälle ---------- */
+const S_BT = {at:"bt",ev:"Der Bundestag hat den Entwurf in drei Lesungen beraten und in der 3. Lesung beschlossen.",q:"Wohin geht der Gesetzesbeschluss?",to:"br1",edge:"p1",extra:["breg"],
+  why:"Der Bundestagspräsident leitet das beschlossene Gesetz unverzüglich dem Bundesrat zu (Art. 77 I) – der „zweite Durchgang“.",
+  wrong:{va:"Den Vermittlungsausschuss kann der Bundestag nur bei Zustimmungsgesetzen anrufen – und nur, wenn es Streit mit dem Bundesrat gibt.",breg:"Zu früh! Erst muss sich der Bundesrat mit dem Gesetz befassen."}};
+const S_BREG = {at:"breg",ev:"Das Gesetz ist zustande gekommen (Art. 78).",q:"Was passiert jetzt?",to:"bp",edge:"g1",extra:["verk"],
+  why:"Der Bundeskanzler bzw. der zuständige Bundesminister zeichnet das Gesetz gegen (Art. 58). Dann geht es an den Bundespräsidenten.",
+  wrong:{verk:"Ohne die Unterschrift des Bundespräsidenten wird nichts verkündet."}};
+const S_BP = {at:"bp",ev:"Der Bundespräsident prüft, ob das Gesetz verfassungsgemäß zustande gekommen ist. Er hat keine Bedenken.",q:"Wie endet der Weg?",to:"verk",edge:"g2",extra:["bt"],
+  why:"Er fertigt das Gesetz aus (unterschreibt es) und lässt es im Bundesgesetzblatt verkünden (Art. 82 I). Danach kann es in Kraft treten. 🎉",
+  wrong:{bt:"Der Bundespräsident schickt Gesetze nicht zur erneuten Beratung zurück. Hätte er verfassungsrechtliche Bedenken, würde er die Ausfertigung verweigern."}};
+const S_BREG_BR = {at:"breg_init",ev:"Das Kabinett hat den Gesetzentwurf beschlossen.",q:"Wohin muss der Entwurf zuerst?",to:"br_init",edge:"i1",
+  why:"Regierungsentwürfe gehen zuerst an den Bundesrat. Er hat in der Regel 6 Wochen Zeit für eine Stellungnahme (Art. 76 II) – der „erste Durchgang“.",
+  wrong:{bt:"Noch nicht! Regierungsentwürfe müssen zuerst dem Bundesrat zur Stellungnahme vorgelegt werden (Art. 76 II).",va:"Der Vermittlungsausschuss kommt erst ins Spiel, wenn der Bundestag das Gesetz beschlossen hat."}};
+const S_BR_BT = {at:"br_init",ev:"Der Bundesrat hat Stellung genommen und einige Änderungen angeregt. Die Bundesregierung antwortet mit einer Gegenäußerung.",q:"Wo wird der Entwurf jetzt beraten?",to:"bt",edge:"i5",exclude:["breg_init"],extra:["va"],
+  why:"Die Bundesregierung leitet den Entwurf mit der Stellungnahme des Bundesrats und ihrer Gegenäußerung an den Bundestag weiter. Die Vorschläge des Bundesrats sind nicht bindend.",
+  wrong:{va:"Der Vermittlungsausschuss vermittelt erst nach dem Gesetzesbeschluss des Bundestags."}};
+const S_ABG = {at:"abg",ev:"Die Fraktion hat ihren Gesetzentwurf fertig ausgearbeitet.",q:"Wo bringt sie ihn ein?",to:"bt",edge:"i3",extra:["br_init","breg_init"],
+  why:"Vorlagen „aus der Mitte des Bundestages“ (eine Fraktion oder 5 % der Abgeordneten, § 76 GOBT) gehen direkt in den Bundestag – ohne Umweg über den Bundesrat (Art. 76 I).",
+  wrong:{br_init:"Nur Regierungsentwürfe müssen erst zum Bundesrat. Abgeordnete bringen ihre Entwürfe direkt im Bundestag ein.",breg_init:"Die Fraktion braucht die Bundesregierung nicht – sie hat ein eigenes Initiativrecht."}};
+
+const CASES = [
+  {id:"c1",title:"Der glatte Weg",lvl:"leicht",type:"e",start:"breg_init",
+   intro:"Die Bundesregierung will den gesetzlichen Mindestlohn erhöhen. Das Gesetz ändert nur Bundesrecht und berührt weder die Finanzen noch die Verwaltung der Länder.",
+   typeWhy:"Einspruchsgesetz – das ist der Regelfall. Zustimmungsgesetze sind nur die Gesetze, bei denen das Grundgesetz die Zustimmung des Bundesrats ausdrücklich verlangt (z. B. bei Länderfinanzen, Verwaltung der Länder oder Grundgesetzänderungen).",
+   steps:[S_BREG_BR,S_BR_BT,S_BT,
+    {at:"br1",ev:"Die Mehrheit im Bundesrat ist einverstanden. Drei Wochen verstreichen – niemand verlangt den Vermittlungsausschuss.",q:"Was passiert mit dem Gesetz?",to:"breg",edge:"p5",
+     why:"Bei Einspruchsgesetzen kann der Bundesrat nur Einspruch einlegen, wenn er vorher binnen 3 Wochen den Vermittlungsausschuss anruft. Tut er das nicht, ist das Gesetz zustande gekommen (Art. 77 II, Art. 78).",
+     wrong:{br2a:"Eine Abstimmung über die Zustimmung gibt es nur bei Zustimmungsgesetzen.",va:"Niemand hat den Vermittlungsausschuss angerufen."}},
+    S_BREG,S_BP]},
+  {id:"c2",title:"Mehr Netto vom Brutto",lvl:"leicht",type:"z",start:"abg",
+   intro:"Eine Bundestagsfraktion will den Grundfreibetrag bei der Einkommensteuer erhöhen. Die Einkommensteuer fließt teils dem Bund, teils den Ländern und Gemeinden zu.",
+   typeWhy:"Zustimmungsgesetz: Steuergesetze, deren Aufkommen ganz oder teilweise den Ländern (oder Gemeinden) zufließt, brauchen die Zustimmung des Bundesrats (Art. 105 III).",
+   steps:[S_ABG,S_BT,
+    {at:"br1",ev:"Die Länder sind mit dem Gesetz zufrieden und wollen gleich abstimmen.",q:"Wie geht es weiter?",to:"br2a",edge:"p4",
+     why:"Bei Zustimmungsgesetzen muss der Bundesrat ausdrücklich zustimmen. Er beschließt darüber in angemessener Frist (Art. 77 IIa).",
+     wrong:{va:"Den Vermittlungsausschuss kann der Bundesrat bei Zustimmungsgesetzen anrufen – muss es aber nicht. Hier gibt es keinen Streit.",breg:"Ohne ausdrückliches Ja des Bundesrats kommt ein Zustimmungsgesetz nicht zustande – Schweigen reicht nicht!"}},
+    {at:"br2a",ev:"Abstimmung im Bundesrat: 41 der 69 Stimmen sind dafür.",q:"Was bedeutet das?",to:"breg",edge:"z2",
+     why:"Nötig ist die absolute Mehrheit, also mindestens 35 von 69 Stimmen. 41 reichen: Der Bundesrat stimmt zu, das Gesetz ist zustande gekommen (Art. 78).",
+     wrong:{fail:"Rechne nach: 41 von 69 Stimmen sind mehr als die Hälfte (35)."}},
+    S_BREG,S_BP]},
+  {id:"c3",title:"Einspruch!",lvl:"mittel",type:"e",start:"breg_init",
+   intro:"Die Bundesregierung will strengere Datenschutzregeln für Smartphone-Apps. Die Länder müssen dafür weder zahlen noch ihre Verwaltung umstellen.",
+   typeWhy:"Einspruchsgesetz – der Regelfall. Nichts im Gesetz löst eine Zustimmungspflicht nach dem Grundgesetz aus.",
+   steps:[S_BREG_BR,S_BR_BT,S_BT,
+    {at:"br1",ev:"Mehrere Länder halten das Gesetz für schlecht gemacht und wollen es stoppen.",q:"Was muss der Bundesrat jetzt tun?",to:"va",edge:"p2",
+     why:"Bei Einspruchsgesetzen muss der Bundesrat zuerst (binnen 3 Wochen) den Vermittlungsausschuss anrufen. Nur dann kann er später Einspruch einlegen (Art. 77 II, III).",
+     wrong:{breg:"Dann käme das Gesetz einfach zustande – das wollen die Länder ja gerade verhindern.",br2a:"Eine Zustimmungsabstimmung gibt es bei Einspruchsgesetzen nicht."}},
+    {at:"va",ev:"Der Vermittlungsausschuss tagt – doch Bundestag und Bundesrat finden keinen Kompromiss.",q:"Wohin geht das Gesetz?",to:"br3",edge:"v1",
+     why:"Ohne Änderungsvorschlag geht das Gesetz unverändert zurück an den Bundesrat. Er kann nun binnen 2 Wochen Einspruch einlegen (Art. 77 III).",
+     wrong:{bt2:"Der Bundestag muss nur erneut abstimmen, wenn der Vermittlungsausschuss eine Änderung vorschlägt.",br2a:"Das ist der Weg bei Zustimmungsgesetzen."}},
+    {at:"br3",ev:"Der Bundesrat legt mit 40 von 69 Stimmen Einspruch ein.",q:"Wer ist jetzt am Zug?",to:"bt4",edge:"r2",
+     why:"Ein Einspruch ist kein endgültiges Veto: Der Bundestag kann ihn zurückweisen (Art. 77 IV).",
+     wrong:{breg:"Der Einspruch ist eingelegt – so einfach geht es nicht weiter."}},
+    {at:"bt4",ev:"Weil der Einspruch mit einfacher Mehrheit beschlossen wurde, braucht der Bundestag die Mehrheit seiner Mitglieder (Kanzlermehrheit: 316 von 630). Die Koalition stimmt geschlossen: 380 Ja-Stimmen.",q:"Was ist das Ergebnis?",to:"breg",edge:"o1",
+     why:"380 ≥ 316: Der Einspruch ist zurückgewiesen, das Gesetz zustande gekommen (Art. 77 IV, Art. 78).",
+     wrong:{fail:"Rechne nach: 380 Stimmen sind mehr als die nötigen 316."}},
+    S_BREG,S_BP]},
+  {id:"c4",title:"Die Zwei-Drittel-Hürde",lvl:"mittel",type:"e",start:"abg",
+   intro:"Eine Fraktion will ein strengeres Lobbyregister für Bundestag und Bundesregierung. Länder sind davon nicht betroffen.",
+   typeWhy:"Einspruchsgesetz – es regelt nur Angelegenheiten des Bundes. Das ist der Regelfall.",
+   steps:[S_ABG,S_BT,
+    {at:"br1",ev:"Die Länder lehnen das Gesetz ab und wollen sich die Möglichkeit eines Einspruchs offenhalten.",q:"Wohin geht das Gesetz?",to:"va",edge:"p2",
+     why:"Ohne vorheriges Vermittlungsverfahren gibt es keinen Einspruch – der Bundesrat muss den Vermittlungsausschuss anrufen (Art. 77 II).",
+     wrong:{breg:"Dann wäre das Gesetz zustande gekommen.",br2a:"Eine Zustimmung braucht ein Einspruchsgesetz nicht."}},
+    {at:"va",ev:"Der Vermittlungsausschuss einigt sich auf einen Änderungsvorschlag.",q:"Wer muss jetzt entscheiden?",to:"bt2",edge:"v2",
+     why:"Schlägt der Vermittlungsausschuss eine Änderung vor, muss der Bundestag erneut beschließen (Art. 77 II S. 5).",
+     wrong:{br3:"Erst muss der Bundestag über die Änderung abstimmen.",br2a:"Das ist der Weg bei Zustimmungsgesetzen."}},
+    {at:"bt2",ev:"Der Bundestag nimmt den geänderten Text an.",q:"Wohin geht das Gesetz?",to:"br3",edge:"b1",
+     why:"Das geänderte Gesetz geht zurück an den Bundesrat. Bei Einspruchsgesetzen entscheidet er jetzt binnen 2 Wochen, ob er Einspruch einlegt (Art. 77 III).",
+     wrong:{br2a:"Eine Zustimmung braucht es bei Einspruchsgesetzen nicht.",fail:"Der Bundestag hat doch zugestimmt!"}},
+    {at:"br3",ev:"Den Ländern reicht der Kompromiss nicht: Einspruch mit 48 von 69 Stimmen – mehr als zwei Drittel!",q:"Wie geht es weiter?",to:"bt4",edge:"r2",
+     why:"Auch einen Einspruch mit 2/3-Mehrheit kann der Bundestag zurückweisen – aber nur mit einer ebenso hohen Mehrheit (Art. 77 IV S. 2).",
+     wrong:{breg:"Es wurde Einspruch eingelegt."}},
+    {at:"bt4",ev:"Bei einem 2/3-Einspruch braucht der Bundestag 2/3 der abgegebenen Stimmen (mindestens aber 316). Ergebnis: 390 Ja, 230 Nein.",q:"Was ist das Ergebnis?",to:"fail",edge:"o2",
+     why:"390 von 620 abgegebenen Stimmen sind nur 63 % – nötig wären 414 (zwei Drittel). Der Einspruch bleibt bestehen, das Gesetz ist gescheitert.",
+     wrong:{breg:"Rechne nach: Zwei Drittel von 620 Stimmen sind 414. 390 reichen nicht."}}]},
+  {id:"c5",title:"Die Länder ergreifen die Initiative",lvl:"mittel",type:"z",start:"br_init",
+   intro:"Mehrere Länder wollen digitale Behördengänge vereinfachen. Das Bundesgesetz soll den Behörden der Länder ein einheitliches Verwaltungsverfahren vorschreiben – ohne dass die Länder davon abweichen dürfen.",
+   typeWhy:"Zustimmungsgesetz: Regelt der Bund das Verwaltungsverfahren der Länder ohne Abweichungsmöglichkeit, muss der Bundesrat zustimmen (Art. 84 I S. 5, 6).",
+   steps:[
+    {at:"br_init",ev:"Der Bundesrat hat beschlossen, den Gesetzentwurf einzubringen.",q:"Über welchen Weg geht der Entwurf?",to:"breg_init",edge:"i2",
+     why:"Entwürfe des Bundesrats gehen über die Bundesregierung an den Bundestag. Sie leitet sie innerhalb von 6 Wochen weiter und fügt ihre Auffassung bei (Art. 76 III).",
+     wrong:{bt:"Fast – aber der Bundesrat muss seinen Entwurf über die Bundesregierung zuleiten (Art. 76 III)."}},
+    {at:"breg_init",ev:"Die Bundesregierung hat ihre Auffassung zu dem Entwurf aufgeschrieben.",q:"Wohin leitet sie den Entwurf weiter?",to:"bt",edge:"i4",
+     why:"Jetzt berät der Bundestag den Entwurf in drei Lesungen.",
+     wrong:{br_init:"Der Bundesrat kennt seinen eigenen Entwurf ja schon 😉",va:"Der Vermittlungsausschuss kommt erst nach dem Gesetzesbeschluss ins Spiel."}},
+    S_BT,
+    {at:"br1",ev:"Der Bundesrat findet das Gesetz grundsätzlich gut, möchte aber noch einige Details ändern, bevor er zustimmt.",q:"Was kann er tun?",to:"va",edge:"p3",
+     why:"Auch bei Zustimmungsgesetzen kann der Bundesrat den Vermittlungsausschuss anrufen, um Änderungen auszuhandeln (Art. 77 II).",
+     wrong:{br2a:"Dann könnte er nur Ja oder Nein sagen – ändern könnte er nichts.",breg:"Ohne Zustimmung des Bundesrats kommt ein Zustimmungsgesetz nicht zustande."}},
+    {at:"va",ev:"Der Vermittlungsausschuss legt einen Änderungsvorschlag vor.",q:"Wer muss jetzt abstimmen?",to:"bt2",edge:"v3",
+     why:"Über den Änderungsvorschlag muss zuerst der Bundestag erneut beschließen (Art. 77 II S. 5).",
+     wrong:{br2a:"Erst muss der Bundestag den geänderten Text beschließen.",br3:"Einspruch gibt es nur bei Einspruchsgesetzen."}},
+    {at:"bt2",ev:"Der Bundestag nimmt die Änderungen an.",q:"Wohin geht das Gesetz?",to:"br2a",edge:"b2",
+     why:"Jetzt muss der Bundesrat über seine Zustimmung entscheiden (Art. 77 IIa).",
+     wrong:{br3:"Einspruch gibt es bei Einspruchsgesetzen – hier braucht es eine Zustimmung.",fail:"Der Bundestag hat doch zugestimmt!"}},
+    {at:"br2a",ev:"Der Bundesrat stimmt mit 52 von 69 Stimmen zu.",q:"Wie geht es weiter?",to:"breg",edge:"z2",
+     why:"Mit der Zustimmung ist das Gesetz zustande gekommen (Art. 78).",wrong:{fail:"52 von 69 – das ist eine klare Mehrheit."}},
+    S_BREG,S_BP]},
+  {id:"c6",title:"Der Rettungsversuch",lvl:"schwer",type:"z",start:"breg_init",
+   intro:"Die Bundesregierung will die Verteilung der Umsatzsteuer zwischen Bund und Ländern neu regeln – zugunsten des Bundes.",
+   typeWhy:"Zustimmungsgesetz: Die Anteile von Bund und Ländern an der Umsatzsteuer werden durch ein Bundesgesetz festgelegt, das der Zustimmung des Bundesrats bedarf (Art. 106 III).",
+   steps:[S_BREG_BR,S_BR_BT,S_BT,
+    {at:"br1",ev:"Die Länder fühlen sich benachteiligt. Sie wollen sofort abstimmen.",q:"Wohin geht das Gesetz?",to:"br2a",edge:"p4",
+     why:"Bei Zustimmungsgesetzen entscheidet der Bundesrat direkt über seine Zustimmung (Art. 77 IIa).",
+     wrong:{va:"Der Bundesrat könnte den Vermittlungsausschuss anrufen – will er aber nicht. Er will abstimmen.",breg:"Ohne Zustimmung kommt ein Zustimmungsgesetz nicht zustande."}},
+    {at:"br2a",ev:"Der Bundesrat verweigert die Zustimmung. Doch die Bundesregierung gibt nicht auf und will das Gesetz retten.",q:"Was kann die Bundesregierung tun?",to:"va",edge:"d1",extra:["va"],
+     why:"Bei Zustimmungsgesetzen können auch Bundesregierung und Bundestag den Vermittlungsausschuss anrufen (Art. 77 II S. 4) – im Schema die gestrichelte Linie.",
+     wrong:{fail:"Noch ist nicht alles verloren – es gibt eine Rettungsmöglichkeit!",breg:"Ohne Zustimmung des Bundesrats kommt das Gesetz nicht zustande."}},
+    {at:"va",ev:"Im Vermittlungsausschuss prallen die Interessen aufeinander. Es gibt keinen Änderungsvorschlag.",q:"Wohin geht das Gesetz?",to:"br2a",edge:"v4",
+     why:"Ohne Änderungsvorschlag muss der Bundesrat erneut über die Zustimmung entscheiden.",
+     wrong:{br3:"Einspruch gibt es nur bei Einspruchsgesetzen.",bt2:"Der Bundestag stimmt nur erneut ab, wenn es einen Änderungsvorschlag gibt."}},
+    {at:"br2a",ev:"Die Länder bleiben hart: Nur 30 von 69 Stimmen sind für das Gesetz.",q:"Was ist das Ergebnis?",to:"fail",edge:"z1",extra:["bt4"],
+     why:"30 < 35: keine Zustimmung – das Gesetz ist gescheitert. Anders als einen Einspruch kann der Bundestag ein fehlendes Ja des Bundesrats NICHT überstimmen!",
+     wrong:{breg:"30 von 69 ist keine Mehrheit.",bt4:"Überstimmen kann der Bundestag nur einen Einspruch – kein fehlendes Ja bei Zustimmungsgesetzen!"}}]},
+  {id:"c7",title:"Der Kompromiss",lvl:"schwer",type:"e",start:"abg",
+   intro:"Eine Fraktion will eine Pfandpflicht für alle Getränkeverpackungen. Die Länder müssen dafür weder zahlen noch ihre Verwaltung umbauen.",
+   typeWhy:"Einspruchsgesetz – keine der Zustimmungspflichten des Grundgesetzes ist berührt. Das ist der Regelfall.",
+   steps:[S_ABG,S_BT,
+    {at:"br1",ev:"Einige Länder fürchten Nachteile für kleine Händler und wollen nachverhandeln.",q:"Wohin geht das Gesetz?",to:"va",edge:"p2",
+     why:"Der Bundesrat ruft den Vermittlungsausschuss an (Art. 77 II). Bei Einspruchsgesetzen ist das sein einziger Weg, Einfluss zu nehmen.",
+     wrong:{breg:"Dann käme das Gesetz unverändert zustande.",br2a:"Eine Zustimmung braucht ein Einspruchsgesetz nicht."}},
+    {at:"va",ev:"Durchbruch! Der Vermittlungsausschuss schlägt Ausnahmen für kleine Läden vor.",q:"Wer muss jetzt entscheiden?",to:"bt2",edge:"v2",
+     why:"Über einen Änderungsvorschlag muss der Bundestag erneut beschließen (Art. 77 II S. 5).",
+     wrong:{br3:"Erst muss der Bundestag den geänderten Text beschließen.",br2a:"Das ist der Weg bei Zustimmungsgesetzen."}},
+    {at:"bt2",ev:"Der Bundestag beschließt das Gesetz mit den Änderungen.",q:"Wohin geht das Gesetz?",to:"br3",edge:"b1",
+     why:"Der Bundesrat kann jetzt binnen 2 Wochen entscheiden, ob er trotzdem Einspruch einlegt (Art. 77 III).",
+     wrong:{br2a:"Bei Einspruchsgesetzen braucht es keine Zustimmung.",fail:"Der Bundestag hat doch zugestimmt!"}},
+    {at:"br3",ev:"Mit dem Kompromiss können die Länder leben. Sie legen keinen Einspruch ein.",q:"Was passiert jetzt?",to:"breg",edge:"r1",
+     why:"Ohne Einspruch ist das Gesetz zustande gekommen (Art. 78).",
+     wrong:{bt4:"Der Bundestag muss nur einen Einspruch zurückweisen – es gibt keinen."}},
+    S_BREG,S_BP]},
+  {id:"c8",title:"Zu teuer!",lvl:"schwer",type:"z",start:"abg",
+   intro:"Die Koalitionsfraktionen wollen ein neues Familiengeld. Die Länder sollen es auszahlen und einen Teil der Kosten selbst tragen.",
+   typeWhy:"Zustimmungsgesetz: Bundesgesetze, die die Länder zu Geldleistungen an Bürger verpflichten, deren Kosten die Länder tragen müssen, brauchen die Zustimmung des Bundesrats (Art. 104a IV).",
+   steps:[S_ABG,S_BT,
+    {at:"br1",ev:"Die Länder wollen die Kosten nicht übernehmen und stimmen sofort ab.",q:"Wohin geht das Gesetz?",to:"br2a",edge:"p4",
+     why:"Der Bundesrat entscheidet direkt über seine Zustimmung (Art. 77 IIa).",
+     wrong:{va:"Der Bundesrat könnte den Vermittlungsausschuss anrufen – will aber direkt abstimmen.",breg:"Ohne Zustimmung kommt ein Zustimmungsgesetz nicht zustande."}},
+    {at:"br2a",ev:"Der Bundesrat verweigert die Zustimmung. Jetzt ergreift der Bundestag die Initiative, um das Gesetz zu retten.",q:"Was kann der Bundestag tun?",to:"va",edge:"d2",extra:["va","bt4"],
+     why:"Auch der Bundestag darf bei Zustimmungsgesetzen den Vermittlungsausschuss anrufen (Art. 77 II S. 4) – gestrichelte Linie im Schema.",
+     wrong:{bt4:"Überstimmen geht nur bei einem Einspruch. Ein fehlendes Ja bei Zustimmungsgesetzen kann der Bundestag nicht überstimmen.",fail:"Noch gibt es einen Ausweg!",breg:"Ohne Zustimmung kommt das Gesetz nicht zustande."}},
+    {at:"va",ev:"Der Vermittlungsausschuss schlägt vor: Der Bund übernimmt die Kosten komplett.",q:"Wer muss jetzt abstimmen?",to:"bt2",edge:"v3",
+     why:"Über einen Änderungsvorschlag muss der Bundestag erneut beschließen (Art. 77 II S. 5).",
+     wrong:{br2a:"Erst muss der Bundestag den geänderten Text beschließen.",br3:"Einspruch gibt es nur bei Einspruchsgesetzen."}},
+    {at:"bt2",ev:"Das ist der Koalition zu teuer: Der Bundestag lehnt den Änderungsvorschlag ab.",q:"Was ist das Ergebnis?",to:"fail",edge:"b4",
+     why:"Damit bleibt es beim ursprünglichen Gesetz – dem hat der Bundesrat aber die Zustimmung verweigert. Das Gesetz ist gescheitert.",
+     wrong:{br2a:"Der Bundestag hat den Vorschlag abgelehnt – und dem ursprünglichen Gesetz hat der Bundesrat schon die Zustimmung verweigert.",br3:"Einspruch gibt es nur bei Einspruchsgesetzen."}}]}
+];
+const DISCOVERABLE = [...new Set(CASES.flatMap(c=>c.steps.map(s=>s.edge)))];
+
+/* ---------- Speicher ---------- */
+const KEY="wegdesgesetzes_v1";
+let save={stars:{},edges:[]};
+try{const s=JSON.parse(localStorage.getItem(KEY)||"null"); if(s&&typeof s==="object"){save.stars=s.stars||{};save.edges=Array.isArray(s.edges)?s.edges:[];}}catch(e){}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(save));}catch(e){}}
+
+/* ---------- SVG aufbauen ---------- */
+const NS="http://www.w3.org/2000/svg";
+const svg=document.getElementById("map");
+function el(tag,attrs,parent){const n=document.createElementNS(NS,tag);for(const k in attrs)n.setAttribute(k,attrs[k]);if(parent)parent.appendChild(n);return n;}
+const FULL={x:0,y:-30,w:1000,h:1690};
+function buildMap(){
+  const defs=el("defs",{},svg);
+  const g=el("linearGradient",{id:"vaGrad",x1:"0",y1:"0",x2:"1",y2:"0.3"},defs);
+  el("stop",{offset:"0","stop-color":"#0a9446"},g);el("stop",{offset:"1","stop-color":"#56b1dc"},g);
+  for(const [k,col] of [["e","var(--e)"],["z","var(--z)"],["h","var(--faint)"]]){
+    const m=el("marker",{id:"ar-"+k,viewBox:"0 0 10 10",refX:"9",refY:"5",markerWidth:"5",markerHeight:"5",orient:"auto-start-reverse"},defs);
+    el("path",{d:"M0,0 L10,5 L0,10 z",style:"fill:"+col},m);
+  }
+  // Bereich Gesetzgebungsverfahren
+  el("path",{class:"zone deco",d:"M 15 225 H 990 V 1490 H 450 L 380 1320 H 15 Z"},svg);
+  el("text",{class:"sectlabel deco",x:20,y:-12},svg).textContent="1. Gesetzesinitiative (Art. 76)";
+  el("text",{class:"sectlabel deco",x:20,y:250},svg).textContent="2. Gesetzgebungsverfahren (Art. 77 ff.)";
+  const eg=el("g",{},svg), lg=el("g",{},svg), ng=el("g",{},svg);
+  for(const e of EDGES){
+    e.el=el("path",{class:"edge k-"+e.k+(e.dash?" dash":""),d:"M"+e.pts.map(p=>p.join(",")).join(" L")},eg);
+    e.lbls=(e.lb||[]).map(l=>{
+      const t=el("text",{class:"elabel k-"+e.k,x:l.x,y:l.y,"text-anchor":l.a||"middle"},lg);
+      if(l.sm)t.style.fontSize="13px";
+      if(l.rot)t.setAttribute("transform",`rotate(-90 ${l.x} ${l.y})`);
+      t.textContent=l.t;return t;});
+  }
+  for(const id in NODES){
+    const n=NODES[id],c=COL[n.c];
+    const gg=el("g",{class:"node","data-id":id},ng); n.el=gg;
+    el("rect",{class:"frame",x:n.x-n.w/2,y:n.y-n.h/2,width:n.w,height:n.h,rx:6,fill:c.fill,stroke:c.stroke,"stroke-width":5},gg);
+    const fs=n.small?20:25, lh=fs*1.1, total=n.lines.length*lh;
+    n.lines.forEach((ln,i)=>{
+      const t=el("text",{class:"nm",x:n.x,y:n.y-total/2+lh*(i+0.75)-8,"text-anchor":"middle"},gg);
+      t.style.fontSize=(i>0&&id==="bt"?19:fs)+"px"; if(n.white)t.style.fill="#fff"; t.textContent=ln;});
+    const a=el("text",{class:"art",x:n.x,y:n.y+n.h/2-11,"text-anchor":"middle"},gg); if(n.white)a.style.fill="#f1f1f1"; a.textContent="("+n.art+")";
+    if(id==="fail"){n.x1=el("path",{d:`M${n.x-n.w/2-20},${n.y-n.h/2-25} L${n.x+n.w/2+20},${n.y+n.h/2+25} M${n.x+n.w/2+20},${n.y-n.h/2-25} L${n.x-n.w/2-20},${n.y+n.h/2+25}`,stroke:"#d4302a","stroke-width":10,opacity:.35,"stroke-linecap":"round"},gg);}
+  }
+  token=el("g",{class:"token"},svg); el("circle",{r:24},token);
+  const tt=el("text",{"text-anchor":"middle",y:8},token); tt.textContent="§";
+  token.style.display="none";
+}
+let token, tokenAnim=0;
+
+/* ---------- Kamera / Pan / Zoom ---------- */
+let vb={...FULL}, camAnim=null, showSchema=false;
+function setVB(v){vb=v;svg.setAttribute("viewBox",`${v.x} ${v.y} ${v.w} ${v.h}`);}
+function fitAspect(b){
+  const r=svg.getBoundingClientRect(); const a=(r.width||1)/(r.height||1);
+  let {x,y,w,h}=b; const cx=x+w/2, cy=y+h/2;
+  if(w/h<a){w=h*a;}else{h=w/a;}
+  return {x:cx-w/2,y:cy-h/2,w,h};
+}
+function animateVB(target,ms=550){
+  if(camAnim)cancelAnimationFrame(camAnim);
+  const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(reduce){setVB(target);return;}
+  const from={...vb},t0=performance.now();
+  const step=t=>{const p=Math.min(1,(t-t0)/ms),e=p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;
+    setVB({x:from.x+(target.x-from.x)*e,y:from.y+(target.y-from.y)*e,w:from.w+(target.w-from.w)*e,h:from.h+(target.h-from.h)*e});
+    if(p<1)camAnim=requestAnimationFrame(step);else camAnim=null;};
+  camAnim=requestAnimationFrame(step);
+}
+function focusNodes(ids){
+  if(!ids.length){animateVB(fitAspect(FULL));return;}
+  let x1=1e9,y1=1e9,x2=-1e9,y2=-1e9;
+  for(const id of ids){const n=NODES[id];x1=Math.min(x1,n.x-n.w/2);y1=Math.min(y1,n.y-n.h/2);x2=Math.max(x2,n.x+n.w/2);y2=Math.max(y2,n.y+n.h/2);}
+  const pad=50; let b={x:x1-pad,y:y1-pad,w:x2-x1+2*pad,h:y2-y1+2*pad};
+  const r=svg.getBoundingClientRect(), minW=Math.max(480,r.width*0.95), minH=Math.max(300,r.height*0.95);
+  if(b.w<minW){b.x-=(minW-b.w)/2;b.w=minW;} if(b.h<minH){b.y-=(minH-b.h)/2;b.h=minH;}
+  animateVB(fitAspect(b));
+}
+function clientToSvg(cx,cy){const r=svg.getBoundingClientRect();const s=Math.max(vb.w/r.width,vb.h/r.height);
+  const ox=(r.width*s-vb.w)/2, oy=(r.height*s-vb.h)/2;
+  return {x:vb.x-ox+(cx-r.left)*s,y:vb.y-oy+(cy-r.top)*s,s};}
+function zoomAt(f,cx,cy){
+  if(camAnim){cancelAnimationFrame(camAnim);camAnim=null;}
+  const p=clientToSvg(cx,cy); let w=vb.w*f,h=vb.h*f;
+  if(w<250||w>FULL.w*2.2&&f>1)return;
+  setVB({x:p.x-(p.x-vb.x)*f,y:p.y-(p.y-vb.y)*f,w,h});
+}
+const pointers=new Map(); let dragStart=null, pinch=null, moved=false;
+svg.addEventListener("pointerdown",e=>{svg.setPointerCapture(e.pointerId);pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});moved=false;
+  if(pointers.size===1){dragStart={x:e.clientX,y:e.clientY,vb:{...vb}};}
+  else if(pointers.size===2){const [a,b]=[...pointers.values()];pinch={d:Math.hypot(a.x-b.x,a.y-b.y)};}
+});
+svg.addEventListener("pointermove",e=>{if(!pointers.has(e.pointerId))return;pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(pointers.size===2&&pinch){const [a,b]=[...pointers.values()];const d=Math.hypot(a.x-b.x,a.y-b.y);
+    if(d>0){zoomAt(pinch.d/d,(a.x+b.x)/2,(a.y+b.y)/2);pinch.d=d;}moved=true;return;}
+  if(dragStart){const dx=e.clientX-dragStart.x,dy=e.clientY-dragStart.y;
+    if(!moved&&Math.hypot(dx,dy)<7)return; moved=true; svg.classList.add("dragging");
+    if(camAnim){cancelAnimationFrame(camAnim);camAnim=null;}
+    const r=svg.getBoundingClientRect(),s=Math.max(dragStart.vb.w/r.width,dragStart.vb.h/r.height);
+    setVB({...dragStart.vb,x:dragStart.vb.x-dx*s,y:dragStart.vb.y-dy*s});}
+});
+function endPtr(e){
+  const wasTap=!moved&&pointers.size===1;
+  pointers.delete(e.pointerId); if(pointers.size<2)pinch=null; if(pointers.size===0){dragStart=null;svg.classList.remove("dragging");}
+  if(wasTap&&e.type==="pointerup"){const t=document.elementFromPoint(e.clientX,e.clientY);const g=t&&t.closest&&t.closest(".node");if(g)onNodeTap(g.dataset.id);}
+}
+svg.addEventListener("pointerup",endPtr);svg.addEventListener("pointercancel",endPtr);
+svg.addEventListener("wheel",e=>{e.preventDefault();zoomAt(e.deltaY>0?1.12:1/1.12,e.clientX,e.clientY);},{passive:false});
+document.getElementById("btnZoomIn").onclick=()=>{const r=svg.getBoundingClientRect();zoomAt(1/1.3,r.left+r.width/2,r.top+r.height/2);};
+document.getElementById("btnZoomOut").onclick=()=>{const r=svg.getBoundingClientRect();zoomAt(1.3,r.left+r.width/2,r.top+r.height/2);};
+const btnSchema=document.getElementById("btnSchema");
+document.getElementById("btnFit").onclick=()=>refocus();
+function setSchema(on){
+  showSchema=on; btnSchema.setAttribute("aria-pressed",on);
+  if(on&&G&&!G.finished&&!G.usedHelp){G.usedHelp=true;toast("💡 Hilfe genutzt","Das komplette Schema ist eingeblendet. In diesem Fall gibt es höchstens ★★.");}
+  if(G)render();
+}
+btnSchema.onclick=()=>setSchema(!showSchema);
+function openMap(){document.body.classList.add("mapopen");requestAnimationFrame(()=>{setVB(fitAspect(FULL));refocus();});}
+function closeMap(){document.body.classList.remove("mapopen");}
+document.getElementById("btnMapClose").onclick=closeMap;
+let resizeT; window.addEventListener("resize",()=>{clearTimeout(resizeT);resizeT=setTimeout(()=>{if(!camAnim)refocus();},150);});
+
+/* ---------- Toast ---------- */
+const toastEl=document.getElementById("toast"); let toastT;
+function toast(title,text){toastEl.innerHTML="";const b=document.createElement("b");b.textContent=title;toastEl.append(b,document.createTextNode(text));
+  toastEl.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>toastEl.classList.remove("show"),3800);}
+
+/* ---------- Spielzustand ---------- */
+let G=null; // {c, i (-1=Typfrage), at, mistakes, used:[edges], wrongNow:Set, answered, path:[]}
+const $=id=>document.getElementById(id);
+const panel=$("panelInner");
+function h(tag,props={},...kids){const n=document.createElement(tag);for(const k in props){if(props[k]==null)continue;if(k==="class")n.className=props[k];else if(k.startsWith("on"))n.addEventListener(k.slice(2),props[k]);else if(k==="html")n.innerHTML=props[k];else n.setAttribute(k,props[k]);}
+  for(const c of kids.flat()){if(c==null||c===false)continue;n.append(c.nodeType?c:document.createTextNode(c));}return n;}
+function starStr(n){return h("span",{class:"stars","aria-label":n+" von 3 Sternen"},...[0,1,2].map(i=>h("span",{class:i<n?"":"off"},"★")));}
+function totalStars(){return Object.values(save.stars).reduce((a,b)=>a+b,0);}
+function updateHeader(){ $("hdrStars").textContent="★ "+totalStars()+"/"+CASES.length*3;}
+
+function showMenu(){
+  G=null; closeMap(); $("menu").hidden=false; $("game").hidden=true; $("btnMenu").hidden=true;
+  const disc=DISCOVERABLE.filter(e=>save.edges.includes(e)).length;
+  $("discTxt").textContent=disc+"/"+DISCOVERABLE.length; $("discBar").style.width=(100*disc/DISCOVERABLE.length)+"%";
+  $("starTxt").textContent=totalStars()+" / "+CASES.length*3;
+  const box=$("cases"); box.innerHTML="";
+  CASES.forEach((c,i)=>{
+    const st=save.stars[c.id]||0;
+    box.append(h("button",{class:"case",onclick:()=>startCase(i)},
+      h("div",{class:"top"},h("span",{class:"num"},"Fall "+(i+1)),h("span",{class:"tag "+c.lvl},c.lvl)),
+      h("h3",{},c.title),h("p",{},c.intro),
+      h("div",{class:"top"},starStr(st),h("span",{class:"num"},st?"nochmal spielen →":"spielen →"))));
+  });
+  updateHeader();
+}
+$("btnMenu").onclick=showMenu;
+$("btnReset").onclick=()=>{if(confirm("Sterne und entdeckte Pfade wirklich zurücksetzen?")){save={stars:{},edges:[]};persist();showMenu();}};
+
+function startCase(i){
+  const c=CASES[i];
+  G={ci:i,c,i:-1,at:c.start,mistakes:0,used:[],wrongNow:new Set(),answered:false,path:[c.start]};
+  $("menu").hidden=true; $("game").hidden=false; $("btnMenu").hidden=false;
+  if(!svg.firstChild)buildMap();
+  showSchema=false; btnSchema.setAttribute("aria-pressed",false); closeMap();
+  $("panel").scrollTop=0;
+  cancelAnimationFrame(tokenAnim);
+  const n=NODES[c.start]; token.style.display=""; token.setAttribute("transform",`translate(${n.x+n.w/2-10},${n.y-n.h/2+10})`);
+  requestAnimationFrame(()=>{setVB(fitAspect(FULL));render();});
+}
+
+function curStep(){return G.i>=0?G.c.steps[G.i]:null;}
+function choicesFor(s){
+  let ids=[...new Set(EDGES.filter(e=>e.from===s.at).map(e=>e.to))];
+  for(const x of s.extra||[]) if(!ids.includes(x))ids.push(x);
+  if(!ids.includes(s.to))ids.push(s.to);
+  ids=ids.filter(x=>!(s.exclude||[]).includes(x)&&x!==s.at);
+  // stabile Mischung je Schritt
+  let seed=(G.ci+1)*97+(G.i+1)*31; const rnd=()=>{seed=(seed*9301+49297)%233280;return seed/233280;};
+  return ids.map(id=>({id,r:rnd()})).sort((a,b)=>a.r-b.r).map(o=>o.id);
+}
+
+const nm=id=>NODES[id].lines.join(" ").replace("- ","");
+function visibleSets(){
+  const nodes=new Set(), edges=new Set(G?G.used:[]);
+  if(showSchema){Object.keys(NODES).forEach(n=>nodes.add(n));EDGES.forEach(e=>edges.add(e.id));return {nodes,edges};}
+  if(G)G.path.forEach(n=>nodes.add(n));
+  if(G&&G.finished)save.edges.forEach(id=>edges.add(id));
+  edges.forEach(id=>{const e=EDGE[id];if(e){nodes.add(e.from);nodes.add(e.to);}});
+  return {nodes,edges};
+}
+function paintEdges(){
+  const {edges}=visibleSets(); const used=new Set(G?G.used:[]);
+  for(const e of EDGES){
+    const vis=edges.has(e.id);
+    e.el.classList.toggle("gone",!vis); e.el.classList.remove("hidden");
+    e.el.classList.toggle("active",used.has(e.id));
+    e.el.setAttribute("marker-end","url(#ar-"+(e.k==="z"?"z":"e")+")");
+    e.lbls.forEach(t=>{t.classList.toggle("gone",!vis);t.classList.remove("hidden");});
+  }
+}
+function paintNodes(){
+  const {nodes}=visibleSets();
+  for(const id in NODES){const g=NODES[id].el;
+    g.classList.toggle("gone",!nodes.has(id));
+    g.classList.toggle("here",!!G&&id===G.at);
+    g.classList.remove("cand","dim");
+  }
+  const showDeco=showSchema||(G&&G.finished);
+  svg.querySelectorAll(".deco").forEach(d=>d.classList.toggle("gone",!showDeco));
+  if(NODES.fail.x1)NODES.fail.x1.setAttribute("opacity",G&&G.at==="fail"?1:.35);
+  const n=G?G.path.length:0;
+  $("mapTitle").textContent=showSchema?"💡 Komplettes Schema":(G&&G.finished?"Dein entdecktes Schema":"Dein Weg bisher · "+n+(n===1?" Station":" Stationen"));
+}
+function refocus(){
+  if(!G)return;
+  focusNodes([...visibleSets().nodes]);
+}
+function trail(){
+  return h("div",{class:"trail","aria-label":"Bisheriger Weg"},...G.path.flatMap((id,k)=>[k?h("span",{},"→"):null,h("span",{class:"st"+(k===G.path.length-1?" now":"")},nm(id))]),
+    h("button",{class:"hbtn sm-only",style:"min-height:30px;padding:3px 10px;font-size:13px;margin-left:4px",onclick:openMap},"🗺️ Schema"));
+}
+
+function render(){
+  paintEdges(); paintNodes(); panel.innerHTML="";
+  const c=G.c, total=c.steps.length+1, done=G.i+1+(G.answered?1:0);
+  panel.append(h("div",{class:"casehead"},h("h2",{},c.title),h("small",{},"Fall "+(G.ci+1)+" · "+c.lvl+(G.usedHelp?" · 💡":""))));
+  panel.append(h("div",{class:"steps"},...Array.from({length:total},(_,k)=>h("i",{class:k<done?"done":k===done?"cur":""}))));
+  if(G.finished){renderResult();refocus();return;}
+  const stage=h("div",{class:"stage"});
+  panel.append(stage);
+  if(G.i===-1){
+    stage.append(h("div",{class:"lage"},h("div",{class:"lbl"},"📰 Der Fall"),c.intro));
+    stage.append(h("p",{class:"question"},"Welche Art von Gesetz ist das?"));
+    stage.append(h("p",{class:"typehint",style:"margin:-6px 0 0"},"Tipp: Die Zustimmung des Bundesrats ist nur nötig, wenn das Grundgesetz es ausdrücklich verlangt."));
+    const opts=[["e","Einspruchsgesetz","var(--e)"],["z","Zustimmungsgesetz","var(--z)"]];
+    stage.append(h("div",{class:"choices"},...opts.map(([k,lbl,col])=>{
+      const right=G.answered&&k===c.type, wrong=G.wrongNow.has(k);
+      return h("button",{class:"choice big"+(right?" right":"")+(wrong?" wrong":""),style:"border-left:8px solid "+col,disabled:(G.answered||wrong)?"":null,onclick:()=>answerType(k)},lbl);
+    })));
+    if(G.answered)stage.append(feedback(true,c.type==="z"?"Richtig: Zustimmungsgesetz!":"Richtig: Einspruchsgesetz!",c.typeWhy),nextBtn());
+    else if(G.lastWrong)stage.append(feedback(false,"Nicht ganz.","Überlege: Verlangt das Grundgesetz hier ausdrücklich die Zustimmung der Länder? (Finanzen der Länder, Verwaltung der Länder, Grundgesetzänderung …)"));
+    panel.append(trail());
+    refocus(); return;
+  }
+  const s=curStep();
+  stage.append(h("div",{class:"lage"},h("div",{class:"lbl"},"📍 Was passiert? · "+nm(s.at)+" · "+(c.type==="z"?"Zustimmungsgesetz":"Einspruchsgesetz")),s.ev));
+  stage.append(h("p",{class:"question"},s.q));
+  const ch=choicesFor(s), names={}; ch.forEach(id=>{names[nm(id)]=(names[nm(id)]||0)+1;});
+  stage.append(h("div",{class:"choices"},...ch.map(id=>{
+    const n=NODES[id],col=COL[n.c], right=G.answered&&id===s.to, wrong=G.wrongNow.has(id);
+    return h("button",{class:"choice"+(right?" right":"")+(wrong?" wrong":""),disabled:(G.answered||wrong)?"":null,onclick:()=>answer(id)},
+      h("span",{class:"chip",style:`background:${n.c==="va"?"linear-gradient(90deg,#0a9446,#56b1dc)":col.fill};border-color:${col.stroke}`}),
+      h("span",{class:"t"},h("b",{},nm(id)),names[nm(id)]>1?h("small",{},n.role):null));
+  })));
+  if(G.answered)stage.append(feedback(true,"Richtig! Neue Station aufgedeckt: "+nm(s.to),s.why),nextBtn());
+  else if(G.lastWrong)stage.append(feedback(false,"Nicht ganz.",(s.wrong&&s.wrong[G.lastWrong])||"Überlege noch einmal, wer in dieser Situation zuständig ist."));
+  panel.append(trail());
+  refocus();
+}
+function cleanDisabled(){panel.querySelectorAll('[disabled="null"]').forEach(b=>b.removeAttribute("disabled"));}
+function feedback(ok,title,text){return h("div",{class:"fb "+(ok?"ok":"bad"),role:"status"},h("b",{},(ok?"✅ ":"❌ ")+title),text);}
+function nextBtn(){
+  const last=G.i===G.c.steps.length-1;
+  const b=h("button",{class:"primary",onclick:next},last?"Ergebnis ansehen →":"Weiter →");
+  setTimeout(()=>{b.scrollIntoView({block:"nearest",behavior:"smooth"});b.focus({preventScroll:true});},60);
+  return b;
+}
+function answerType(k){
+  if(G.answered)return;
+  if(k===G.c.type){G.answered=true;G.lastWrong=null;}
+  else{G.mistakes++;G.wrongNow.add(k);G.lastWrong=k;}
+  render();
+}
+function onNodeTap(id){
+  if(NODES[id].el.classList.contains("gone"))return;
+  toast(nm(id)+" ("+NODES[id].art+")",INFO[id]);
+}
+function answer(id){
+  const s=curStep(); if(!s||G.answered)return;
+  if(id===s.to){
+    G.answered=true;G.lastWrong=null;
+    const e=EDGE[s.edge]; G.used.push(e.id); G.lastEdge=e.id;
+    if(!save.edges.includes(e.id)){save.edges.push(e.id);persist();}
+    moveToken(e,s.at,s.to);
+    G.at=s.to; G.path.push(s.to);
+  }else{G.mistakes++;G.wrongNow.add(id);G.lastWrong=id;}
+  render();
+}
+function next(){
+  if(G.i===G.c.steps.length-1){finish();return;}
+  G.i++;G.answered=false;G.wrongNow=new Set();G.lastWrong=null;render();
+  const first=panel.querySelector(".choice:not([disabled])"); if(first&&window.innerWidth>=900)first.focus({preventScroll:true});
+  $("panel").scrollTop=0;
+}
+function moveToken(e,fromId,toId){
+  const A=NODES[fromId],B=NODES[toId];
+  const off=n=>[n.x+n.w/2-10,n.y-n.h/2+10];
+  let pts;
+  if(e.from===fromId){pts=[off(A),...e.pts,off(B)];} else {pts=[off(A),[B.x,B.y],off(B)];}
+  let len=0;const seg=[];for(let k=1;k<pts.length;k++){const d=Math.hypot(pts[k][0]-pts[k-1][0],pts[k][1]-pts[k-1][1]);seg.push(d);len+=d;}
+  const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const ms=reduce?0:Math.min(1400,350+len*0.9), t0=performance.now();
+  const step=t=>{const p=ms?Math.min(1,(t-t0)/ms):1;const e2=p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;let dist=e2*len,k=0;
+    while(k<seg.length-1&&dist>seg[k]){dist-=seg[k];k++;}
+    const f=seg[k]?Math.min(1,dist/seg[k]):1;const x=pts[k][0]+(pts[k+1][0]-pts[k][0])*f,y=pts[k][1]+(pts[k+1][1]-pts[k][1])*f;
+    token.setAttribute("transform",`translate(${x},${y})`); if(p<1)tokenAnim=requestAnimationFrame(step);};
+  cancelAnimationFrame(tokenAnim); tokenAnim=requestAnimationFrame(step);
+}
+function finish(){
+  G.finished=true; let stars=G.mistakes===0?3:G.mistakes<=2?2:1; if(G.usedHelp)stars=Math.min(stars,2);
+  G.stars=stars; save.stars[G.c.id]=Math.max(save.stars[G.c.id]||0,stars); persist(); updateHeader(); render();
+}
+function renderResult(){
+  const ok=G.at==="verk";
+  panel.append(h("div",{class:"stage result"},
+    h("div",{class:"big"},ok?"📜":"🗑️"),
+    h("h2",{},ok?"Das Gesetz ist verkündet!":"Das Gesetz ist gescheitert."),
+    h("p",{style:"margin:4px 0;color:var(--muted)"},ok?"Es steht im Bundesgesetzblatt und kann in Kraft treten.":"Auch das gehört zur Demokratie: Ohne Mehrheit kein Gesetz."),
+    starStr(G.stars),
+    h("p",{style:"margin:6px 0 0;color:var(--muted);font-size:14px"},(G.mistakes===0?"Fehlerfrei – stark!":G.mistakes+" Fehler")+(G.usedHelp?" · Hilfe genutzt (max. ★★)":""))));
+  const disc=DISCOVERABLE.filter(e=>save.edges.includes(e)).length;
+  panel.append(h("p",{style:"margin:0;text-align:center;color:var(--muted);font-size:14px"},"Dein Schema: "+disc+" von "+DISCOVERABLE.length+" Pfeilen entdeckt. ",
+    h("button",{class:"hbtn sm-only",style:"min-height:30px;padding:3px 10px;font-size:13px",onclick:openMap},"🗺️ Ansehen")));
+  panel.append(h("b",{},"Dein Weg im Überblick:"));
+  const items=[h("li",{},h("span",{class:"n"},"1"),h("span",{},h("b",{},"Gesetzesart: "),G.c.typeWhy))];
+  G.c.steps.forEach((s,k)=>items.push(h("li",{},h("span",{class:"n"},String(k+2)),h("span",{},h("b",{},nm(s.at)+" → "+nm(s.to)+": "),s.why))));
+  panel.append(h("ol",{class:"recap"},...items));
+  const nextI=G.ci+1<CASES.length?G.ci+1:null;
+  panel.append(h("div",{class:"btnrow"},
+    nextI!==null?h("button",{class:"primary",onclick:()=>startCase(nextI)},"Nächster Fall →"):null,
+    h("button",{class:"secondary",onclick:()=>startCase(G.ci)},"Nochmal"),
+    h("button",{class:"secondary",onclick:showMenu},"Alle Fälle")));
+  $("panel").scrollTop=0;
+}
+
+showMenu();
+</script>
+</body>
+</html>
